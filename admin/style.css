@@ -1,0 +1,75 @@
+/* Include all the CSS you provided here */
+
+/* Additional styles for the admin panel */
+.admin-container {
+    padding: 20px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.admin-table th,
+.admin-table td {
+padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.admin-table th {
+    background-color: #153448;
+    color: #fff;
+}
+
+.admin-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.admin-form input[type="text"],
+.admin-form input[type="password"],
+.admin-form input[type="number"],
+.admin-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.admin-btn {
+    font-size: 13px;
+    color: #fff;
+    background-color: #153448;
+    padding: 12px 25px;
+    display: inline-block;
+    border-radius: 3px;
+    font-weight: 600;
+    transition: all .3s;
+    border: none;
+    cursor: pointer;
+}
+
+.admin-btn:hover {
+    opacity: 0.9;
+}
+
+.admin-btn-danger {
+    background-color: #dc3545;
+}
+
+.admin-navbar {
+    background-color: #153448;
+    padding: 10px 0;
+}
+
+.admin-navbar a {
+    color: #fff;
+    padding: 10px 15px;
+    text-decoration: none;
+}
+
+.admin-navbar a:hover {
+    background-color: #0d2a3a;
+}

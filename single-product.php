@@ -82,10 +82,11 @@ require_once 'includes/connection.php';
     <!-- Profile Slider -->
     <div id="profileSlider" class="profile-slider">
         <div class="profile-content">
-            <h2>User Profile</h2>
             <div id="profileInfo">
                 <!-- Profile information will be loaded here -->
             </div>
+            <div class="col mt-2"></div>
+            <button id="editProfileBtn">Edit Profile</button>
         </div>
     </div>
     <!-- ***** Main Banner Area Start ***** -->
@@ -239,7 +240,7 @@ require_once 'includes/connection.php';
         });
     </script>
 
-    <script>
+<script>
     $(document).ready(function() {
         $("#profileToggle").click(function() {
             $("#profileSlider").toggleClass("active");
@@ -257,6 +258,10 @@ require_once 'includes/connection.php';
                     }
                 });
             }
+        });
+
+        $("#editProfileBtn").click(function() {
+            window.location.href = "edit_profile.php";
         });
     });
     </script>

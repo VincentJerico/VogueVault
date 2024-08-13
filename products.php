@@ -1,5 +1,46 @@
 <?php
+session_start();
 require_once 'includes/connection.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Pagination setup
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$perPage = 9;
+$start = ($page - 1) * $perPage;
+
+// Search and category filtering
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$category = isset($_GET['category']) ? $_GET['category'] : '';
+
+// Base query without category filtering
+$query = "SELECT * FROM products WHERE name LIKE ? ORDER BY created_at DESC LIMIT ?, ?";
+
+// Prepare and execute statement
+$stmt = $conn->prepare($query);
+$searchTerm = "%$search%";
+$stmt->bind_param("sii", $searchTerm, $start, $perPage);
+$stmt->execute();
+$result = $stmt->get_result();
+$products = $result->fetch_all(MYSQLI_ASSOC);
+
+// Total products for pagination
+$total_query = "SELECT COUNT(*) as count FROM products WHERE name LIKE ?";
+$total_stmt = $conn->prepare($total_query);
+$total_stmt->bind_param("s", $searchTerm);
+$total_stmt->execute();
+$total_result = $total_stmt->get_result();
+$total_products = $total_result->fetch_assoc()['count'];
+$total_pages = ceil($total_products / $perPage);
+
+
+$stmt->close();
+$total_stmt->close();
+$conn->close();
 ?>
 
 
@@ -83,10 +124,11 @@ require_once 'includes/connection.php';
     <!-- Profile Slider -->
     <div id="profileSlider" class="profile-slider">
         <div class="profile-content">
-            <h2>User Profile</h2>
             <div id="profileInfo">
                 <!-- Profile information will be loaded here -->
             </div>
+            <div class="col mt-2"></div>
+            <button id="editProfileBtn">Edit Profile</button>
         </div>
     </div>
     <!-- ***** Main Banner Area Start ***** -->
@@ -104,7 +146,7 @@ require_once 'includes/connection.php';
     </div>
     <!-- ***** Main Banner Area End ***** -->
     <!-- ***** Products Area Starts ***** -->
-    <section class="section" id="products">
+    <!--<section class="section" id="products">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -365,6 +407,70 @@ require_once 'includes/connection.php';
                 </div>
             </div>
         </div>
+    </section>-->
+    <section class="section" id="products">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-heading">
+                        <h2>Our Latest Products</h2>
+                        <span>Check out all of our latest products.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <?php if (!empty($products)): ?>
+                    <?php foreach ($products as $product): ?>
+                    <div class="col-lg-4">
+                        <div class="item">
+                            <div class="thumb">
+                                <div class="hover-content">
+                                    <ul>
+                                        <li><a href="single-product.php?id=<?php echo $product['id']; ?>"><i class="fa fa-eye"></i></a></li>
+                                        <li><a href="single-product.php?id=<?php echo $product['id']; ?>"><i class="fa fa-star"></i></a></li>
+                                        <li><a href="single-product.php?id=<?php echo $product['id']; ?>"><i class="fa fa-shopping-cart"></i></a></li>
+                                    </ul>
+                                </div>
+                                <img src="assets/images/<?php echo $product['image']; ?>" alt="">
+                            </div>
+                            <div class="down-content">
+                                <h4><?php echo htmlspecialchars($product['name']); ?></h4>
+                                <span><?php echo '₱' . number_format($product['price'], 2); ?></span>
+                                <ul class="stars">
+                                    <?php for ($i = 0; $i < 5; $i++): ?>
+                                    <li><i class="fa fa-star"></i></li>
+                                    <?php endfor; ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                <div class="col-lg-12">
+                    <p>No products found matching your criteria.</p>
+                </div>
+                <?php endif; ?>
+                <div class="col-lg-12">
+                    <div class="pagination">
+                        <ul>
+                            <?php if ($page > 1): ?>
+                                <li><a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category); ?>">Previous</a></li>
+                            <?php endif; ?>
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <li class="<?php echo $i == $page ? 'active' : ''; ?>">
+                                    <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category); ?>">
+                                        <?php echo $i; ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
+                            <?php if ($page < $total_pages): ?>
+                                <li><a href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category); ?>">Next</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     <!-- ***** Products Area Ends ***** -->
     <!-- ***** Footer Start ***** -->
@@ -476,6 +582,10 @@ require_once 'includes/connection.php';
                     }
                 });
             }
+        });
+
+        $("#editProfileBtn").click(function() {
+            window.location.href = "edit_profile.php";
         });
     });
     </script>

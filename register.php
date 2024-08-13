@@ -2,29 +2,40 @@
 session_start();
 require_once 'includes/connection.php'; // Include your database connection file
 
+$error_message = '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
     $email = $_POST['email'];
-
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
     $gender = $_POST['gender'];
     $birthday = $_POST['birthday'];
 
+    // Check if username or email already exists
+    $check_stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+    $check_stmt->bind_param("ss", $username, $email);
+    $check_stmt->execute();
+    $check_stmt->store_result();
 
-    $stmt = $conn->prepare("INSERT INTO users (username, email, password, gender, birthday) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssss", $username, $email, $hashed_password, $gender, $birthday);
-
-    if ($stmt->execute()) {
-        header("Location: login.php");
-        exit();
+    if ($check_stmt->num_rows > 0) {
+        $error_message = "Username or email already exists.";
     } else {
-        echo "Error: " . $stmt->error;
+        // Proceed with registration
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password, gender, birthday) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $username, $email, $hashed_password, $gender, $birthday);
+
+        if ($stmt->execute()) {
+            header("Location: login.php");
+            exit();
+        } else {
+            $error_message = "Error: " . $stmt->error;
+        }
+        $stmt->close();
     }
-    $stmt->close();
+    $check_stmt->close();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -188,6 +199,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <button type="submit" class="register-button">Register</button>
         </form>
+        <?php
+        if ($error_message) {
+            echo "<p style='color:red;'>$error_message</p>";
+        }
+        ?>
         <p class="login-link">Already have an account? <a href="login.php">Login</a></p>
     </div>
 

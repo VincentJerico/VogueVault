@@ -8,6 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
+    // Prepare and execute the statement to get the user ID and hashed password
     $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -16,9 +17,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($stmt->num_rows == 1) {
         $stmt->bind_result($id, $hashed_password);
         $stmt->fetch();
+        
+        // Verify the password
         if (password_verify($password, $hashed_password)) {
             $_SESSION['user_id'] = $id;
-            header("Location: index.php");
+
+            // Fetch the user role
+            $role_stmt = $conn->prepare("SELECT role FROM users WHERE id = ?");
+            $role_stmt->bind_param("i", $id);
+            $role_stmt->execute();
+            $role_stmt->bind_result($role);
+            $role_stmt->fetch();
+            $role_stmt->close();
+
+            // Store the user role in session
+            $_SESSION['user_role'] = $role;
+
+            // Redirect based on user role
+            if ($role == 'admin') {
+                header("Location: admin/index.php");
+            } else {
+                header("Location: index.php");
+            }
             exit();
         } else {
             $error_message = "Invalid password.";
@@ -29,6 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

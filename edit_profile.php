@@ -1,5 +1,46 @@
 <?php
 session_start();
+
+// Generate CSRF token if it does not exist
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Validate CSRF token
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('CSRF token validation failed');
+    }
+
+    // Update CSRF token for the next request
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+    require_once 'includes/connection.php'; // Include your database connection file
+
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: login.php');
+        exit;
+    }
+
+    $user_id = $_SESSION['user_id'];
+
+    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    $gender = filter_input(INPUT_POST, 'gender', FILTER_SANITIZE_STRING);
+    $birthday = filter_input(INPUT_POST, 'birthday', FILTER_SANITIZE_STRING);
+
+    if (!$username || !$email || !$gender || !$birthday) {
+        die('Invalid input data');
+    }
+
+    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, gender = ?, birthday = ? WHERE id = ?");
+    $stmt->bind_param("ssssi", $username, $email, $gender, $birthday, $user_id);
+    $stmt->execute();
+    $stmt->close();
+
+    $success_message = "Profile updated successfully!";
+}
+
 require_once 'includes/connection.php'; // Include your database connection file
 
 if (!isset($_SESSION['user_id'])) {
@@ -9,25 +50,10 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $gender = $_POST['gender'];
-    $birthday = $_POST['birthday'];
-
-    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ?, gender = ?, birthday = ? WHERE id = ?");
-    $stmt->bind_param("ssssi", $username, $email, $gender, $birthday, $user_id);
-    $stmt->execute();
-    $stmt->close();
-
-    echo "<p>Profile updated successfully!</p>";
-}
-
 $stmt = $conn->prepare("SELECT username, email, gender, birthday FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
-
 $row = $result->fetch_assoc();
 ?>
 
@@ -156,6 +182,7 @@ $row = $result->fetch_assoc();
             <div class="success-message"><?php echo htmlspecialchars($success_message); ?></div>
         <?php endif; ?>
         <form method="POST" action="">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
             <div class="form-group">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($row['username']); ?>" required>

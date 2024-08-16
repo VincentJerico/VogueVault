@@ -9,12 +9,15 @@ if (!isset($_SESSION['user_id'])) {
 
 // Check if the user came directly to this page
 if (!isset($_SESSION['login_redirect'])) {
-    $alert_message = "You've accessed this page directly. Please use the login page for proper access.";
+    $alert_message = "You've accessed this page directly. For the best experience, please use the login page.";
     $_SESSION['alert_message'] = $alert_message;
 }
 
 // Set the login redirect flag
 $_SESSION['login_redirect'] = true;
+
+// Check login status (but don't redirect)
+$is_logged_in = isset($_SESSION['user_id']);
 ?>
 
 <!DOCTYPE html>
@@ -90,8 +93,12 @@ $_SESSION['login_redirect'] = true;
                             </li>
                             -->
                             <li class="scroll-to-section"><a href="#explore">Explore</a></li>
-                            <li class="profile-nav"><a href="javascript:void(0);" id="profileToggle">Profile</a></li>
-                            <li class=""><a href="index.php">Logout</a></li>
+                            <?php if ($is_logged_in): ?>
+                                <li class="profile-nav"><a href="javascript:void(0);" id="profileToggle">Profile</a></li>
+                                <li class=""><a href="logout.php">Logout</a></li>
+                            <?php else: ?>
+                                <li class=""><a href="index.php">Login</a></li>
+                            <?php endif; ?>
                         </ul>        
                         <a class='menu-trigger'>
                             <span>Menu</span>
@@ -104,17 +111,23 @@ $_SESSION['login_redirect'] = true;
     </header>
     <!-- ***** Header Area End ***** -->
     <!-- Profile Slider -->
-    <?php if (isset($_SESSION['user_id'])): ?>
     <div id="profileSlider" class="profile-slider">
         <div class="profile-content">
             <div id="profileInfo">
                 <!-- Profile information will be loaded here -->
             </div>
             <div class="col mt-2"></div>
-            <button id="editProfileBtn">Edit Profile</button>
+            <?php if ($is_logged_in): ?>
+                <button id="editProfileBtn">Edit Profile</button>
+                <button id="logoutBtn">Logout</button>
+            <?php else: ?>
+                <p>Please log in to view your profile.</p>
+                <button id="loginBtn">Login</button>
+            <?php endif; ?>
         </div>
     </div>
-<?php endif; ?>
+
+
     <!-- ***** Main Banner Area Start ***** -->
     <div class="main-banner" id="top">
         <div class="container-fluid">
@@ -853,8 +866,8 @@ $_SESSION['login_redirect'] = true;
             $("#profileToggle").click(function() {
                 $("#profileSlider").toggleClass("active");
                 
-                if ($("#profileSlider").hasClass("active")) {
-                    // Load profile information
+                if ($("#profileSlider").hasClass("active") && <?php echo $is_logged_in ? 'true' : 'false'; ?>) {
+                    // Load profile information only if user is logged in
                     $.ajax({
                         url: 'get_profile.php',
                         type: 'GET',
@@ -873,6 +886,16 @@ $_SESSION['login_redirect'] = true;
                 window.location.href = "edit_profile.php";
             });
 
+            // Logout functionality
+            $("#logoutBtn").click(function() {
+                window.location.href = "logout.php";
+            });
+
+            // Login functionality
+            $("#loginBtn").click(function() {
+                window.location.href = "index.php";
+            });
+
             // Close profile slider when clicking outside of it
             $(document).click(function(event) {
                 if (!$(event.target).closest("#profileSlider, #profileToggle").length) {
@@ -881,6 +904,5 @@ $_SESSION['login_redirect'] = true;
             });
         });
     </script>
-
 </body>
 </html>

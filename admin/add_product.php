@@ -1,80 +1,80 @@
 <?php
 session_start();
 require_once '../includes/connection.php';
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header("Location: login.php");
-    exit;
+
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+    header("Location: ../index.php");
+    exit();
 }
 
-$conn = new mysqli("localhost", "root", "", "voguevaultdb");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $description = $_POST['description'];
+    $category = $_POST['category'];
     $price = $_POST['price'];
-    $image = $_POST['image'];
-
-    $sql = "INSERT INTO products (name, description, price, image) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssds", $name, $description, $price, $image);
+    $image = $_FILES['image']['name'];
+    $target_dir = "../assets/images/products/";
+    $target_file = $target_dir . basename($image);
     
-    if ($stmt->execute()) {
-        $success = "Product added successfully";
+    // Move uploaded file to target directory
+    if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+        $stmt = $pdo->prepare("INSERT INTO products (name, description, category, price, image) VALUES (:name, :description, :category, :price, :image)");
+        $stmt->execute([
+            ':name' => $name,
+            ':description' => $description,
+            ':category' => $category,
+            ':price' => $price,
+            ':image' => $image
+        ]);
+        header("Location: products.php");
     } else {
-        $error = "Error: " . $conn->error;
+        $error = "There was an error uploading the file.";
     }
 }
 
-$conn->close();
+$pdo = null;
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product - VogueVault Admin</title>
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Add New Product - VogueVault Admin</title>
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-    <header>
-        <nav class="admin-navbar">
-            <a href="index.php">Dashboard</a>
-            <a href="products.php">Products</a>
-            <a href="categories.php">Categories</a>
-            <a href="users.php">Users</a>
-            <a href="orders.php">Orders</a>
-            <a href="logout.php">Logout</a>
-        </nav>
-    </header>
-    <div class="admin-container">
-        <h1>Add New Product</h1>
-        <?php
-        if (isset($error)) echo "<p class='error'>$error</p>";
-        if (isset($success)) echo "<p class='success'>$success</p>";
-        ?>
-        <form method="post" class="admin-form">
-            <div>
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+    <div class="container mt-5">
+        <h2>Add New Product</h2>
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+        <form action="add_product.php" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Product Name</label>
+                <input type="text" name="name" class="form-control" required>
             </div>
-            <div>
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" required></textarea>
+            <div class="form-group">
+                <label for="description">Product Description</label>
+                <textarea name="description" class="form-control" required></textarea>
             </div>
-            <div>
-                <label for="price">Price:</label>
-                <input type="number" id="price" name="price" step="0.01" required>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <input type="text" name="category" class="form-control" required>
             </div>
-            <div>
-                <label for="image">Image URL:</label>
-                <input type="text" id="image" name="image">
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" name="price" class="form-control" required>
             </div>
-            <button type="submit" class="admin-btn">Add Product</button>
+            <div class="form-group">
+                <label for="image">Product Image</label>
+                <input type="file" name="image" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Product</button>
         </form>
     </div>
+    <script src="../assets/js/jquery-2.1.0.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
 </body>
 </html>

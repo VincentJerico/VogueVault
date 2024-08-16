@@ -19,53 +19,39 @@ $category = isset($_GET['category']) ? $_GET['category'] : '';
 
 // Fetch categories for filtering
 $categories_query = "SELECT DISTINCT category FROM products";
-$categories_result = $conn->query($categories_query);
-$categories = $categories_result->fetch_all(MYSQLI_ASSOC);
+$categories_result = $pdo->query($categories_query);
+$categories = $categories_result->fetchAll(PDO::FETCH_ASSOC);
 
 // Modify the base query to include search and category filtering
-$query = "SELECT * FROM products WHERE name LIKE ?";
-$params = ["%$search%"];
-$types = "s";
+$query = "SELECT * FROM products WHERE name LIKE :search";
+$params = [':search' => "%$search%"];
 
 if ($category) {
-    $query .= " AND category = ?";
-    $params[] = $category;
-    $types .= "s";
+    $query .= " AND category = :category";
+    $params[':category'] = $category;
 }
 
-$query .= " ORDER BY created_at DESC LIMIT ?, ?";
-$params[] = $start;
-$params[] = $perPage;
-$types .= "ii";
+// Append the LIMIT clause directly
+$query .= " ORDER BY created_at DESC LIMIT $start, $perPage";
 
 // Prepare and execute statement
-$stmt = $conn->prepare($query);
-$stmt->bind_param($types, ...$params);
-$stmt->execute();
-$result = $stmt->get_result();
-$products = $result->fetch_all(MYSQLI_ASSOC);
+$stmt = $pdo->prepare($query);
+$stmt->execute($params);
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Total products for pagination
-$total_query = "SELECT COUNT(*) as count FROM products WHERE name LIKE ?";
-$total_params = ["%$search%"];
-$total_types = "s";
+$total_query = "SELECT COUNT(*) as count FROM products WHERE name LIKE :search";
+$total_params = [':search' => "%$search%"];
 
 if ($category) {
-    $total_query .= " AND category = ?";
-    $total_params[] = $category;
-    $total_types .= "s";
+    $total_query .= " AND category = :category";
+    $total_params[':category'] = $category;
 }
 
-$total_stmt = $conn->prepare($total_query);
-$total_stmt->bind_param($total_types, ...$total_params);
-$total_stmt->execute();
-$total_result = $total_stmt->get_result();
-$total_products = $total_result->fetch_assoc()['count'];
+$total_stmt = $pdo->prepare($total_query);
+$total_stmt->execute($total_params);
+$total_products = $total_stmt->fetch(PDO::FETCH_ASSOC)['count'];
 $total_pages = ceil($total_products / $perPage);
-
-$stmt->close();
-$total_stmt->close();
-$conn->close();
 ?>
 
 

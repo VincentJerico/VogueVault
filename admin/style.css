@@ -1,0 +1,83 @@
+body {
+    padding-top: 56px; /* Adjust this value if your navbar height changes */
+}
+header {
+    z-index: 1030; /* Ensure navbar is on top */
+}
+.card {
+    margin-bottom: 1.5rem; /* Space between cards */
+}
+.btn-block {
+    margin-bottom: 1rem; /* Space between buttons */
+}
+.container {
+    margin-top: 1rem; /* Space from fixed navbar */
+}
+.card-title {
+    font-size: 1.25rem; /* Adjust font size for better readability */
+}
+a img {
+    height: auto;
+    width: 60px;
+}
+
+/* Card styles */
+.card {
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Button styles */
+.btn-lg {
+    font-size: 18px;
+    padding: 12px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #153448;
+    border-color: #153448;
+}
+
+.btn-primary:hover {
+    background-color: #0d2a3a;
+    border-color: #0d2a3a;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* List group item styles */
+.list-group-item {
+    transition: background-color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f1f1f1;
+}
+
+/* Navbar styles */
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff;
+    transition: color 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #cfd9e4;
+}
+

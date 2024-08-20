@@ -1,6 +1,10 @@
 <?php
 session_start();
+<<<<<<< HEAD
 require_once 'includes/connection.php'; // This will include the PDO connection
+=======
+require_once 'includes/connection.php';
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
 
 $message = '';
 
@@ -8,6 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $birthday = $_POST['birthday'];
     
+<<<<<<< HEAD
     try {
         // Prepare and execute the SQL statement
         $stmt = $pdo->prepare("SELECT id, birthday FROM users WHERE email = :email");
@@ -36,6 +41,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } catch (PDOException $e) {
         $message = "An error occurred: " . $e->getMessage();
     }
+=======
+    $stmt = $conn->prepare("SELECT id, birthday FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows == 1) {
+        $user = $result->fetch_assoc();
+        if ($birthday == $user['birthday']) {
+            $token = bin2hex(random_bytes(50));
+            
+            $stmt = $conn->prepare("UPDATE users SET reset_token = ? WHERE id = ?");
+            $stmt->bind_param("si", $token, $user['id']);
+            $stmt->execute();
+            
+            header("Location: reset_password.php?token=$token");
+            exit();
+        } else {
+            $message = "Incorrect birthday.";
+        }
+    } else {
+        $message = "No account found with that email address.";
+    }
+    $stmt->close();
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
 }
 ?>
 
@@ -45,8 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
+<<<<<<< HEAD
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"">
     <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
+=======
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
     <style>
         body {
             font-family: 'Poppins', sans-serif;

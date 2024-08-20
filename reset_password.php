@@ -8,6 +8,7 @@ $message_type = '';
 if (isset($_GET['token'])) {
     $token = $_GET['token'];
     
+<<<<<<< HEAD
     // Use PDO instead of mysqli
     $stmt = $pdo->prepare("SELECT id FROM users WHERE reset_token = :token");
     $stmt->bindParam(':token', $token);
@@ -16,6 +17,15 @@ if (isset($_GET['token'])) {
     
     if ($result) {
         $user = $result;
+=======
+    $stmt = $conn->prepare("SELECT id FROM users WHERE reset_token = ?");
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows == 1) {
+        $user = $result->fetch_assoc();
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
         
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $password = $_POST['password'];
@@ -24,9 +34,14 @@ if (isset($_GET['token'])) {
             if ($password === $confirm_password) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 
+<<<<<<< HEAD
                 $stmt = $pdo->prepare("UPDATE users SET password = :password, reset_token = NULL WHERE id = :id");
                 $stmt->bindParam(':password', $hashed_password);
                 $stmt->bindParam(':id', $user['id'], PDO::PARAM_INT);
+=======
+                $stmt = $conn->prepare("UPDATE users SET password = ?, reset_token = NULL WHERE id = ?");
+                $stmt->bind_param("si", $hashed_password, $user['id']);
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                 $stmt->execute();
                 
                 $message = "Password reset successfully. You can now Log in with your new password.";
@@ -40,6 +55,10 @@ if (isset($_GET['token'])) {
         $message = "Invalid reset token.";
         $message_type = 'error';
     }
+<<<<<<< HEAD
+=======
+    $stmt->close();
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
 } else {
     $message = "No token provided.";
     $message_type = 'error';
@@ -52,8 +71,12 @@ if (isset($_GET['token'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
+<<<<<<< HEAD
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"">
     <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
+=======
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -95,6 +118,7 @@ if (isset($_GET['token'])) {
             position: relative;
             width: 100%;
         }
+<<<<<<< HEAD
 
         input[type="password"] {
             flex: 1;
@@ -120,6 +144,29 @@ if (isset($_GET['token'])) {
             z-index: 10; /* Ensure it stays above the input field */
         }
 
+=======
+        input[type="password"] {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            padding-right: 1rem; /* Ensure space for the toggle icon */
+        }
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #153448;
+            z-home: 10;
+            font-size: 1.1rem; /* Adjust font size as needed */
+            width: 2rem; /* Set a fixed width */
+            text-align: center; /* Center the icon within its container */
+        }
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
         .reset-button {
             width: 100%;
             padding: 0.75rem;
@@ -162,7 +209,10 @@ if (isset($_GET['token'])) {
         @media (max-width: 480px) {
             .reset-password-container {
                 padding: 1.5rem;
+<<<<<<< HEAD
                 width: 100%;
+=======
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
             }
             h2 {
                 font-size: 1.2rem;
@@ -191,14 +241,20 @@ if (isset($_GET['token'])) {
                     <label for="password">New Password:</label>
                     <div class="password-field">
                         <input type="password" id="password" name="password" required>
+<<<<<<< HEAD
                         <i class="password-toggle fas fa-eye" id="togglePassword"></i>
+=======
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="confirm_password">Confirm New Password:</label>
                     <div class="password-field">
                         <input type="password" id="confirm_password" name="confirm_password" required>
+<<<<<<< HEAD
                         <i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>
+=======
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                     </div>
                 </div>
                 <button type="submit" class="reset-button">Reset Password</button>
@@ -211,6 +267,7 @@ if (isset($_GET['token'])) {
         function togglePassword(inputId, toggleId) {
             const input = document.getElementById(inputId);
             const toggle = document.getElementById(toggleId);
+<<<<<<< HEAD
             
             toggle.addEventListener('click', function () {
                 const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -229,6 +286,27 @@ if (isset($_GET['token'])) {
                 alert('Passwords do not match');
                 e.preventDefault();
             }
+=======
+
+            toggle.addEventListener('click', function () {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+
+                // Toggle the eye icon
+                if (type === 'password') {
+                    toggle.classList.remove('fa-eye-slash');
+                    toggle.classList.add('fa-eye');
+                } else {
+                    toggle.classList.remove('fa-eye');
+                    toggle.classList.add('fa-eye-slash');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            togglePassword('password', 'togglePassword');
+            togglePassword('confirm_password', 'toggleConfirmPassword');
+>>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
         });
     </script>
 

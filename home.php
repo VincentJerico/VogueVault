@@ -27,11 +27,7 @@ $is_logged_in = isset($_SESSION['user_id']);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-<<<<<<< HEAD
     <link href="/assets/fonts/poppins.css" rel="stylesheet">
-=======
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
     <title>VogueVault</title>
     <!-- Additional CSS Files -->
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">

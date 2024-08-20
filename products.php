@@ -121,11 +121,7 @@ $total_pages = ceil($total_products / $perPage);
                             -->
                             <li class="scroll-to-section"><a href="home.php">Explore</a></li>
                             <li class="profile-nav"><a href="javascript:void(0);" id="profileToggle">Profile</a></li>
-<<<<<<< HEAD
                             <li class=""><a href="logout.php">Logout</a></li>
-=======
-                            <li class=""><a href="index.php">Logout</a></li>
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                         </ul>        
                         <a class='menu-trigger'>
                             <span>Menu</span>

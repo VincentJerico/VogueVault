@@ -1,10 +1,6 @@
 <?php
 session_start();
-<<<<<<< HEAD
 require_once 'includes/connection.php'; // Include your PDO connection file
-=======
-require_once 'includes/connection.php'; // Include your database connection file
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
 
 $error_message = '';
 
@@ -16,52 +12,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $birthday = $_POST['birthday'];
 
     // Check if username or email already exists
-<<<<<<< HEAD
     $check_stmt = $pdo->prepare("SELECT id FROM users WHERE username = :username OR email = :email");
     $check_stmt->bindParam(':username', $username);
     $check_stmt->bindParam(':email', $email);
     $check_stmt->execute();
 
     if ($check_stmt->rowCount() > 0) {
-=======
-    $check_stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-    $check_stmt->bind_param("ss", $username, $email);
-    $check_stmt->execute();
-    $check_stmt->store_result();
-
-    if ($check_stmt->num_rows > 0) {
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
         $error_message = "Username or email already exists.";
     } else {
         // Proceed with registration
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-<<<<<<< HEAD
         $stmt = $pdo->prepare("INSERT INTO users (username, email, password, gender, birthday) VALUES (:username, :email, :password, :gender, :birthday)");
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $hashed_password);
         $stmt->bindParam(':gender', $gender);
         $stmt->bindParam(':birthday', $birthday);
-=======
-        $stmt = $conn->prepare("INSERT INTO users (username, email, password, gender, birthday) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $username, $email, $hashed_password, $gender, $birthday);
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
 
         if ($stmt->execute()) {
             header("Location: index.php");
             exit();
         } else {
-<<<<<<< HEAD
             $error_message = "Error: " . $stmt->errorInfo()[2];
         }
     }
-=======
-            $error_message = "Error: " . $stmt->error;
-        }
-        $stmt->close();
-    }
-    $check_stmt->close();
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
 }
 ?>
 <!DOCTYPE html>
@@ -70,11 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-<<<<<<< HEAD
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"">
-=======
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -209,29 +179,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password">Password:</label>
                 <div class="password-field">
                     <input type="password" id="password" name="password" required>
-<<<<<<< HEAD
                     <i class="password-toggle fas fa-eye" id="togglePassword"></i>
-=======
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                 </div>
             </div>
             <div class="form-group">
                 <label for="confirm_password">Confirm Password:</label>
                 <div class="password-field">
                     <input type="password" id="confirm_password" name="confirm_password" required>
-<<<<<<< HEAD
                     <i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>
-=======
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                 </div>
             </div>
             <div class="form-group">
                 <label for="gender">Gender:</label>
-<<<<<<< HEAD
                 <select id="gender" name="gender">
-=======
-                <select id="gender" name="gender" required>
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>

@@ -32,11 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Redirect based on user role
             if ($role == 'admin') {
                 $_SESSION['login_redirect'] = true;
-<<<<<<< HEAD
                 header("Location: admin/admin_panel.php");
-=======
-                header("Location: admin/home.php");
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
             } else {
                 $_SESSION['login_redirect'] = true;
                 header("Location: home.php");
@@ -58,12 +54,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VogueVault - Welcome</title>
-<<<<<<< HEAD
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"">
     <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
-=======
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -138,11 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .password-toggle {
             position: absolute;
             top: 50%;
-<<<<<<< HEAD
             right: 0px;
-=======
-            right: 10px;
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
             transform: translateY(-50%);
             cursor: pointer;
             color: #153448;
@@ -251,11 +239,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="password">Password:</label>
                     <div class="password-field">
                         <input type="password" id="password" name="password" required>
-<<<<<<< HEAD
                         <i class="password-toggle fas fa-eye" id="togglePassword"></i>
-=======
-                        
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                     </div>
                 </div>
                 <div class="remember-me">

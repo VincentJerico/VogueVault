@@ -10,11 +10,7 @@ require_once 'includes/connection.php';
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-<<<<<<< HEAD
     <link href="/assets/fonts/poppins.css" rel="stylesheet">
-=======
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
     <title>VogueVault - About</title>
     <!-- Additional CSS Files -->
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
@@ -72,11 +68,7 @@ require_once 'includes/connection.php';
                             -->
                             <li class="scroll-to-section"><a href="home.php">Explore</a></li>
                             <li class="profile-nav"><a href="javascript:void(0);" id="profileToggle">Profile</a></li>
-<<<<<<< HEAD
                             <li class=""><a href="logout.php">Logout</a></li>
-=======
-                            <li class=""><a href="index.php">Logout</a></li>
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                         </ul>        
                         <a class='menu-trigger'>
                             <span>Menu</span>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 20, 2024 at 06:28 PM
+-- Generation Time: Aug 20, 2024 at 08:16 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -73,6 +73,7 @@ CREATE TABLE `products` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text DEFAULT NULL,
+  `category` enum('Men''s','Women''s','Kid''s') NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `image` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -82,8 +83,8 @@ CREATE TABLE `products` (
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `name`, `description`, `price`, `image`, `created_at`) VALUES
-(1, 'pantalon', 'ahahaha', 100.00, NULL, '2024-08-20 09:36:59');
+INSERT INTO `products` (`id`, `name`, `description`, `category`, `price`, `image`, `created_at`) VALUES
+(1, 'pantalon', 'ahahaha', 'Men\'s', 100.00, NULL, '2024-08-20 09:36:59');
 
 -- --------------------------------------------------------
 
@@ -108,7 +109,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `gender`, `birthday`, `created_at`, `reset_token`) VALUES
-(1, 'testuser1', '$2y$10$Obc93i0bo12mnJ8M9LsL/uwHK6Tqy/s0PxjLTA2M5jaHAAnbxPVU.', 'testuser1@example.com', 'customer', 'male', '2003-12-07', '2024-08-09 08:22:55', NULL),
+(1, 'vijey', '$2y$10$Obc93i0bo12mnJ8M9LsL/uwHK6Tqy/s0PxjLTA2M5jaHAAnbxPVU.', 'testuser1@example.com', 'customer', 'male', '2003-12-07', '2024-08-09 08:22:55', NULL),
 (3, 'testuser2', '$2y$10$O8tj3UiJPwT6tRigBxNyWOfh66ZIdsuHdxAjVOa7KKeQ3hAynXWQO', 'testuser2@example.com', 'customer', 'male', '2004-05-15', '2024-08-09 08:54:44', NULL),
 (4, 'testuser3', '$2y$10$6BxtQij9dAlsUDgaIlKQlOF41BaUcbMgnIBG07G5lQE7lGBcMzl32', 'testuser3@example.com', 'customer', 'male', '2008-03-15', '2024-08-09 09:01:50', NULL),
 (5, 'testuser4', '$2y$10$nUaNh3okwqw9rcnVzcaDM.5TbpTBm0jruwxqERgI8pIfV6GZdnJXy', 'testuser4@example.com', 'customer', 'other', '2005-12-11', '2024-08-09 09:03:11', NULL),

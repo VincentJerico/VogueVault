@@ -1,5 +1,12 @@
 <?php
+session_start();
 require_once 'includes/connection.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit();
+}
 ?>
 
 
@@ -67,11 +74,7 @@ require_once 'includes/connection.php';
                             </li>-->
                             <li class="scroll-to-section"><a href="home.php">Explore</a></li>
                             <li class="profile-nav"><a href="javascript:void(0);" id="profileToggle">Profile</a></li>
-<<<<<<< HEAD
                             <li class=""><a href="logout.php">Logout</a></li>
-=======
-                            <li class=""><a href="index.php">Logout</a></li>
->>>>>>> 90d4c79b0a080f779b2d0463cb429adb887e2bd1
                         </ul>        
                         <a class='menu-trigger'>
                             <span>Menu</span>

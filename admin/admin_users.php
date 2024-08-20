@@ -167,7 +167,7 @@ $pdo = null;
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-md">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -265,6 +265,9 @@ $pdo = null;
         </div>
     </div>
 
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../assets/js/jquery-3.5.1.slim.min.js"></script>
@@ -297,25 +300,16 @@ $pdo = null;
                 userIdToDelete = button.getAttribute('data-user-id');
             });
 
-            confirmDeleteButton.addEventListener('click', function() {
-                $.ajax({
-                    url: 'delete_user.php',
-                    method: 'POST',
-                    data: { user_id: userIdToDelete },
-                    success: function(response) {
-                        var result = JSON.parse(response);
-                        if (result.success) {
-                            $(`tr[data-user-id="${userIdToDelete}"]`).remove();
-                            var modal = bootstrap.Modal.getInstance(deleteModal);
-                            modal.hide();
-                        } else {
-                            alert('Error deleting user: ' + result.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error deleting user:', error);
-                        alert('An error occurred while deleting the user.');
-                    }
+            document.addEventListener('DOMContentLoaded', function() {
+                var deleteButtons = document.querySelectorAll('.delete-button');
+                var deleteForm = document.getElementById('deleteForm');
+                var userIdInput = document.getElementById('userIdToDelete');
+
+                deleteButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        var userId = button.getAttribute('data-user-id');
+                        userIdInput.value = userId;
+                    });
                 });
             });
 

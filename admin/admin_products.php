@@ -22,18 +22,6 @@ function executeQuery($query) {
 $sql = "SELECT * FROM products";
 $stmt = $pdo->query($sql);
 
-if (isset($_GET['delete_id'])) {
-    $deleteId = $_GET['delete_id'];
-    $sql = "DELETE FROM products WHERE id = :deleteId";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':deleteId', $deleteId, PDO::PARAM_INT);
-    if ($stmt->execute()) {
-        echo "<div class='alert alert-success'>Record deleted successfully</div>";
-    } else {
-        echo "<div class='alert alert-danger'>Error deleting record: " . $stmt->errorInfo()[2] . "</div>";
-    }
-}  
-
 $pdo = null;
 ?>
 
@@ -188,7 +176,7 @@ $pdo = null;
                 </div>
 
                 <div class="row">
-                    <?php 
+                    <?php
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         echo '<div class="col-md-6 col-lg-4 mb-4">';
                         echo '<div class="card h-100">';
@@ -198,7 +186,7 @@ $pdo = null;
                         echo '<p class="card-text">' . htmlspecialchars($row['description']) . '</p>';
                         echo '<p class="card-text"><strong>Price:</strong> ₱' . htmlspecialchars($row['price']) . '</p>';
                         echo '<button class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#editModal" data-id="' . htmlspecialchars($row['id']) . '"><i class="bi bi-pencil-square"></i> Edit</button>';
-                        echo '<button class="btn btn-sm btn-outline-danger" data-id="' . htmlspecialchars($row['id']) . '"><i class="bi bi-trash-fill"></i> Delete</button>';
+                        echo "<button class='btn btn-sm btn-outline-danger' onclick=\"deleteRecord(event, " . htmlspecialchars($row['id']) . ")\"><i class='bi bi-trash-fill'></i> Delete</button>";
                         echo '</div>';
                         echo '</div>';
                         echo '</div>';
@@ -255,16 +243,43 @@ $pdo = null;
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Add your edit form here -->
+                    <form id="editProductForm" action="edit_product.php" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" id="editProductId" name="id"> <!-- Hidden field for product ID -->
+                        <div class="mb-3">
+                            <label for="editName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="editName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="editDescription" name="description" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategory" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="editCategory" name="category" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPrice" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="editPrice" name="price" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editImage" class="form-label">Product Image</label>
+                            <input type="file" class="form-control" id="editImage" name="image">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Product</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
+
     <script src="../assets/js/bootstrap.min.js"></script>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/popper.min.js"></script>
     <script src="../assets/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="./alerts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const searchInput = document.getElementById('searchInput');
@@ -278,6 +293,48 @@ $pdo = null;
                 }
             });
         });
+
+
+        function deleteRecord(event, id) {
+            event.preventDefault();
+            if (confirm('Are you sure you want to delete this product?')) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'delete_product.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        if (xhr.responseText.trim() === 'Record deleted successfully') {
+                            event.target.closest('.col-md-6').remove(); // Adjust this selector to remove the product card
+                        } else {
+                            alert('Error deleting product: ' + xhr.responseText);
+                        }
+                    }
+                };
+                xhr.send('id=' + id);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const editModal = document.getElementById('editModal');
+            editModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const productId = button.getAttribute('data-id');
+
+                // Fetch product details via AJAX
+                fetch(`get_product.php?id=${productId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Populate the form with the product's current data
+                        document.getElementById('editProductId').value = data.id;
+                        document.getElementById('editName').value = data.name;
+                        document.getElementById('editDescription').value = data.description;
+                        document.getElementById('editCategory').value = data.category;
+                        document.getElementById('editPrice').value = data.price;
+                    });
+            });
+        });
+
+
     </script>
 </body>
 </html>

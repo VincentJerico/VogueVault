@@ -178,9 +178,9 @@ $pdo = null;
                 <div class="row">
                     <?php
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        echo '<div class="col-md-6 col-lg-4 mb-4">';
+                        echo '<div class="col-md-4 col-lg-3 mb-4">';
                         echo '<div class="card h-100">';
-                        echo '<img src="' . htmlspecialchars($row['image']) . '" class="card-img-top product-img" alt="Product Image">';
+                        echo '<img src="' . htmlspecialchars($row['image']) . '" class="card-img-top product-img mt-2 ml-4" alt="Product Image">';
                         echo '<div class="card-body">';
                         echo '<h5 class="card-title">' . htmlspecialchars($row['name']) . '</h5>';
                         echo '<p class="card-text">' . htmlspecialchars($row['description']) . '</p>';

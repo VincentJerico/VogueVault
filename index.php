@@ -5,12 +5,12 @@ require_once 'includes/connection.php'; // Include your database connection file
 $error_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
+    $username_or_email = $_POST['username'];
     $password = $_POST['password'];
 
     // Prepare and execute the statement to get the user ID and hashed password
-    $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = ?");
-    $stmt->execute([$username]);
+    $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = ? OR email = ?");
+    $stmt->execute([$username_or_email, $username_or_email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
@@ -42,11 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error_message = "Invalid password.";
         }
     } else {
-        $error_message = "No user found with that username.";
+        $error_message = "No user found with that username or email.";
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -257,6 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="password">Password:</label>
                     <div class="password-field">
                         <input type="password" id="password" name="password" required>
+                        <i class="password-toggle fas fa-eye" id="togglePassword"></i>
                         <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
                     </div>
                 </div>

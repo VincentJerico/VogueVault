@@ -59,7 +59,6 @@ if (!isset($_SESSION['user_id'])) {
                                 <ul>
                                     <li><a href="about.php">About Us</a></li>
                                     <li><a href="products.php">Products</a></li>
-                                    <li><a href="single-product.php">Single Product</a></li>
                                     <li><a href="contact.php">Contact Us</a></li>
                                 </ul>
                             </li>
@@ -158,32 +157,7 @@ if (!isset($_SESSION['user_id'])) {
     <div class="subscribe">
         <div class="container">
             <div class="row">
-                <div class="col-lg-8">
-                    <div class="section-heading">
-                        <h2>By Subscribing To Our Newsletter You Can Get 30% Off</h2>
-                        <span>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</span>
-                    </div>
-                    <form id="subscribe" action="" method="get">
-                        <div class="row">
-                            <div class="col-lg-5">
-                            <fieldset>
-                                <input name="name" type="text" id="name" placeholder="Your Name" required="">
-                            </fieldset>
-                            </div>
-                            <div class="col-lg-5">
-                            <fieldset>
-                                <input name="email" type="text" id="email" pattern="[^ @]*@[^ @]*" placeholder="Your Email Address" required="">
-                            </fieldset>
-                            </div>
-                            <div class="col-lg-2">
-                            <fieldset>
-                                <button type="submit" id="form-submit" class="main-dark-button"><i class="fa fa-paper-plane"></i></button>
-                            </fieldset>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-lg-4">
+                <div class="col-lg-12">
                     <div class="row">
                         <div class="col-6">
                             <ul>

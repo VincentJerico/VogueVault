@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'includes/connection.php';
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -18,6 +19,19 @@ $_SESSION['login_redirect'] = true;
 
 // Check login status (but don't redirect)
 $is_logged_in = isset($_SESSION['user_id']);
+
+// Fetch products for each category
+function getProductsByCategory($pdo, $category, $limit = 4) {
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE category = :category ORDER BY created_at DESC LIMIT :limit");
+    $stmt->bindParam(':category', $category, PDO::PARAM_STR);
+    $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+$menProducts = getProductsByCategory($pdo, "Men's");
+$womenProducts = getProductsByCategory($pdo, "Women's");
+$kidsProducts = getProductsByCategory($pdo, "Kid's");
 ?>
 
 <!DOCTYPE html>
@@ -35,6 +49,7 @@ $is_logged_in = isset($_SESSION['user_id']);
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/owl-carousel.css">
     <link rel="stylesheet" href="assets/css/lightbox.css">
+    <link rel="stylesheet" href="assets/css/get-product-style.css">
     <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
 </head>
 <body>
@@ -78,7 +93,6 @@ $is_logged_in = isset($_SESSION['user_id']);
                                 <ul>
                                     <li><a href="about.php">About Us</a></li>
                                     <li><a href="products.php">Products</a></li>
-                                    <li><a href="single-product.php">Single Product</a></li>
                                     <li><a href="contact.php">Contact Us</a></li>
                                 </ul>
                             </li>
@@ -236,14 +250,14 @@ $is_logged_in = isset($_SESSION['user_id']);
         </div>
     </div>
     <!-- ***** Main Banner Area End ***** -->
-    <!-- ***** Men Area Starts ***** -->
+    <!-- ***** Men's Area Starts ***** -->
     <section class="section" id="men">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="section-heading">
                         <h2>Men's Latest</h2>
-                        <span>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</span>
+                        <span>Check out our latest men's products</span>
                     </div>
                 </div>
             </div>
@@ -253,111 +267,48 @@ $is_logged_in = isset($_SESSION['user_id']);
                 <div class="col-lg-12">
                     <div class="men-item-carousel">
                         <div class="owl-men-item owl-carousel">
+                            <?php foreach ($menProducts as $product): ?>
                             <div class="item">
                                 <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/men-1modularjacket.png" alt="">
+                                <div class="hover-content">
+                                    <ul>
+                                        <li><a href="#men" class="view-product-btn" data-product-id="<?php echo htmlspecialchars($product['id']); ?>"><i class="fa fa-eye"></i></a></li>
+                                        <li><a href="single-product.php?id=<?php echo htmlspecialchars($product['id']); ?>" class="view-product-btn"><i class="fa fa-shopping-cart"></i></a></li>
+                                    </ul>
+                                </div>
+                                    <?php
+                                    $imagePath = !empty($product['image']) ? './uploads/' . basename($product['image']) : 'assets/images/default-product-image.jpg';
+                                    $imageUrl = file_exists($imagePath) ? $imagePath : 'assets/images/default-product-image.jpg';
+                                    ?>
+                                    <img src="<?php echo htmlspecialchars($imageUrl); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                                 </div>
                                 <div class="down-content">
-                                    <h4>Carhartt Modular <br> Jacket</h4>
-                                    <span>₱6199.00</span>
+                                    <h4><?php echo htmlspecialchars($product['name']); ?></h4>
+                                    <span>₱<?php echo number_format($product['price'], 2); ?></span>
                                     <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
+                                        <?php
+                                        $rating = isset($product['rating']) ? floatval($product['rating']) : 0;
+                                        for ($i = 1; $i <= 5; $i++):
+                                            if ($i <= $rating):
+                                                echo '<li><i class="fa fa-star"></i></li>';
+                                            elseif ($i - 0.5 <= $rating):
+                                                echo '<li><i class="fa fa-star-half-o"></i></li>';
+                                            else:
+                                                echo '<li><i class="fa fa-star-o"></i></li>';
+                                            endif;
+                                        endfor;
+                                        ?>
                                     </ul>
                                 </div>
                             </div>
-                            <div class="item">
-                                <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/men-2pants.png" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <h4>Uniqlo Cargo Pants</h4>
-                                    <span>₱1990.00</span>
-                                    <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                            <!--single-product.php?product_id=1&product_name=jhamesproduct-->
-                                            <!--
-                                            $productId = $_GET['product_id'];
-                                            $productName = $_GET['product_name']
-                                            -->
-                                            
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/men-3shoes.jpg" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <h4>Converse Chuck '70s</h4>
-                                    <span>₱4099.00</span>
-                                    <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/men-4rayban.png" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <h4>Ray-Ban Polarized <br> Metal Aviator Sunglasses</h4>
-                                    <span>₱13440.00</span>
-                                    <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ***** Men Area Ends ***** -->
+    <!-- ***** Men's Area Ends ***** -->
     <!-- ***** Women Area Starts ***** -->
     <section class="section" id="women">
         <div class="container">
@@ -365,7 +316,7 @@ $is_logged_in = isset($_SESSION['user_id']);
                 <div class="col-lg-6">
                     <div class="section-heading">
                         <h2>Women's Latest</h2>
-                        <span>Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
+                        <span>Check out our latest women's product</span>
                     </div>
                 </div>
             </div>
@@ -375,98 +326,41 @@ $is_logged_in = isset($_SESSION['user_id']);
                 <div class="col-lg-12">
                     <div class="women-item-carousel">
                         <div class="owl-women-item owl-carousel">
+                            <?php foreach ($womenProducts as $product): ?>
                             <div class="item">
                                 <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/woman-1shirt.png" alt="">
+                                <div class="hover-content">
+                                    <ul>
+                                        <li><a href="#women" class="view-product-btn" data-product-id="<?php echo htmlspecialchars($product['id']); ?>"><i class="fa fa-eye"></i></a></li>
+                                        <li><a href="single-product.php?id=<?php echo htmlspecialchars($product['id']); ?>" class="view-product-btn"><i class="fa fa-shopping-cart"></i></a></li>
+                                    </ul>
+                                </div>
+                                    <?php
+                                    $imagePath = !empty($product['image']) ? './uploads/' . basename($product['image']) : 'assets/images/default-product-image.jpg';
+                                    $imageUrl = file_exists($imagePath) ? $imagePath : 'assets/images/default-product-image.jpg';
+                                    ?>
+                                    <img src="<?php echo htmlspecialchars($imageUrl); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                                 </div>
                                 <div class="down-content">
-                                    <h4>Uniqlo Cap-Sleeve <br> Tshirt</h4>
-                                    <span>₱499.00</span>
+                                    <h4><?php echo htmlspecialchars($product['name']); ?></h4>
+                                    <span>₱<?php echo number_format($product['price'], 2); ?></span>
                                     <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
+                                        <?php
+                                        $rating = isset($product['rating']) ? floatval($product['rating']) : 0;
+                                        for ($i = 1; $i <= 5; $i++):
+                                            if ($i <= $rating):
+                                                echo '<li><i class="fa fa-star"></i></li>';
+                                            elseif ($i - 0.5 <= $rating):
+                                                echo '<li><i class="fa fa-star-half-o"></i></li>';
+                                            else:
+                                                echo '<li><i class="fa fa-star-o"></i></li>';
+                                            endif;
+                                        endfor;
+                                        ?>
                                     </ul>
                                 </div>
                             </div>
-                            <div class="item">
-                                <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/woman-2cardigan.png" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <h4>Uniqlo Oversized <br> Japanese Style Cardigan</h4>
-                                    <span>₱899.00</span>
-                                    <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/woman-3trouser.png" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <h4>Uniqlo Wide-Leg <br> Trouser</h4>
-                                    <span>₱799.00</span>
-                                    <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/woman-4shoes.png" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <h4>Puma Palermo Leather</h4>
-                                    <span>₱6049</span>
-                                    <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -481,7 +375,7 @@ $is_logged_in = isset($_SESSION['user_id']);
                 <div class="col-lg-6">
                     <div class="section-heading">
                         <h2>Kid's Latest</h2>
-                        <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima!</span>
+                        <span>Check out our latest kid's product</span>
                     </div>
                 </div>
             </div>
@@ -491,98 +385,41 @@ $is_logged_in = isset($_SESSION['user_id']);
                 <div class="col-lg-12">
                     <div class="kid-item-carousel">
                         <div class="owl-kid-item owl-carousel">
+                        <?php foreach ($kidsProducts as $product): ?>
                             <div class="item">
                                 <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/kid-01.jpg" alt="">
+                                <div class="hover-content">
+                                    <ul>
+                                        <li><a href="#kids" class="view-product-btn" data-product-id="<?php echo htmlspecialchars($product['id']); ?>"><i class="fa fa-eye"></i></a></li>
+                                        <li><a href="single-product.php?id=<?php echo htmlspecialchars($product['id']); ?>" class="view-product-btn"><i class="fa fa-shopping-cart"></i></a></li>
+                                    </ul>
+                                </div>
+                                    <?php
+                                    $imagePath = !empty($product['image']) ? './uploads/' . basename($product['image']) : 'assets/images/default-product-image.jpg';
+                                    $imageUrl = file_exists($imagePath) ? $imagePath : 'assets/images/default-product-image.jpg';
+                                    ?>
+                                    <img src="<?php echo htmlspecialchars($imageUrl); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                                 </div>
                                 <div class="down-content">
-                                    <h4>School Collection</h4>
-                                    <span>-----</span>
+                                    <h4><?php echo htmlspecialchars($product['name']); ?></h4>
+                                    <span>₱<?php echo number_format($product['price'], 2); ?></span>
                                     <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
+                                        <?php
+                                        $rating = isset($product['rating']) ? floatval($product['rating']) : 0;
+                                        for ($i = 1; $i <= 5; $i++):
+                                            if ($i <= $rating):
+                                                echo '<li><i class="fa fa-star"></i></li>';
+                                            elseif ($i - 0.5 <= $rating):
+                                                echo '<li><i class="fa fa-star-half-o"></i></li>';
+                                            else:
+                                                echo '<li><i class="fa fa-star-o"></i></li>';
+                                            endif;
+                                        endfor;
+                                        ?>
                                     </ul>
                                 </div>
                             </div>
-                            <div class="item">
-                                <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/kid-02.jpg" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <h4>Summer Collection</h4>
-                                    <span>-----</span>
-                                    <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/kid-03.jpg" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <h4>Casual Collection</h4>
-                                    <span>-----</span>
-                                    <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="thumb">
-                                    <div class="hover-content">
-                                        <ul>
-                                            <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                            <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <img src="assets/images/kid-4.png" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <h4>Winter Collection</h4>
-                                    <span>-----</span>
-                                    <ul class="stars">
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                        <li><i class="fa fa-star"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -728,32 +565,7 @@ $is_logged_in = isset($_SESSION['user_id']);
     <div class="subscribe">
         <div class="container">
             <div class="row">
-                <div class="col-lg-8">
-                    <div class="section-heading">
-                        <h2>By Subscribing To Our Newsletter You Can Get 30% Off</h2>
-                        <span>Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
-                    </div>
-                    <form id="subscribe" action="" method="get">
-                        <div class="row">
-                            <div class="col-lg-5">
-                            <fieldset>
-                                <input name="name" type="text" id="name" placeholder="Your Name" required="">
-                            </fieldset>
-                            </div>
-                            <div class="col-lg-5">
-                            <fieldset>
-                                <input name="email" type="text" id="email" pattern="[^ @]*@[^ @]*" placeholder="Your Email Address" required="">
-                            </fieldset>
-                            </div>
-                            <div class="col-lg-2">
-                            <fieldset>
-                                <button type="submit" id="form-submit" class="main-dark-button"><i class="fa fa-paper-plane"></i></button>
-                            </fieldset>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-lg-4">
+                <div class="col-lg-12">
                     <div class="row">
                         <div class="col-6">
                             <ul>
@@ -910,5 +722,119 @@ $is_logged_in = isset($_SESSION['user_id']);
             });
         });
     </script>
+
+    <script>
+            $(document).ready(function() {
+                $('.view-product-btn').on('click', function(e) {
+                    e.preventDefault(); // Prevent the default anchor behavior
+                    var href = $(this).attr('href');
+                    window.location.href = href; // Redirect manually
+                });
+            });
+
+            // ... (include the rest of your existing JavaScript for product viewing and rating)
+            $(document).ready(function() {
+                $('.rate-star').on('click', function() {
+                    var rating = $(this).data('rate');
+                    var productId = $(this).data('product-id');
+
+                    $.ajax({
+                        url: 'rate-product.php',
+                        method: 'POST',
+                        data: {
+                            product_id: productId,
+                            rating: rating
+                        },
+                        success: function(response) {
+                            alert('Rating submitted successfully!');
+                            location.reload(); // Reload to update the rating
+                        },
+                        error: function() {
+                            alert('Error submitting rating.');
+                        }
+                    });
+                });
+            });
+
+            $(document).ready(function() {
+                $('.rate-product .rate-star').on('mouseenter', function() {
+                    var rating = $(this).data('rate');
+                    $(this).parent().find('.rate-star').each(function() {
+                        if ($(this).data('rate') <= rating) {
+                            $(this).addClass('hovered');
+                        }
+                    });
+                }).on('mouseleave', function() {
+                    $(this).parent().find('.rate-star').removeClass('hovered');
+                });
+
+                $('.rate-product .rate-star').on('click', function() {
+                    var rating = $(this).data('rate');
+                    var productId = $(this).data('product-id');
+
+                    $(this).parent().find('.rate-star').removeClass('selected');
+                    $(this).parent().find('.rate-star').each(function() {
+                        if ($(this).data('rate') <= rating) {
+                            $(this).addClass('selected');
+                        }
+                    });
+
+                    // Your existing AJAX call to submit the rating
+                    $.ajax({
+                        url: 'rate-product.php',
+                        method: 'POST',
+                        data: {
+                            product_id: productId,
+                            rating: rating
+                        },
+                        success: function(response) {
+                            alert('Rating submitted successfully!');
+                            location.reload(); // Reload to update the rating
+                        },
+                        error: function() {
+                            alert('Error submitting rating.');
+                        }
+                    });
+                });
+            });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.view-product-btn').on('click', function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                $.ajax({
+                    url: 'get-product-details.php',
+                    method: 'GET',
+                    data: { id: productId },
+                    success: function(response) {
+                        showProductModal(response);
+                    },
+                    error: function() {
+                        alert('Error fetching product details');
+                    }
+                });
+            });
+        });
+
+        function showProductModal(productDetails) {
+            var modal = $('<div class="product-modal"></div>');
+            modal.html(productDetails);
+            $('body').append(modal);
+            modal.show();
+
+            $('.close-modal').on('click', function() {
+                modal.remove();
+            });
+
+            $(document).on('click', function(event) {
+                if (!$(event.target).closest('.product-details').length && !$(event.target).is('.product-details')) {
+                    modal.remove();
+                }
+            });
+        }
+    </script>
+    
 </body>
 </html>

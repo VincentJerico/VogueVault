@@ -7,27 +7,34 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'];
-    $description = $_POST['description'];
-    $category = $_POST['category'];
-    $price = $_POST['price'];
-    $image = $_FILES['image']['name'];
+// Check if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Other form data processing (e.g., product name, description, etc.)
 
-    // Image upload directory
+    // Handle file upload
     $target_dir = "../uploads/";
-    $target_file = $target_dir . basename($image);
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0755, true); // 0755 is a permission code
+    }
 
-    // Move the uploaded file to the uploads directory
-    if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-        $sql = "INSERT INTO products (name, description, category, price, image) VALUES (:name, :description, :category, :price, :image)";
+    $target_file = $target_dir . basename($_FILES["image"]["name"]);
+
+    if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+        // File is uploaded successfully, you can now save the file path in the database along with other product details.
+        $name = $_POST['name'];
+        $description = $_POST['description'];
+        $category = $_POST['category'];
+        $price = $_POST['price'];
+        $image = $target_file;
+
+        $sql = "INSERT INTO products (name, description, category, price, image) VALUES (?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute(['name' => $name, 'description' => $description, 'category' => $category, 'price' => $price, 'image' => $target_file]);
+        $stmt->execute([$name, $description, $category, $price, $image]);
+
         header("Location: admin_products.php");
+        exit();
     } else {
         echo "Sorry, there was an error uploading your file.";
     }
 }
-
-$pdo = null;
 ?>

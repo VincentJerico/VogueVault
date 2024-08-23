@@ -2,13 +2,30 @@
 session_start();
 require_once 'includes/connection.php';
 
-// Check if user is logged in
+// Redirect if the user is not logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
 }
-?>
 
+// Fetch product details based on the passed ID
+if (isset($_GET['id'])) {
+    $product_id = $_GET['id'];
+
+    $stmt = $pdo->prepare("SELECT *, stock FROM products WHERE id = :id");
+    $stmt->bindParam(':id', $product_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$product) {
+        echo "Product not found!";
+        exit();
+    }
+} else {
+    echo "No product selected!";
+    exit();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -59,7 +76,6 @@ if (!isset($_SESSION['user_id'])) {
                                 <ul>
                                     <li><a href="about.php">About Us</a></li>
                                     <li><a href="products.php">Products</a></li>
-                                    <li><a href="single-product.php">Single Product</a></li>
                                     <li><a href="contact.php">Contact Us</a></li>
                                 </ul>
                             </li>
@@ -114,43 +130,62 @@ if (!isset($_SESSION['user_id'])) {
     <section class="section" id="product">
         <div class="container">
             <div class="row">
-                <div class="col-lg-8">
-                <div class="left-images">
-                    <img src="assets/images/single-product-01.jpg" alt="">
-                    <img src="assets/images/single-product-02.jpg" alt="">
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="right-content">
-                    <h4>Two-Toned Shoes</h4>
-                    <span class="price">$75.00</span>
-                    <ul class="stars">
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                    </ul>
-                    <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod kon tempor incididunt ut labore.</span>
-                    <div class="quote">
-                        <i class="fa fa-quote-left"></i><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiuski smod.</p>
+                <div class="col-lg-7">
+                    <div class="left-images">
+                        <?php
+                        $imagePath = !empty($product['image']) ? './uploads/' . basename($product['image']) : 'assets/images/default-product-image.jpg';
+                        $imageUrl = file_exists($imagePath) ? $imagePath : 'assets/images/default-product-image.jpg';
+                        ?>
+                        <img src="<?php echo htmlspecialchars($imageUrl); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                     </div>
-                    <div class="quantity-content">
-                        <div class="left-content">
-                            <h6>No. of Orders</h6>
+                </div>
+                <div class="col-lg-5">
+                    <div class="right-content">
+                        <div class="product-info">
+                            <h4><?php echo htmlspecialchars($product['name']); ?></h4>
+                            <span class="price">₱<?php echo number_format($product['price'], 2); ?></span>
+                            <ul class="stars">
+                                <?php 
+                                $rating = isset($product['rating']) ? floatval($product['rating']) : 0;
+                                for ($i = 1; $i <= 5; $i++) {
+                                    if ($i <= $rating) {
+                                        echo '<li><i class="fa fa-star"></i></li>';
+                                    } elseif ($i - 0.5 <= $rating) {
+                                        echo '<li><i class="fa fa-star-half-o"></i></li>';
+                                    } else {
+                                        echo '<li><i class="fa fa-star-o"></i></li>';
+                                    }
+                                }
+                                ?>
+                            </ul>
+                            </div>
+                        <div class="description">
+                            <span><?php echo htmlspecialchars($product['description']); ?></span>
                         </div>
-                        <div class="right-content">
-                            <div class="quantity buttons_added">
-                                <input type="button" value="-" class="minus"><input type="number" step="1" min="1" max="" name="quantity" value="1" title="Qty" class="input-text qty text" size="4" pattern="" inputmode=""><input type="button" value="+" class="plus">
+                        <div class="quote">
+                            <i class="fa fa-quote-left"></i><p><?php echo htmlspecialchars($product['quote'] ?? ''); ?></p>
+                        </div>
+                        <div class="quantity-content">
+                            <div class="left-content">
+                                <h6>No. of Orders</h6>
+                            </div>
+                            <div class="right-content">
+                                <div class="quantity buttons_added">
+                                    <input type="button" value="-" class="minus">
+                                    <input type="number" step="1" min="1" max="<?php echo isset($product['stock']) ? htmlspecialchars($product['stock']) : ''; ?>" name="quantity" value="1" title="Qty" class="input-text qty text" size="4">
+                                    <input type="button" value="+" class="plus">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="total">
-                        <h4>Total: $210.00</h4>
-                        <div class="main-border-button"><a href="#">Add To Cart</a></div>
+                        <div class="total">
+                            <h4>Total: ₱<span id="totalPrice"><?php echo number_format($product['price'], 2); ?></span></h4>
+                        </div>
+                        <div class="buttons-container">
+                            <div class="main-border-button"><a href="#" id="addToCartBtn">Add To Cart</a></div>
+                            <div class="main-border-button"><a href="#" id="buyNowBtn">Buy Now</a></div>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
         </div>
     </section>
@@ -226,8 +261,7 @@ if (!isset($_SESSION['user_id'])) {
     <script src="assets/js/imgfix.min.js"></script> 
     <script src="assets/js/slick.js"></script> 
     <script src="assets/js/lightbox.js"></script> 
-    <script src="assets/js/isotope.js"></script> 
-    <script src="assets/js/quantity.js"></script>
+    <script src="assets/js/isotope.js"></script>
     <!-- Global Init -->
     <script src="assets/js/custom.js"></script>
 
@@ -247,7 +281,7 @@ if (!isset($_SESSION['user_id'])) {
         });
     </script>
 
-<script>
+    <script>
     $(document).ready(function() {
         $("#profileToggle").click(function() {
             $("#profileSlider").toggleClass("active");
@@ -271,6 +305,88 @@ if (!isset($_SESSION['user_id'])) {
             window.location.href = "edit_profile.php";
         });
     });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            let price = <?php echo $product['price']; ?>;
+            let stock = <?php echo $product['stock']; ?>;
+
+            // Update total when quantity changes
+            $(".qty").on('input', function() {
+                let quantity = $(this).val();
+                let total = price * quantity;
+                $("#totalPrice").text(total.toFixed(2));
+            });
+
+            // Increment quantity
+            $(".plus").click(function() {
+                let $input = $(this).prev('input.qty');
+                let val = parseInt($input.val());
+                if (val < stock) {
+                    $input.val(val + 1).trigger('input');
+                }
+            });
+
+            // Decrement quantity
+            $(".minus").click(function() {
+                let $input = $(this).next('input.qty');
+                let val = parseInt($input.val());
+                if (val > 1) {
+                    $input.val(val - 1).trigger('input');
+                }
+            });
+
+            // Add to cart
+            $("#addToCartBtn").click(function(e) {
+                e.preventDefault();
+                let quantity = $(".qty").val();
+                $.ajax({
+                    url: 'add-to-cart.php',
+                    type: 'POST',
+                    data: {
+                        product_id: <?php echo $product['id']; ?>,
+                        quantity: quantity
+                    },
+                    success: function(response) {
+                        const data = JSON.parse(response);
+                        if (data.success) {
+                            alert(data.message);
+                        } else {
+                            alert('Failed to add product: ' + data.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error adding product to cart.');
+                    }
+                });
+            });
+            // Buy Now
+            $("#buyNowBtn").click(function(e) {
+                e.preventDefault();
+                let quantity = $(".qty").val();
+                $.ajax({
+                    url: 'place-order.php', // Assume you create this file to handle the order
+                    type: 'POST',
+                    data: {
+                        product_id: <?php echo $product['id']; ?>,
+                        quantity: quantity
+                    },
+                    success: function(response) {
+                        const data = JSON.parse(response);
+                        if (data.success) {
+                            alert(data.message);
+                            window.location.href = 'order-confirmation.php'; // Redirect to confirmation page
+                        } else {
+                            alert('Failed to place order: ' + data.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error placing order.');
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

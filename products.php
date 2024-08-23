@@ -65,6 +65,7 @@ $total_pages = ceil($total_products / $perPage);
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
     <title>VogueVault - Product Listing</title>
     <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -105,7 +106,6 @@ $total_pages = ceil($total_products / $perPage);
                                 <ul>
                                     <li><a href="about.php">About Us</a></li>
                                     <li><a href="products.php">Products</a></li>
-                                    <li><a href="single-product.php">Single Product</a></li>
                                     <li><a href="contact.php">Contact Us</a></li>
                                 </ul>
                             </li>
@@ -158,268 +158,6 @@ $total_pages = ceil($total_products / $perPage);
     </div>
     <!-- ***** Main Banner Area End ***** -->
     <!-- ***** Products Area Starts ***** -->
-    <!--<section class="section" id="products">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-heading">
-                        <h2>Our Latest Products</h2>
-                        <span>Check out all of our latest products.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="thumb">
-                            <div class="hover-content">
-                                <ul>
-                                    <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <img src="assets/images/men-1modularjacket.png" alt="">
-                        </div>
-                        <div class="down-content">
-                            <h4>Carhartt Modular <br> Jacket</h4>
-                            <span>₱6199.00</span>
-                            <ul class="stars">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="thumb">
-                            <div class="hover-content">
-                                <ul>
-                                    <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <img src="assets/images/men-2pants.png" alt="">
-                        </div>
-                        <div class="down-content">
-                            <h4>Uniqlo Cargo Pants</h4>
-                            <span>₱1990.00</span>
-                            <ul class="stars">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="thumb">
-                            <div class="hover-content">
-                                <ul>
-                                    <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <img src="assets/images/men-3shoes.jpg" alt="">
-                        </div>
-                        <div class="down-content">
-                            <h4>Converse Chuck '70s</h4>
-                            <span>₱4099.00</span>
-                            <ul class="stars">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="thumb">
-                            <div class="hover-content">
-                                <ul>
-                                    <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <img src="assets/images/woman-1shirt.png" alt="">
-                        </div>
-                        <div class="down-content">
-                            <h4>Uniqlo Cap-Sleeve <br> Tshirt</h4>
-                            <span>₱499.00</span>
-                            <ul class="stars">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="thumb">
-                            <div class="hover-content">
-                                <ul>
-                                    <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <img src="assets/images/woman-2cardigan.png" alt="">
-                        </div>
-                        <div class="down-content">
-                            <h4>Uniqlo Oversized <br> Japanese Style Cardigan</h4>
-                            <span>₱899.00</span>
-                            <ul class="stars">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="thumb">
-                            <div class="hover-content">
-                                <ul>
-                                    <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <img src="assets/images/woman-3trouser.png" alt="">
-                        </div>
-                        <div class="down-content">
-                            <h4>Uniqlo Wide-Leg <br> Trouser</h4>
-                            <span>₱799.00</span>
-                            <ul class="stars">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="thumb">
-                            <div class="hover-content">
-                                <ul>
-                                    <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <img src="assets/images/kid-01.jpg" alt="">
-                        </div>
-                        <div class="down-content">
-                            <h4>School Collection</h4>
-                            <span>-----</span>
-                            <ul class="stars">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="thumb">
-                            <div class="hover-content">
-                                <ul>
-                                    <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <img src="assets/images/kid-02.jpg" alt="">
-                        </div>
-                        <div class="down-content">
-                            <h4>Summer Collection</h4>
-                            <span>-----</span>
-                            <ul class="stars">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="item">
-                        <div class="thumb">
-                            <div class="hover-content">
-                                <ul>
-                                    <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
-                                    <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <img src="assets/images/kid-03.jpg" alt="">
-                        </div>
-                        <div class="down-content">
-                            <h4>Casual Collection</h4>
-                            <span>-----</span>
-                            <ul class="stars">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <div class="pagination">
-                        <ul>
-                            <li class="active">
-                                <a href="#">1</a>
-                            </li>
-                            <li>
-                                <a href="#">2</a>
-                            </li>
-                            <li>
-                                <a href="#">3</a>
-                            </li>
-                            <li>
-                                <a href="#">4</a>
-                            </li>
-                            <li>
-                                <a href="#">></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>-->
     <section class="section" id="products">
         <div class="container">
             <div class="row">
@@ -454,42 +192,63 @@ $total_pages = ceil($total_products / $perPage);
             </form>
 
             <div class="row">
-                <?php if (!empty($products)): ?>
-                    <?php foreach ($products as $product): ?>
-                    <div class="col-lg-4">
-                        <div class="item">
-                            <div class="thumb">
-                                <div class="hover-content">
-                                    <ul>
-                                        <li><a href="#" class="view-product-btn" data-product-id="<?php echo $product['id']; ?>"><i class="fa fa-eye"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                                    </ul>
-                                </div>
-                                <img src="assets/images/<?php echo $product['image']; ?>" alt="">
-                            </div>
-                            <div class="down-content">
-                                <h4><?php echo htmlspecialchars($product['name']); ?></h4>
-                                <span><?php echo '₱' . number_format($product['price'], 2); ?></span>
-                                <ul class="stars">
-                                    <?php for ($i = 0; $i < 5; $i++): ?>
-                                    <li><i class="fa fa-star"></i></li>
-                                    <?php endfor; ?>
+            <?php if (!empty($products)): ?>
+                <?php foreach ($products as $product): ?>
+                <div class="col-lg-4">
+                    <div class="item">
+                        <div class="thumb">
+                            <div class="hover-content">
+                                <ul>
+                                    <li><a href="#" class="view-product-btn" data-product-id="<?php echo htmlspecialchars($product['id']); ?>"><i class="fa fa-eye"></i></a></li>
+                                    <li><a href="single-product.php?id=<?php echo htmlspecialchars($product['id']); ?>" class="view-product-btn"><i class="fa fa-shopping-cart"></i></a></li>
                                 </ul>
+                            </div>
+                            <?php
+                            // Ensure the correct relative path to the uploads directory
+                            $imagePath = !empty($product['image']) ? './uploads/' . basename($product['image']) : 'assets/images/default-product-image.jpg';
+                            $imageUrl = file_exists($imagePath) ? $imagePath : 'assets/images/default-product-image.jpg';
+                            ?>
+                            <img src="<?php echo htmlspecialchars($imageUrl); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-img">
+                        </div>
+                        <div class="down-content">
+                            <h4><?php echo htmlspecialchars($product['name']); ?></h4>
+                            <span><?php echo '₱' . number_format($product['price'], 2); ?></span>
+                            <div class="stars">
+                                <?php
+                                $rating = isset($product['rating']) ? floatval($product['rating']) : 0;
+                                for ($i = 1; $i <= 5; $i++):
+                                    if ($i <= $rating):
+                                        echo '<i class="fa fa-star"></i>';
+                                    elseif ($i - 0.5 <= $rating):
+                                        echo '<i class="fa fa-star-half-o"></i>';
+                                    else:
+                                        echo '<i class="fa fa-star-o"></i>';
+                                    endif;
+                                endfor;
+                                ?>
+                                <span class="rating-value">(<?php echo number_format($rating, 1); ?>)</span>
+                            </div>
+                            <!-- Rating Form -->
+                            <div class="rate-product">
+                                <span>Rate this product: </span>
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <i class="fa fa-star-o rate-star" data-rate="<?php echo $i; ?>" data-product-id="<?php echo $product['id']; ?>"></i>
+                                <?php endfor; ?>
                             </div>
                         </div>
                     </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                <div class="col-lg-12">
-                    <p>No products found matching your criteria.</p>
                 </div>
-                <?php endif; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+            <div class="col-lg-12">
+                <p>No products found matching your criteria.</p>
+            </div>
+            <?php endif; ?>
                 <div class="col-lg-12">
                     <div class="pagination">
                         <ul>
                             <?php if ($page > 1): ?>
-                                <li><a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category); ?>">Previous</a></li>
+                                <li><a href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category); ?>">Prev</a></li>
                             <?php endif; ?>
                             <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                                 <li class="<?php echo $i == $page ? 'active' : ''; ?>">
@@ -661,5 +420,73 @@ $total_pages = ceil($total_products / $perPage);
             });
         }
     </script>
+
+    <script>
+    $(document).ready(function() {
+        $('.rate-star').on('click', function() {
+            var rating = $(this).data('rate');
+            var productId = $(this).data('product-id');
+
+            $.ajax({
+                url: 'rate-product.php',
+                method: 'POST',
+                data: {
+                    product_id: productId,
+                    rating: rating
+                },
+                success: function(response) {
+                    alert('Rating submitted successfully!');
+                    location.reload(); // Reload to update the rating
+                },
+                error: function() {
+                    alert('Error submitting rating.');
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('.rate-product .rate-star').on('mouseenter', function() {
+            var rating = $(this).data('rate');
+            $(this).parent().find('.rate-star').each(function() {
+                if ($(this).data('rate') <= rating) {
+                    $(this).addClass('hovered');
+                }
+            });
+        }).on('mouseleave', function() {
+            $(this).parent().find('.rate-star').removeClass('hovered');
+        });
+
+        $('.rate-product .rate-star').on('click', function() {
+            var rating = $(this).data('rate');
+            var productId = $(this).data('product-id');
+
+            $(this).parent().find('.rate-star').removeClass('selected');
+            $(this).parent().find('.rate-star').each(function() {
+                if ($(this).data('rate') <= rating) {
+                    $(this).addClass('selected');
+                }
+            });
+
+            // Your existing AJAX call to submit the rating
+            $.ajax({
+                url: 'rate-product.php',
+                method: 'POST',
+                data: {
+                    product_id: productId,
+                    rating: rating
+                },
+                success: function(response) {
+                    alert('Rating submitted successfully!');
+                    location.reload(); // Reload to update the rating
+                },
+                error: function() {
+                    alert('Error submitting rating.');
+                }
+            });
+        });
+    });
+    </script>
+
 </body>
 </html>

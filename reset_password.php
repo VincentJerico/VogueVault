@@ -21,7 +21,14 @@ if (isset($_GET['token'])) {
             $password = $_POST['password'];
             $confirm_password = $_POST['confirm_password'];
             
-            if ($password === $confirm_password) {
+            // Validate password length
+            if (strlen($password) < 8) {
+                $message = "Password must be at least 8 characters long.";
+                $message_type = 'error';
+            } elseif ($password !== $confirm_password) {
+                $message = "Passwords do not match.";
+                $message_type = 'error';
+            } else {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 
                 $stmt = $pdo->prepare("UPDATE users SET password = :password, reset_token = NULL WHERE id = :id");
@@ -29,11 +36,8 @@ if (isset($_GET['token'])) {
                 $stmt->bindParam(':id', $user['id'], PDO::PARAM_INT);
                 $stmt->execute();
                 
-                $message = "Password reset successfully. You can now Log in with your new password.";
+                $message = "Password reset successfully. You can now log in with your new password.";
                 $message_type = 'success';
-            } else {
-                $message = "Passwords do not match.";
-                $message_type = 'error';
             }
         }
     } else {
@@ -58,21 +62,38 @@ if (isset($_GET['token'])) {
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/images/bnwbg2.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(5px) brightness(0.5); /* Adjust the blur value as needed */
+            z-index: -1;
         }
         .reset-password-container {
-            background-color: #fff;
-            padding: 2rem;
+            padding: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.85); /* Slight transparency */
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 100%;
+            overflow: hidden;
             max-width: 500px;
+            width: 100%;
+            z-index: 1; /* Ensure the container is above the blurred background */
         }
         h2 {
             color: #153448;
@@ -98,6 +119,8 @@ if (isset($_GET['token'])) {
 
         input[type="password"] {
             flex: 1;
+            max-width: 500px;
+            width: 100%;
             padding: 0.5rem;
             padding-right: 2.5rem; /* Space for the toggle icon */
             border: 1px solid #ced4da;
@@ -159,7 +182,7 @@ if (isset($_GET['token'])) {
         a:hover {
             color: #FF8343;
         }
-        @media (max-width: 480px) {
+        @media (max-width: 500px) {
             .reset-password-container {
                 padding: 1.5rem;
                 width: 100%;
@@ -185,20 +208,20 @@ if (isset($_GET['token'])) {
                 <?php echo htmlspecialchars($message); ?>
             </div>
         <?php endif; ?>
-        <?php if (!$message || $message == "Passwords do not match."): ?>
+        <?php if (!$message || $message_type === 'error'): ?>
             <form method="POST" action="">
                 <div class="form-group">
                     <label for="password">New Password:</label>
                     <div class="password-field">
                         <input type="password" id="password" name="password" required>
-                        <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
+                        <i class="password-toggle fas fa-eye" id="togglePassword"></i>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="confirm_password">Confirm New Password:</label>
                     <div class="password-field">
                         <input type="password" id="confirm_password" name="confirm_password" required>
-                        <!--<i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>-->
+                        <i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>
                     </div>
                 </div>
                 <button type="submit" class="reset-button">Reset Password</button>
@@ -225,8 +248,11 @@ if (isset($_GET['token'])) {
         document.querySelector('form').addEventListener('submit', function(e) {
             var password = document.getElementById('password').value;
             var confirm_password = document.getElementById('confirm_password').value;
-            if (password != confirm_password) {
-                alert('Passwords do not match');
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters long.');
+                e.preventDefault();
+            } else if (password != confirm_password) {
+                alert('Passwords do not match.');
                 e.preventDefault();
             }
         });

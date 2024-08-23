@@ -8,32 +8,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
     $email = $_POST['email'];
-    $gender = $_POST['gender'];
-    $birthday = $_POST['birthday'];
 
-    // Check if username or email already exists
-    $check_stmt = $pdo->prepare("SELECT id FROM users WHERE username = :username OR email = :email");
-    $check_stmt->bindParam(':username', $username);
-    $check_stmt->bindParam(':email', $email);
-    $check_stmt->execute();
-
-    if ($check_stmt->rowCount() > 0) {
-        $error_message = "Username or email already exists.";
+    // Check if the password is at least 8 characters long
+    if (strlen($password) < 8) {
+        $error_message = "Password must be at least 8 characters long.";
     } else {
-        // Proceed with registration
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, gender, birthday) VALUES (:username, :email, :password, :gender, :birthday)");
-        $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $hashed_password);
-        $stmt->bindParam(':gender', $gender);
-        $stmt->bindParam(':birthday', $birthday);
+        // Check if username or email already exists
+        $check_stmt = $pdo->prepare("SELECT id FROM users WHERE username = :username OR email = :email");
+        $check_stmt->bindParam(':username', $username);
+        $check_stmt->bindParam(':email', $email);
+        $check_stmt->execute();
 
-        if ($stmt->execute()) {
-            header("Location: index.php");
-            exit();
+        if ($check_stmt->rowCount() > 0) {
+            $error_message = "Username or email already exists.";
         } else {
-            $error_message = "Error: " . $stmt->errorInfo()[2];
+            // Proceed with registration
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
+            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':password', $hashed_password);
+
+            if ($stmt->execute()) {
+                header("Location: index.php");
+                exit();
+            } else {
+                $error_message = "Error: " . $stmt->errorInfo()[2];
+            }
         }
     }
 }
@@ -45,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -56,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             align-items: center;
             min-height: 100vh;
             position: relative;
+            overflow: hidden;
         }
 
         body::before {
@@ -150,6 +153,61 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #153448;
             font-size: 0.9rem;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        #terms-text h3 {
+            color: #153448;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        #terms-text p {
+            margin-bottom: 1em;
+            line-height: 1.6;
+        }
+
+        #terms-text strong {
+            color: #153448;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
         a {
             text-decoration: none;
             color: #153448;
@@ -195,6 +253,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password">Password:</label>
                 <div class="password-field">
                     <input type="password" id="password" name="password" required>
+                    <i class="password-toggle fas fa-eye" id="togglePassword"></i>
                     <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
                 </div>
             </div>
@@ -202,25 +261,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="confirm_password">Confirm Password:</label>
                 <div class="password-field">
                     <input type="password" id="confirm_password" name="confirm_password" required>
+                    <i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>
                     <!--<i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>-->
                 </div>
             </div>
-            <div class="form-group">
-                <label for="gender">Gender:</label>
-                <select id="gender" name="gender">
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="birthday">Birthday:</label>
-                <input type="date" id="birthday" name="birthday" required>
-            </div>
             <div class="terms">
                 <input type="checkbox" id="terms" name="terms" required>
-                <label for="terms">I agree to the Terms and Conditions</label>
+                <label for="terms">I agree to the <a href="#" id="open-terms">Terms and Conditions</a></label>
             </div>
             <button type="submit" class="register-button">Register</button>
         </form>
@@ -232,29 +279,130 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p class="index-link">Already have an account? <a href="index.php">Log in</a></p>
     </div>
 
+    <div id="terms-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>VogueVault Terms and Conditions</h2>
+            <div id="terms-text">
+                <h3>1. Introduction</h3>
+                <p>Welcome to VogueVault! These Terms and Conditions govern your use of our website, services, and products. By accessing or using VogueVault, you agree to comply with and be bound by these Terms.</p>
+
+                <h3>2. Use of Services</h3>
+                <p><strong>Account:</strong> To access certain features, you may need to create an account. You are responsible for maintaining the confidentiality of your account information and are liable for all activities under your account.</p>
+                <p><strong>Prohibited Activities:</strong> You agree not to engage in activities that violate any applicable laws, infringe on the rights of others, or interfere with the operation of our Services. This includes, but is not limited to, fraudulent activities, distribution of malware, or attempts to gain unauthorized access to our systems.</p>
+
+                <h3>3. Orders and Payments</h3>
+                <p><strong>Product Availability:</strong> All products are subject to availability. We reserve the right to limit quantities, reject orders, or discontinue products without prior notice.</p>
+                <p><strong>Pricing:</strong> Prices are subject to change without notice. The price applicable at the time of your order will be the price in effect.</p>
+                <p><strong>Payment:</strong> Payment must be made at the time of purchase. We accept various payment methods, including credit cards, debit cards, and other payment gateways as specified on our website. You agree to provide accurate billing and contact information. Failure to do so may result in delays or cancellation of your order.</p>
+
+                <h3>4. Shipping and Delivery</h3>
+                <p><strong>Shipping:</strong> We offer various shipping options. Delivery times may vary based on your location and chosen shipping method. Shipping fees and estimated delivery times will be provided at checkout.</p>
+                <p><strong>Risk of Loss:</strong> The risk of loss and title for products pass to you upon delivery of the products to the carrier. VogueVault is not responsible for any delays caused by the carrier or customs.</p>
+
+                <h3>5. Returns and Refunds</h3>
+                <p><strong>Return Policy:</strong> You may return eligible products within 14 days of receipt. The products must be in their original condition, unused, and in their original packaging with all tags attached.</p>
+                <p><strong>Refunds:</strong> Refunds will be issued to the original payment method within 7-14 business days after we receive and inspect the returned products. Shipping fees are non-refundable unless the return is due to our error.</p>
+
+                <h3>6. Intellectual Property</h3>
+                <p><strong>Ownership:</strong> All content on VogueVault, including logos, images, text, and design, is our property or the property of our licensors and is protected by intellectual property laws.</p>
+                <p><strong>License:</strong> You are granted a limited, non-exclusive, non-transferable license to access and use our Services for personal, non-commercial purposes. Any unauthorized use of our content may violate copyright, trademark, and other laws.</p>
+
+                <h3>7. Privacy</h3>
+                <p>Your privacy is important to us. Please review our Privacy Policy to understand how we collect, use, and protect your information.</p>
+
+                <h3>8. Limitation of Liability</h3>
+                <p>To the maximum extent permitted by law, VogueVault shall not be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of our Services, including but not limited to loss of profits, data, or other intangible losses, even if we have been advised of the possibility of such damages.</p>
+
+                <h3>9. Indemnification</h3>
+                <p>You agree to indemnify, defend, and hold harmless VogueVault, its affiliates, and their respective officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, or expenses arising out of your use of our Services or your violation of these Terms.</p>
+
+                <h3>10. Governing Law</h3>
+                <p>These Terms shall be governed by and construed in accordance with the laws of the Republic of the Philippines. Any disputes arising from these Terms shall be resolved exclusively in the courts of the Philippines.</p>
+
+                <h3>11. Changes to Terms</h3>
+                <p>We may update these Terms from time to time. The updated Terms will be posted on our website with the effective date. Your continued use of our Services after the posting of changes constitutes your acceptance of the new Terms.</p>
+
+                <h3>12. Contact Us</h3>
+                <p>If you have any questions about these Terms, please contact us at voguevault@gmail.com or through our contact page.</p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function togglePassword(inputId, toggleId) {
-            const input = document.getElementById(inputId);
-            const toggle = document.getElementById(toggleId);
-            
-            toggle.addEventListener('click', function () {
-                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                input.setAttribute('type', type);
-                this.classList.toggle('fa-eye-slash');
-            });
-        }
-
-        togglePassword('password', 'togglePassword');
-        togglePassword('confirm_password', 'toggleConfirmPassword');
-
         document.querySelector('form').addEventListener('submit', function(e) {
             var password = document.getElementById('password').value;
             var confirm_password = document.getElementById('confirm_password').value;
+
+            // Check if the password is at least 8 characters long
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters long.');
+                e.preventDefault();
+            }
+
             if (password != confirm_password) {
-                alert('Passwords do not match');
+                alert('Passwords do not match.');
                 e.preventDefault();
             }
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            function togglePassword(inputId, toggleId) {
+                const input = document.getElementById(inputId);
+                const toggle = document.getElementById(toggleId);
+                
+                toggle.addEventListener('click', function () {
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
+
+            togglePassword('password', 'togglePassword');
+            togglePassword('confirm_password', 'toggleConfirmPassword');
+
+            document.querySelector('form').addEventListener('submit', function(e) {
+                var password = document.getElementById('password').value;
+                var confirm_password = document.getElementById('confirm_password').value;
+                if (password != confirm_password) {
+                    alert('Passwords do not match');
+                    e.preventDefault();
+                }
+            });
+            // Get the modal
+            var modal = document.getElementById("terms-modal");
+            // Get the button that opens the modal
+            var btn = document.getElementById("open-terms");
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+            // Function to toggle body scroll
+            function toggleBodyScroll(isModalOpen) {
+                document.body.style.overflow = isModalOpen ? 'hidden' : 'auto';
+            }
+            // Function to open modal
+            function openModal(e) {
+                e.preventDefault();
+                modal.style.display = "block";
+                toggleBodyScroll(true);
+            }
+            // Function to close modal
+            function closeModal() {
+                modal.style.display = "none";
+                toggleBodyScroll(false);
+            }
+            // When the user clicks on the button, open the modal
+            btn.onclick = openModal;
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = closeModal;
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    closeModal();
+                }
+            }
+        });
     </script>
+
+
 </body>
 </html>

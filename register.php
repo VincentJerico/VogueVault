@@ -44,26 +44,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            position: relative;
         }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/images/bnwbg.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(5px) brightness(0.5); /* Adjust blur and brightness as needed */
+            z-index: -1;
+        }
+
         .register-container {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.85); /* Slight transparency */
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 500px;
+            z-index: 1; /* Ensure the container is above the blurred background */
         }
         h2 {
             color: #153448;
@@ -179,14 +195,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password">Password:</label>
                 <div class="password-field">
                     <input type="password" id="password" name="password" required>
-                    <i class="password-toggle fas fa-eye" id="togglePassword"></i>
+                    <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
                 </div>
             </div>
             <div class="form-group">
                 <label for="confirm_password">Confirm Password:</label>
                 <div class="password-field">
                     <input type="password" id="confirm_password" name="confirm_password" required>
-                    <i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>
+                    <!--<i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>-->
                 </div>
             </div>
             <div class="form-group">

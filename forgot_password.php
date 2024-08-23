@@ -45,43 +45,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
         }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/images/bnwbg.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(5px) brightness(0.5); /* Adjust blur and brightness as needed */
+            z-index: -1;
+        }
+
         .forgot-password-container {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.85); /* Slight transparency */
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 500px;
+            z-index: 1; /* Ensure the container is above the blurred background */
         }
+
         h2 {
             color: #153448;
             margin-bottom: 1.5rem;
             text-align: center;
             font-size: 1.5rem;
         }
+
         .form-group {
             margin-bottom: 1rem;
         }
+
         label {
             display: block;
             margin-bottom: 0.5rem;
             color: #153448;
             font-size: 0.9rem;
         }
+
         input[type="email"],
         input[type="date"] {
             width: 100%;
@@ -90,6 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 4px;
             font-size: 1rem;
         }
+
         .reset-button {
             width: 100%;
             padding: 0.75rem;
@@ -101,9 +123,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             transition: background-color 0.3s;
             font-size: 1rem;
         }
+
         .reset-button:hover {
             background-color: #0e2330;
         }
+
         .back-to-index {
             display: block;
             text-align: center;
@@ -112,19 +136,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 0.9rem;
             text-decoration: none;
         }
+
         .message {
             color: crimson;
             margin-bottom: 1rem;
             font-size: 0.9rem;
             text-align: center;
         }
+
         a {
             text-decoration: none;
             color: #153448;
         }
+
         a:hover {
             color: #FF8343;
         }
+
         @media (max-width: 480px) {
             .forgot-password-container {
                 padding: 1.5rem;

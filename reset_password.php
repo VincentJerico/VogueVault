@@ -52,7 +52,7 @@ if (isset($_GET['token'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
     <style>
         body {
@@ -191,14 +191,14 @@ if (isset($_GET['token'])) {
                     <label for="password">New Password:</label>
                     <div class="password-field">
                         <input type="password" id="password" name="password" required>
-                        <i class="password-toggle fas fa-eye" id="togglePassword"></i>
+                        <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="confirm_password">Confirm New Password:</label>
                     <div class="password-field">
                         <input type="password" id="confirm_password" name="confirm_password" required>
-                        <i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>
+                        <!--<i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>-->
                     </div>
                 </div>
                 <button type="submit" class="reset-button">Reset Password</button>

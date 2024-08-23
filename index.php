@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VogueVault - Welcome</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
     <style>
         body {
@@ -67,15 +67,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            position: relative;
+            overflow: hidden;
         }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/images/bnwbg2.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(5px) brightness(0.5); /* Adjust the blur value as needed */
+            z-index: -1;
+        }
+
         .container {
             display: flex;
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.85); /* Slight transparency */
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             max-width: 1000px;
             width: 100%;
+            z-index: 1; /* Ensure the container is above the blurred background */
         }
         .welcome-section {
             flex: 1;
@@ -239,7 +257,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="password">Password:</label>
                     <div class="password-field">
                         <input type="password" id="password" name="password" required>
-                        <i class="password-toggle fas fa-eye" id="togglePassword"></i>
+                        <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
                     </div>
                 </div>
                 <div class="remember-me">

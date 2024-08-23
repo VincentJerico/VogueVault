@@ -306,6 +306,12 @@ $is_logged_in = isset($_SESSION['user_id']);
                                             <li><a href="single-product.php"><i class="fa fa-eye"></i></a></li>
                                             <li><a href="single-product.php"><i class="fa fa-star"></i></a></li>
                                             <li><a href="single-product.php"><i class="fa fa-shopping-cart"></i></a></li>
+                                            <!--single-product.php?product_id=1&product_name=jhamesproduct-->
+                                            <!--
+                                            $productId = $_GET['product_id'];
+                                            $productName = $_GET['product_name']
+                                            -->
+                                            
                                         </ul>
                                     </div>
                                     <img src="assets/images/men-3shoes.jpg" alt="">

@@ -198,7 +198,7 @@ $pdo = null;
                             <tr>
                                 <th>Order #</th>
                                 <th>User #</th>
-                                <th>Total Amount</th>
+                                <th>Total Price</th>
                                 <th>Status</th>
                                 <th>Date Created</th>
                                 <th>Actions</th>
@@ -211,7 +211,7 @@ $pdo = null;
                                     echo "<tr>";
                                     echo "<td>" . htmlspecialchars($row["id"]) . "</td>";
                                     echo "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
-                                    echo "<td>₱" . htmlspecialchars($row["total_amount"]) . "</td>";
+                                    echo "<td>₱" . htmlspecialchars($row["total_price"]) . "</td>";
                                     echo "<td>" . htmlspecialchars($row["status"]) . "</td>";
                                     echo "<td>" . htmlspecialchars($row["created_at"]) . "</td>";
                                     echo "<td><a href='order_details.php?order_id=" . htmlspecialchars($row["id"]) . "' class='btn btn-sm btn-outline-primary'>View Items</a></td>";

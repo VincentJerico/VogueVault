@@ -20,12 +20,12 @@ function executeQuery($query) {
 }
 
 // Total Sales
-$totalSalesQuery = "SELECT SUM(total_amount) AS total_sales FROM orders";
+$totalSalesQuery = "SELECT SUM(total_price) AS total_sales FROM orders";
 $totalSalesStmt = executeQuery($totalSalesQuery);
 $totalSales = $totalSalesStmt->fetch(PDO::FETCH_ASSOC)['total_sales'];
 
 // Daily Sales
-$dailySalesQuery = "SELECT DATE(created_at) AS sale_date, SUM(total_amount) AS daily_sales FROM orders GROUP BY sale_date";
+$dailySalesQuery = "SELECT DATE(created_at) AS sale_date, SUM(total_price) AS daily_sales FROM orders GROUP BY sale_date";
 $dailySalesStmt = executeQuery($dailySalesQuery);
 $dailySalesData = $dailySalesStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -337,7 +337,7 @@ $pdo = null;
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/popper.min.js"></script>
     <script src="../assets/js/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>    
     <script src="../assets/js/chart.js"></script>
     <script>
         // search bar
@@ -365,51 +365,51 @@ $pdo = null;
 
         document.getElementById('date').textContent = new Date().toLocaleDateString();
 
-// Monthly Sales Chart
-const ctxMonthlySales = document.getElementById('monthlySalesChart').getContext('2d');
-const monthlySalesChart = new Chart(ctxMonthlySales, {
-    type: 'line',
-    data: {
-        labels: <?php echo json_encode(array_column($totalSalesData, 'month')); ?>,
-        datasets: [{
-            label: 'Monthly Sales',
-            data: <?php echo json_encode(array_column($totalSalesData, 'total_sales')); ?>,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 2
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+        // Monthly Sales Chart
+        const ctxMonthlySales = document.getElementById('monthlySalesChart').getContext('2d');
+        const monthlySalesChart = new Chart(ctxMonthlySales, {
+            type: 'line',
+            data: {
+                labels: <?php echo json_encode(array_column($totalSalesData, 'month')); ?>,
+                datasets: [{
+                    label: 'Monthly Sales',
+                    data: <?php echo json_encode(array_column($totalSalesData, 'total_sales')); ?>,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
-        }
-    }
-});
+        });
 
-// Daily Sales Chart
-const ctxDailySales = document.getElementById('dailySalesChart').getContext('2d');
-const dailySalesChart = new Chart(ctxDailySales, {
-    type: 'bar',
-    data: {
-        labels: <?php echo json_encode(array_column($dailySalesData, 'day')); ?>,
-        datasets: [{
-            label: 'Daily Sales',
-            data: <?php echo json_encode(array_column($dailySalesData, 'total_sales')); ?>,
-            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-            borderColor: 'rgba(153, 102, 255, 1)',
-            borderWidth: 2
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+        // Daily Sales Chart
+        const ctxDailySales = document.getElementById('dailySalesChart').getContext('2d');
+        const dailySalesChart = new Chart(ctxDailySales, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode(array_column($dailySalesData, 'day')); ?>,
+                datasets: [{
+                    label: 'Daily Sales',
+                    data: <?php echo json_encode(array_column($dailySalesData, 'total_sales')); ?>,
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
-        }
-    }
-});
+        });
     </script>
 </body>
 </html>

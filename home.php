@@ -133,7 +133,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
             <div class="col mt-2"></div>
             <?php if ($is_logged_in): ?>
                 <button id="editProfileBtn">Edit Profile</button>
-                <button id="logoutBtn">Logout</button>
+                <div class="col mt-2"></div>
             <?php else: ?>
                 <p>Please log in to view your profile.</p>
                 <button id="loginBtn">Login</button>
@@ -173,7 +173,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                                         <div class="hover-content">
                                             <div class="inner">
                                                 <h4>Women</h4>
-                                                <p>Lorem ipsum dolor sit amet, conservisii ctetur adipiscing elit incid.</p>
+                                                <p>Check out our latest women's products</p>
                                                 <div class="main-border-button">
                                                     <a href="#women" class="scroll-to-section">Discover More</a>
                                                 </div>
@@ -193,7 +193,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                                         <div class="hover-content">
                                             <div class="inner">
                                                 <h4>Men</h4>
-                                                <p>Lorem ipsum dolor sit amet, conservisii ctetur adipiscing elit incid.</p>
+                                                <p>Check out our latest men's products</p>
                                                 <div class="main-border-button">
                                                     <a href="#men" class="scroll-to-section">Discover More</a>
                                                 </div>
@@ -213,7 +213,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                                         <div class="hover-content">
                                             <div class="inner">
                                                 <h4>Kids</h4>
-                                                <p>Lorem ipsum dolor sit amet, conservisii ctetur adipiscing elit incid.</p>
+                                                <p>Check out our latest kid's products</p>
                                                 <div class="main-border-button">
                                                     <a href="#kids" class="scroll-to-section">Discover More</a>
                                                 </div>
@@ -227,15 +227,15 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                                 <div class="right-first-image">
                                     <div class="thumb">
                                         <div class="inner-content">
-                                            <h4>Accessories</h4>
-                                            <span>Best Trend Accessories</span>
+                                            <h4>More</h4>
+                                            <span>Best Trend Products</span>
                                         </div>
                                         <div class="hover-content">
                                             <div class="inner">
-                                                <h4>Accessories</h4>
-                                                <p>Lorem ipsum dolor sit amet, conservisii ctetur adipiscing elit incid.</p>
+                                                <h4>More</h4>
+                                                <p>Check out our latest Products.</p>
                                                 <div class="main-border-button">
-                                                    <a href="#">Discover More</a>
+                                                    <a href="#explore">Discover More</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -578,7 +578,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                             <ul>
                                 <li>Work Hours:<br><span>07:30 AM - 9:30 PM Daily</span></li>
                                 <li>Email:<br><span>voguevault@gmail.com</span></li>
-                                <li>Social Media:<br><span><a href="#">Facebook</a>, <a href="#">Instagram</a>, <a href="#">Behance</a>, <a href="#">Linkedin</a></span></li>
+                                <li>Social Media:<br><span><a href="#">Facebook</a>, <a href="#">Instagram</a>, <a href="#">Linkedin</a></span></li>
                             </ul>
                         </div>
                     </div>
@@ -616,7 +616,6 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                     <ul>
                         <li class="scroll-to-section"><a href="#top">Homepage</a></li>
                         <li><a href="about.php">About Us</a></li>
-                        <li class="scroll-to-section"><a href="#">Help</a></li>
                         <li><a href="contact.php">Contact Us</a></li>
                     </ul>
                 </div>
@@ -625,8 +624,6 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                     <ul>
                         <li><a href="#">Help</a></li>
                         <li><a href="#">FAQ's</a></li>
-                        <li><a href="#">Shipping</a></li>
-                        <li><a href="#">Tracking ID</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-12">
@@ -636,7 +633,6 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                             <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                             <li><a href="#"><i class="fa fa-twitter"></i></a></li>
                             <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#"><i class="fa fa-behance"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -817,6 +813,70 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                 });
             });
         });
+
+            // Function to handle Add to Cart
+            function addToCart(productId, quantity) {
+                $.ajax({
+                    url: 'add-to-cart.php',
+                    method: 'POST',
+                    data: {
+                        product_id: productId,
+                        quantity: quantity
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.message);
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error adding product to cart');
+                    }
+                });
+            }
+
+            // Function to handle Buy Now
+            function buyNow(productId, quantity) {
+                $.ajax({
+                    url: 'place-order.php',
+                    method: 'POST',
+                    data: {
+                        product_id: productId,
+                        quantity: quantity
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.message);
+                            // Optionally redirect to a confirmation page
+                            // window.location.href = 'order-confirmation.php';
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error placing order');
+                    }
+                });
+            }
+
+            // Event delegation for dynamically added elements
+            $(document).on('click', '.add-to-cart-btn', function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                var quantity = 1; // You might want to add a quantity input field in your modal
+                addToCart(productId, quantity);
+            });
+
+            $(document).on('click', '.buy-now-btn', function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                var quantity = 1; // You might want to add a quantity input field in your modal
+                buyNow(productId, quantity);
+            });
+
 
         function showProductModal(productDetails) {
             var modal = $('<div class="product-modal"></div>');

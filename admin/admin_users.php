@@ -19,15 +19,6 @@ function executeQuery($query) {
     return $stmt;
 }
 
-// Handle Add User
-if (isset($_POST['add_user'])) {
-    $username = $_POST['username'];
-    $role = $_POST['role'];
-    $sql = "INSERT INTO users (username, role, created_at) VALUES (?, ?, NOW())";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$username, $role]);
-}
-
 // Handle Edit User
 if (isset($_POST['edit_user'])) {
     $user_id = $_POST['user_id'];
@@ -187,9 +178,6 @@ $pdo = null;
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h2><i class="bi bi-people-fill me-2"></i>Users</h2>
-                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                        <i class="bi bi-person-plus-fill me-2"></i>Add User
-                    </button>
                 </div>
 
                 <div class="table-responsive">
@@ -229,35 +217,6 @@ $pdo = null;
         </div>
     </div>
 
-    <!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="admin_users.php">
-                        <div class="mb-3">
-                            <label for="addUsername" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="addUsername" name="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="addRole" class="form-label">Role</label>
-                            <select class="form-select" id="addRole" name="role" required>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                        <button type="submit" name="add_user" class="btn btn-primary">Add User</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <!-- Edit User Modal -->
     <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -276,7 +235,7 @@ $pdo = null;
                         <div class="mb-3">
                             <label for="editRole" class="form-label">Role</label>
                             <select class="form-select" id="editRole" name="role" required>
-                                <option value="user">User</option>
+                                <option value="customer">Customer</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>

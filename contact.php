@@ -116,7 +116,7 @@ if (!isset($_SESSION['user_id'])) {
             <div class="row">
                 <div class="col-lg-6">
                     <div id="map">
-                        <iframe < src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3866.4835979496365!2d120.87347677591548!3d14.283311284764414!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd80655363e331%3A0xa4247d4e2b9cbce8!2sCavite%20State%20University%20-%20Trece%20Martires%20Campus!5e0!3m2!1sen!2sph!4v1722907139690!5m2!1sen!2sph" width="100%" height="400px" frameborder="0" style="border:0" allowfullscreen></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3866.4835979496365!2d120.87347677591548!3d14.283311284764414!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd80655363e331%3A0xa4247d4e2b9cbce8!2sCavite%20State%20University%20-%20Trece%20Martires%20Campus!5e0!3m2!1sen!2sph!4v1722907139690!5m2!1sen!2sph" width="100%" height="400px" frameborder="0" style="border:0" allowfullscreen></iframe>
                         <!-- You can simply copy and paste "Embed a map" code from Google Maps for any location. -->
                     </div>
                 </div>
@@ -170,7 +170,7 @@ if (!isset($_SESSION['user_id'])) {
                             <ul>
                                 <li>Work Hours:<br><span>07:30 AM - 9:30 PM</span></li>
                                 <li>Email:<br><span>voguevault@gmail.com</span></li>
-                                <li>Social Media:<br><span><a href="#">Facebook</a>, <a href="#">Instagram</a>, <a href="#">Behance</a>, <a href="#">Linkedin</a></span></li>
+                                <li>Social Media:<br><span><a href="#">Facebook</a>, <a href="#">Instagram</a>, <a href="#">Linkedin</a></span></li>
                             </ul>
                         </div>
                     </div>
@@ -208,7 +208,6 @@ if (!isset($_SESSION['user_id'])) {
                     <ul>
                         <li><a href="#">Homepage</a></li>
                         <li><a href="#">About Us</a></li>
-                        <li><a href="#">Help</a></li>
                         <li><a href="#">Contact Us</a></li>
                     </ul>
                 </div>
@@ -217,8 +216,6 @@ if (!isset($_SESSION['user_id'])) {
                     <ul>
                         <li><a href="#">Help</a></li>
                         <li><a href="#">FAQ's</a></li>
-                        <li><a href="#">Shipping</a></li>
-                        <li><a href="#">Tracking ID</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-12">
@@ -228,7 +225,6 @@ if (!isset($_SESSION['user_id'])) {
                             <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                             <li><a href="#"><i class="fa fa-twitter"></i></a></li>
                             <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#"><i class="fa fa-behance"></i></a></li>
                         </ul>
                     </div>
                 </div>

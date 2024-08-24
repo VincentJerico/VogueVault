@@ -14,8 +14,23 @@ $perPage = 9;
 $start = ($page - 1) * $perPage;
 
 // Search and category filtering
-$search = isset($_GET['search']) ? $_GET['search'] : '';
+$search = isset($_GET['search']) ? strtolower(trim($_GET['search'])) : '';
 $category = isset($_GET['category']) ? $_GET['category'] : '';
+
+// Map search terms to categories
+$category_mapping = [
+    'men' => "men's",
+    'mens' => "men's",
+    "men\'s" => "men's",
+    'women' => "women's",
+    'womens' => "women's",
+    "women\'s" => "women's",
+];
+
+// Check if the search term matches a mapped category
+if (array_key_exists($search, $category_mapping)) {
+    $category = $category_mapping[$search];
+}
 
 // Fetch categories for filtering
 $categories_query = "SELECT DISTINCT category FROM products";
@@ -54,7 +69,6 @@ $total_products = $total_stmt->fetch(PDO::FETCH_ASSOC)['count'];
 $total_pages = ceil($total_products / $perPage);
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,7 +81,6 @@ $total_pages = ceil($total_products / $perPage);
     <!-- Additional CSS Files -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/get-product-style.css">
     <link rel="stylesheet" href="assets/css/owl-carousel.css">
@@ -296,7 +309,6 @@ $total_pages = ceil($total_products / $perPage);
                     <ul>
                         <li><a href="home.php #top">Homepage</a></li>
                         <li><a href="#">About Us</a></li>
-                        <li><a href="#">Help</a></li>
                         <li><a href="contact.php">Contact Us</a></li>
                     </ul>
                 </div>
@@ -305,8 +317,6 @@ $total_pages = ceil($total_products / $perPage);
                     <ul>
                         <li><a href="#">Help</a></li>
                         <li><a href="#">FAQ's</a></li>
-                        <li><a href="#">Shipping</a></li>
-                        <li><a href="#">Tracking ID</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-12">
@@ -316,7 +326,6 @@ $total_pages = ceil($total_products / $perPage);
                             <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                             <li><a href="#"><i class="fa fa-twitter"></i></a></li>
                             <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#"><i class="fa fa-behance"></i></a></li>
                         </ul>
                     </div>
                 </div>

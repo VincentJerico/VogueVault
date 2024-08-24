@@ -133,14 +133,10 @@ if (isset($_GET['token'])) {
         .password-toggle {
             position: absolute;
             top: 50%;
-            right: 0.5rem; /* Position the icon within the input */
+            right: 0px; /* Position the icon within the input */
             transform: translateY(-50%);
             cursor: pointer;
             color: #153448;
-            font-size: 1.1rem;
-            width: 2rem; /* Set a fixed width */
-            text-align: center; /* Center the icon */
-            z-index: 10; /* Ensure it stays above the input field */
         }
 
         .reset-button {
@@ -214,14 +210,16 @@ if (isset($_GET['token'])) {
                     <label for="password">New Password:</label>
                     <div class="password-field">
                         <input type="password" id="password" name="password" required>
-                        <i class="password-toggle fas fa-eye" id="togglePassword"></i>
+                        
+                        <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="confirm_password">Confirm New Password:</label>
                     <div class="password-field">
                         <input type="password" id="confirm_password" name="confirm_password" required>
-                        <i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>
+                        
+                        <!--<i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>-->
                     </div>
                 </div>
                 <button type="submit" class="reset-button">Reset Password</button>

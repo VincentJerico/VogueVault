@@ -110,6 +110,9 @@ if (isset($_GET['id'])) {
             </div>
             <div class="col mt-2"></div>
             <button id="editProfileBtn">Edit Profile</button>
+            <div id="cartItems">
+                <!-- Cart items will be loaded here -->
+            </div>
         </div>
     </div>
     <!-- ***** Main Banner Area Start ***** -->
@@ -219,7 +222,6 @@ if (isset($_GET['id'])) {
                     <ul>
                         <li><a href="#">Homepage</a></li>
                         <li><a href="#">About Us</a></li>
-                        <li><a href="#">Help</a></li>
                         <li><a href="#">Contact Us</a></li>
                     </ul>
                 </div>
@@ -228,8 +230,6 @@ if (isset($_GET['id'])) {
                     <ul>
                         <li><a href="#">Help</a></li>
                         <li><a href="#">FAQ's</a></li>
-                        <li><a href="#">Shipping</a></li>
-                        <li><a href="#">Tracking ID</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-12">
@@ -239,7 +239,6 @@ if (isset($_GET['id'])) {
                             <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                             <li><a href="#"><i class="fa fa-twitter"></i></a></li>
                             <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#"><i class="fa fa-behance"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -279,32 +278,6 @@ if (isset($_GET['id'])) {
                 
             });
         });
-    </script>
-
-    <script>
-    $(document).ready(function() {
-        $("#profileToggle").click(function() {
-            $("#profileSlider").toggleClass("active");
-            
-            if ($("#profileSlider").hasClass("active")) {
-                // Load profile information
-                $.ajax({
-                    url: 'get_profile.php',
-                    type: 'GET',
-                    success: function(response) {
-                        $("#profileInfo").html(response);
-                    },
-                    error: function() {
-                        $("#profileInfo").html("<p>Error loading profile information.</p>");
-                    }
-                });
-            }
-        });
-
-        $("#editProfileBtn").click(function() {
-            window.location.href = "edit_profile.php";
-        });
-    });
     </script>
 
     <script>
@@ -365,28 +338,93 @@ if (isset($_GET['id'])) {
             $("#buyNowBtn").click(function(e) {
                 e.preventDefault();
                 let quantity = $(".qty").val();
+                let form = $('<form action="order_form.php" method="post">' +
+                    '<input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">' +
+                    '<input type="hidden" name="quantity" value="' + quantity + '">' +
+                    '</form>');
+                $('body').append(form);
+                form.submit();
+            });
+        });
+    </script>
+
+    <script>
+    $(document).ready(function() {
+        $("#profileToggle").click(function() {
+            $("#profileSlider").toggleClass("active");
+            
+            if ($("#profileSlider").hasClass("active")) {
+                // Load profile information
                 $.ajax({
-                    url: 'place-order.php', // Assume you create this file to handle the order
-                    type: 'POST',
-                    data: {
-                        product_id: <?php echo $product['id']; ?>,
-                        quantity: quantity
+                    url: 'get_profile.php',
+                    type: 'GET',
+                    success: function(response) {
+                        $("#profileInfo").html(response);
                     },
+                    error: function() {
+                        $("#profileInfo").html("<p>Error loading profile information.</p>");
+                    }
+                });
+
+                // Load cart items
+                $.ajax({
+                    url: 'get_cart.php',
+                    type: 'GET',
                     success: function(response) {
                         const data = JSON.parse(response);
                         if (data.success) {
-                            alert(data.message);
-                            window.location.href = 'order-confirmation.php'; // Redirect to confirmation page
+                            let cartHtml = '<h3>Your Cart</h3>';
+                            if (data.cart_items.length > 0) {
+                                data.cart_items.forEach(item => {
+                                    cartHtml += `
+                                        <div class="cart-item">
+                                            <p>${item.name} - Quantity: ${item.quantity} - Price: ₱${(item.price * item.quantity).toFixed(2)}</p>
+                                            <button class="buy-now-btn" data-cart-id="${item.cart_id}">Buy Now</button>
+                                        </div>
+                                    `;
+                                });
+                            } else {
+                                cartHtml += '<p>Your cart is empty.</p>';
+                            }
+                            $("#cartItems").html(cartHtml);
+
+                            // Add event listener for Buy Now buttons
+                            $(".buy-now-btn").click(function() {
+                                const cartId = $(this).data('cart-id');
+                                $.ajax({
+                                    url: 'place-order.php',
+                                    type: 'POST',
+                                    data: { cart_id: cartId },
+                                    success: function(response) {
+                                        const data = JSON.parse(response);
+                                        if (data.success) {
+                                            alert(data.message);
+                                            // Reload cart items
+                                            $("#profileToggle").click().click();
+                                        } else {
+                                            alert('Failed to place order: ' + data.message);
+                                        }
+                                    },
+                                    error: function() {
+                                        alert('Error placing order.');
+                                    }
+                                });
+                            });
                         } else {
-                            alert('Failed to place order: ' + data.message);
+                            $("#cartItems").html("<p>Error loading cart items.</p>");
                         }
                     },
                     error: function() {
-                        alert('Error placing order.');
+                        $("#cartItems").html("<p>Error loading cart items.</p>");
                     }
                 });
-            });
+            }
         });
+
+        $("#editProfileBtn").click(function() {
+            window.location.href = "edit_profile.php";
+        });
+    });
     </script>
 </body>
 </html>

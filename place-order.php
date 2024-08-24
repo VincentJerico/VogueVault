@@ -7,17 +7,33 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if (!isset($_POST['product_id']) || !isset($_POST['quantity'])) {
-    echo json_encode(['success' => false, 'message' => 'Invalid request parameters']);
-    exit();
-}
-
 $user_id = $_SESSION['user_id'];
-$product_id = (int)$_POST['product_id'];
-$quantity = (int)$_POST['quantity'];
 
-if ($quantity <= 0) {
-    echo json_encode(['success' => false, 'message' => 'Invalid quantity']);
+// Check if we're buying from cart or directly
+if (isset($_POST['cart_id'])) {
+    // Buying from cart
+    $cart_id = (int)$_POST['cart_id'];
+    
+    // Fetch cart item
+    $stmt = $pdo->prepare("SELECT * FROM cart WHERE id = :cart_id AND user_id = :user_id");
+    $stmt->bindParam(':cart_id', $cart_id, PDO::PARAM_INT);
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$cart_item) {
+        echo json_encode(['success' => false, 'message' => 'Cart item not found']);
+        exit();
+    }
+    
+    $product_id = $cart_item['product_id'];
+    $quantity = $cart_item['quantity'];
+} elseif (isset($_POST['product_id']) && isset($_POST['quantity'])) {
+    // Buying directly
+    $product_id = (int)$_POST['product_id'];
+    $quantity = (int)$_POST['quantity'];
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request parameters']);
     exit();
 }
 
@@ -55,11 +71,17 @@ try {
     $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
     $stmt->execute();
 
+    // If buying from cart, remove the item from cart
+    if (isset($cart_id)) {
+        $stmt = $pdo->prepare("DELETE FROM cart WHERE id = :cart_id");
+        $stmt->bindParam(':cart_id', $cart_id, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
     $pdo->commit();
     echo json_encode(['success' => true, 'message' => 'Order placed successfully!']);
 } catch (Exception $e) {
     $pdo->rollBack();
     echo json_encode(['success' => false, 'message' => 'Error placing order: ' . $e->getMessage()]);
 }
-
 ?>

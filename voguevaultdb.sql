@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 24, 2024 at 09:53 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Aug 24, 2024 at 11:55 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -41,8 +41,7 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`id`, `user_id`, `product_id`, `quantity`, `created_at`, `updated_at`) VALUES
-(1, 1, 10, 3, '2024-08-23 15:08:09', '2024-08-23 15:16:25'),
-(2, 1, 6, 1, '2024-08-23 17:07:11', '2024-08-23 17:07:11');
+(3, 3, 6, 1, '2024-08-24 16:33:31', '2024-08-24 16:33:31');
 
 -- --------------------------------------------------------
 
@@ -57,16 +56,24 @@ CREATE TABLE `orders` (
   `quantity` int(11) DEFAULT NULL,
   `total_price` decimal(10,2) NOT NULL,
   `status` enum('pending','processing','shipped','delivered','cancelled') NOT NULL DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `shipping_address` text DEFAULT NULL,
+  `payment_method` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `user_id`, `product_id`, `quantity`, `total_price`, `status`, `created_at`) VALUES
-(2, 1, 5, 4, 16396.00, 'pending', '2024-08-23 15:54:04'),
-(3, 1, 6, 1, 13440.00, 'pending', '2024-08-23 16:49:50');
+INSERT INTO `orders` (`id`, `user_id`, `product_id`, `quantity`, `total_price`, `status`, `created_at`, `shipping_address`, `payment_method`) VALUES
+(2, 1, 5, 4, 16396.00, 'pending', '2024-08-23 15:54:04', NULL, NULL),
+(3, 1, 6, 1, 13440.00, 'pending', '2024-08-23 16:49:50', NULL, NULL),
+(4, 1, 7, 10, 4990.00, 'pending', '2024-08-24 17:09:09', NULL, NULL),
+(5, 1, 6, 1, 13440.00, 'pending', '2024-08-24 20:25:38', NULL, NULL),
+(6, 1, 5, 1, 4099.00, 'pending', '2024-08-24 21:02:46', NULL, NULL),
+(7, 1, 6, 3, 40320.00, 'pending', '2024-08-24 21:24:34', NULL, NULL),
+(8, 1, 10, 3, 18147.00, 'pending', '2024-08-24 21:24:42', NULL, NULL),
+(9, 1, 6, 1, 13440.00, 'pending', '2024-08-24 21:25:38', 'Diyan lang sa may tabi', 'cash_on_delivery');
 
 -- --------------------------------------------------------
 
@@ -108,12 +115,12 @@ CREATE TABLE `products` (
 INSERT INTO `products` (`id`, `name`, `description`, `category`, `price`, `image`, `created_at`, `rating`, `rating_count`, `stock`) VALUES
 (3, '(Men\'s) Modular Jacket', 'Carhartt Modular Jacket', 'Men\'s', 6199.00, '../uploads/men-1modularjacket.png', '2024-08-23 10:01:18', 4.8, 5, 100),
 (4, '(Men\'s) Cargo Pants', 'Uniqlo Cargo Pants', 'Men\'s', 1990.00, '../uploads/men-2pants.png', '2024-08-23 10:01:52', 4.75, 4, 100),
-(5, '(Men\'s) Converse', 'Converse Chuck \'70s', 'Men\'s', 4099.00, '../uploads/men-3shoes.jpg', '2024-08-23 10:03:22', 5, 4, 96),
-(6, '(Men\'s) Aviator Sunglasses', 'Ray-Ban Polarized Metal Aviator Sunglasses', 'Men\'s', 13440.00, '../uploads/men-4rayban.png', '2024-08-23 10:04:55', 4.78571, 14, 99),
-(7, '(Women\'s) Cap-Sleeve Tshirt', 'Uniqlo Cap-Sleeve Tshirt', 'Women\'s', 499.00, '../uploads/woman-1shirt.png', '2024-08-23 10:08:09', 4.66667, 6, 100),
+(5, '(Men\'s) Converse', 'Converse Chuck \'70s', 'Men\'s', 4099.00, '../uploads/men-3shoes.jpg', '2024-08-23 10:03:22', 5, 4, 95),
+(6, '(Men\'s) Aviator Sunglasses', 'Ray-Ban Polarized Metal Aviator Sunglasses', 'Men\'s', 13440.00, '../uploads/men-4rayban.png', '2024-08-23 10:04:55', 4.78571, 14, 95),
+(7, '(Women\'s) Cap-Sleeve Tshirt', 'Uniqlo Cap-Sleeve Tshirt', 'Women\'s', 499.00, '../uploads/woman-1shirt.png', '2024-08-23 10:08:09', 4.66667, 6, 90),
 (8, '(Women\'s) Oversized Japanese Style Cardigan', 'Uniqlo Oversized Japanese Style Cardigan', 'Women\'s', 899.00, '../uploads/woman-2cardigan.png', '2024-08-23 10:10:09', 5, 2, 100),
 (9, '(Women\'s) Wide-Leg Trouser', 'Uniqlo Wide-Leg Trouser', 'Women\'s', 799.00, '../uploads/woman-3trouser.png', '2024-08-23 10:12:30', 4.75, 8, 100),
-(10, '(Women\'s) Puma', 'Puma Palermo Leather Shoes', 'Women\'s', 6049.00, '../uploads/woman-4shoes.png', '2024-08-23 10:15:50', 5, 2, 100),
+(10, '(Women\'s) Puma', 'Puma Palermo Leather Shoes', 'Women\'s', 6049.00, '../uploads/woman-4shoes.png', '2024-08-23 10:15:50', 5, 2, 97),
 (11, '(Kid\'s) School Collection', 'Back-To-School Collection for kids', 'Kid\'s', 4599.00, '../uploads/kid-01.jpg', '2024-08-23 10:25:26', 0, 0, 100),
 (12, '(Kid\'s) Summer Collection', 'Summer Outfit for kids', 'Kid\'s', 2799.00, '../uploads/kid-02.jpg', '2024-08-23 10:32:46', 0, 0, 100),
 (13, '(Kid\'s) Casual Collection', 'Casual Collection for kids', 'Kid\'s', 7399.00, '../uploads/kid-03.jpg', '2024-08-23 10:37:53', 0, 0, 100),
@@ -142,8 +149,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `gender`, `birthday`, `created_at`, `reset_token`) VALUES
-(1, 'testuser1', '$2y$10$FANTTaDtb59edj4nLMnp1umFid/jP0n1TDDKK41yHnepO1iC0YbBS', 'testuser1@example.com', 'customer', 'male', '2003-12-07', '2024-08-23 08:55:28', NULL),
-(2, 'admin1', '$2y$10$hRChidKpexOrdui/zLWSk.3ST9GIbtj2JCLSJThbC5FXspfnaZcqq', 'admin1@example.com', 'admin', NULL, NULL, '2024-08-23 09:48:31', NULL);
+(1, 'testuser1', '$2y$10$bp.moFEisbTkVUDFoEV/YekwEuxOVJ69fIJ62L5pdndXc3Z90QJWm', 'testuser1@example.com', 'customer', 'male', '2003-12-07', '2024-08-23 08:55:28', '78cb8a3536851e223fb1fe496e16787277ead06361e040247eef36779eaa532c62df1aa0b618ab57c575b7b16745f19c5f19'),
+(2, 'admin1', '$2y$10$hRChidKpexOrdui/zLWSk.3ST9GIbtj2JCLSJThbC5FXspfnaZcqq', 'admin1@example.com', 'admin', NULL, NULL, '2024-08-23 09:48:31', NULL),
+(3, 'Rence', '$2y$10$dVlli./KQW7MeFn42nBZeuTHV6bHQETw8kR.d04zb1sfjho/QOFoW', 'rence@gmail.com', 'customer', 'other', '2003-04-17', '2024-08-24 16:28:56', NULL);
 
 --
 -- Indexes for dumped tables
@@ -194,13 +202,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `order_items`
@@ -218,7 +226,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables

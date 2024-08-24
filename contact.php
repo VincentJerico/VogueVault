@@ -94,6 +94,9 @@ if (!isset($_SESSION['user_id'])) {
             </div>
             <div class="col mt-2"></div>
             <button id="editProfileBtn">Edit Profile</button>
+            <div id="cartItems">
+                <!-- Cart items will be loaded here -->
+            </div>
         </div>
     </div>
     <!-- ***** Main Banner Area Start ***** -->
@@ -268,7 +271,6 @@ if (!isset($_SESSION['user_id'])) {
     
     <script>
         $(document).ready(function() {
-            // Toggle profile slider visibility
             $("#profileToggle").click(function() {
                 $("#profileSlider").toggleClass("active");
                 
@@ -284,13 +286,65 @@ if (!isset($_SESSION['user_id'])) {
                             $("#profileInfo").html("<p>Error loading profile information.</p>");
                         }
                     });
+
+                    // Load cart items
+                    $.ajax({
+                        url: 'get_cart.php',
+                        type: 'GET',
+                        success: function(response) {
+                            const data = JSON.parse(response);
+                            if (data.success) {
+                                let cartHtml = '<h3>Your Cart</h3>';
+                                if (data.cart_items.length > 0) {
+                                    data.cart_items.forEach(item => {
+                                        cartHtml += `
+                                            <div class="cart-item">
+                                                <p>${item.name} - Quantity: ${item.quantity} - Price: ₱${(item.price * item.quantity).toFixed(2)}</p>
+                                                <button class="buy-now-btn" data-cart-id="${item.cart_id}">Buy Now</button>
+                                            </div>
+                                        `;
+                                    });
+                                } else {
+                                    cartHtml += '<p>Your cart is empty.</p>';
+                                }
+                                $("#cartItems").html(cartHtml);
+
+                                // Add event listener for Buy Now buttons
+                                $(".buy-now-btn").click(function() {
+                                    const cartId = $(this).data('cart-id');
+                                    $.ajax({
+                                        url: 'place-order.php',
+                                        type: 'POST',
+                                        data: { cart_id: cartId },
+                                        success: function(response) {
+                                            const data = JSON.parse(response);
+                                            if (data.success) {
+                                                alert(data.message);
+                                                // Reload cart items
+                                                $("#profileToggle").click().click();
+                                            } else {
+                                                alert('Failed to place order: ' + data.message);
+                                            }
+                                        },
+                                        error: function() {
+                                            alert('Error placing order.');
+                                        }
+                                    });
+                                });
+                            } else {
+                                $("#cartItems").html("<p>Error loading cart items.</p>");
+                            }
+                        },
+                        error: function() {
+                            $("#cartItems").html("<p>Error loading cart items.</p>");
+                        }
+                    });
                 }
             });
 
-            // Redirect to edit profile page
             $("#editProfileBtn").click(function() {
                 window.location.href = "edit_profile.php";
-            });
+            });     
 
             // Close profile slider when clicking outside of it
             $(document).click(function(event) {

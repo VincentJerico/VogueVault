@@ -131,17 +131,12 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                 <!-- Profile information will be loaded here -->
             </div>
             <div class="col mt-2"></div>
-            <?php if ($is_logged_in): ?>
-                <button id="editProfileBtn">Edit Profile</button>
-                <div class="col mt-2"></div>
-            <?php else: ?>
-                <p>Please log in to view your profile.</p>
-                <button id="loginBtn">Login</button>
-            <?php endif; ?>
+            <button id="editProfileBtn">Edit Profile</button>
+            <div id="cartItems">
+                <!-- Cart items will be loaded here -->
+            </div>
         </div>
     </div>
-
-
     <!-- ***** Main Banner Area Start ***** -->
     <div class="main-banner" id="top">
         <div class="container-fluid">
@@ -675,27 +670,78 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
     </script>
 
     <script>
-        $(document).ready(function() {
-            // Toggle profile slider visibility
-            $("#profileToggle").click(function() {
-                $("#profileSlider").toggleClass("active");
-                
-                if ($("#profileSlider").hasClass("active") && <?php echo $is_logged_in ? 'true' : 'false'; ?>) {
-                    // Load profile information only if user is logged in
-                    $.ajax({
-                        url: 'get_profile.php',
-                        type: 'GET',
-                        success: function(response) {
-                            $("#profileInfo").html(response);
-                        },
-                        error: function() {
-                            $("#profileInfo").html("<p>Error loading profile information.</p>");
-                        }
-                    });
-                }
-            });
+    $(document).ready(function() {
+        $("#profileToggle").click(function() {
+            $("#profileSlider").toggleClass("active");
+            
+            if ($("#profileSlider").hasClass("active")) {
+                // Load profile information
+                $.ajax({
+                    url: 'get_profile.php',
+                    type: 'GET',
+                    success: function(response) {
+                        $("#profileInfo").html(response);
+                    },
+                    error: function() {
+                        $("#profileInfo").html("<p>Error loading profile information.</p>");
+                    }
+                });
 
-            // Redirect to edit profile page
+                // Load cart items
+                $.ajax({
+                    url: 'get_cart.php',
+                    type: 'GET',
+                    success: function(response) {
+                        const data = JSON.parse(response);
+                        if (data.success) {
+                            let cartHtml = '<h3>Your Cart</h3>';
+                            if (data.cart_items.length > 0) {
+                                data.cart_items.forEach(item => {
+                                    cartHtml += `
+                                        <div class="cart-item">
+                                            <p>${item.name} - Quantity: ${item.quantity} - Price: ₱${(item.price * item.quantity).toFixed(2)}</p>
+                                            <button class="buy-now-btn" data-cart-id="${item.cart_id}">Buy Now</button>
+                                        </div>
+                                    `;
+                                });
+                            } else {
+                                cartHtml += '<p>Your cart is empty.</p>';
+                            }
+                            $("#cartItems").html(cartHtml);
+
+                            // Add event listener for Buy Now buttons
+                            $(".buy-now-btn").click(function() {
+                                const cartId = $(this).data('cart-id');
+                                $.ajax({
+                                    url: 'place-order.php',
+                                    type: 'POST',
+                                    data: { cart_id: cartId },
+                                    success: function(response) {
+                                        const data = JSON.parse(response);
+                                        if (data.success) {
+                                            alert(data.message);
+                                            // Reload cart items
+                                            $("#profileToggle").click().click();
+                                        } else {
+                                            alert('Failed to place order: ' + data.message);
+                                        }
+                                    },
+                                    error: function() {
+                                        alert('Error placing order.');
+                                    }
+                                });
+                            });
+                        } else {
+                            $("#cartItems").html("<p>Error loading cart items.</p>");
+                        }
+                    },
+                    error: function() {
+                        $("#cartItems").html("<p>Error loading cart items.</p>");
+                    }
+                });
+            }
+        });
+
             $("#editProfileBtn").click(function() {
                 window.location.href = "edit_profile.php";
             });

@@ -19,9 +19,35 @@ function executeQuery($query) {
     return $stmt;
 }
 
+// Handle Add User
+if (isset($_POST['add_user'])) {
+    $username = $_POST['username'];
+    $role = $_POST['role'];
+    $sql = "INSERT INTO users (username, role, created_at) VALUES (?, ?, NOW())";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$username, $role]);
+}
+
+// Handle Edit User
+if (isset($_POST['edit_user'])) {
+    $user_id = $_POST['user_id'];
+    $username = $_POST['username'];
+    $role = $_POST['role'];
+    $sql = "UPDATE users SET username = ?, role = ? WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$username, $role, $user_id]);
+}
+
+// Handle Delete User
+if (isset($_POST['delete_user'])) {
+    $user_id = $_POST['user_id'];
+    $sql = "DELETE FROM users WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$user_id]);
+}
+
 $sql = "SELECT * FROM users";
 $stmt = $pdo->query($sql);
-
 $pdo = null;
 ?>
 
@@ -212,11 +238,25 @@ $pdo = null;
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Add user form here -->
+                    <form method="post" action="admin_users.php">
+                        <div class="mb-3">
+                            <label for="addUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="addUsername" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addRole" class="form-label">Role</label>
+                            <select class="form-select" id="addRole" name="role" required>
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <button type="submit" name="add_user" class="btn btn-primary">Add User</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Edit User Modal -->
     <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
@@ -227,7 +267,8 @@ $pdo = null;
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editUserForm">
+                    <form method="post" action="admin_users.php">
+                        <input type="hidden" id="editUserId" name="user_id">
                         <div class="mb-3">
                             <label for="editUsername" class="form-label">Username</label>
                             <input type="text" class="form-control" id="editUsername" name="username" required>
@@ -239,12 +280,13 @@ $pdo = null;
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" name="edit_user" class="btn btn-primary">Save changes</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -255,15 +297,19 @@ $pdo = null;
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to delete this user?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                    <form method="post" action="admin_users.php">
+                        <input type="hidden" id="deleteUserId" name="user_id">
+                        <p>Are you sure you want to delete this user?</p>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" name="delete_user" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
@@ -290,93 +336,29 @@ $pdo = null;
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Delete Modal
-            var deleteModal = document.getElementById('deleteModal');
-            var confirmDeleteButton = document.getElementById('confirmDelete');
-            var userIdToDelete;
-
-            deleteModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                userIdToDelete = button.getAttribute('data-user-id');
-            });
-
-            document.addEventListener('DOMContentLoaded', function() {
-                var deleteButtons = document.querySelectorAll('.delete-button');
-                var deleteForm = document.getElementById('deleteForm');
-                var userIdInput = document.getElementById('userIdToDelete');
-
-                deleteButtons.forEach(function(button) {
-                    button.addEventListener('click', function() {
-                        var userId = button.getAttribute('data-user-id');
-                        userIdInput.value = userId;
-                    });
-                });
-            });
-
             // Edit User Modal
             var editUserModal = document.getElementById('editUserModal');
-            var editUserForm = document.getElementById('editUserForm');
-            var editUsername = document.getElementById('editUsername');
-            var editRole = document.getElementById('editRole');
-            var userIdToEdit;
-
             editUserModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;
-                userIdToEdit = button.getAttribute('data-user-id');
+                var userId = button.getAttribute('data-user-id');
+                var username = button.closest('tr').querySelector('td:nth-child(2)').textContent;
+                var role = button.closest('tr').querySelector('td:nth-child(3)').textContent;
 
-                $.ajax({
-                    url: 'get_user.php',
-                    method: 'GET',
-                    data: { user_id: userIdToEdit },
-                    success: function(response) {
-                        var userData = JSON.parse(response);
-                        editUsername.value = userData.username;
-                        editRole.value = userData.role;
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error fetching user data:', error);
-                        alert('An error occurred while fetching user data.');
-                    }
-                });
+                document.getElementById('editUserId').value = userId;
+                document.getElementById('editUsername').value = username.trim();
+                document.getElementById('editRole').value = role.trim();
             });
 
-            editUserForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                var updatedData = {
-                    user_id: userIdToEdit,
-                    username: editUsername.value,
-                    role: editRole.value
-                };
-
-                $.ajax({
-                    url: 'update_user.php',
-                    method: 'POST',
-                    data: updatedData,
-                    success: function(response) {
-                        console.log(response); // Check the response
-                        var result = JSON.parse(response);
-                        if (result.success) {
-                            // Update the table row with the new data
-                            var row = $(`tr[data-user-id="${userIdToEdit}"]`);
-                            row.find('td:eq(1)').text(updatedData.username);
-                            row.find('td:eq(2)').text(updatedData.role);
-                            
-                            // Hide the modal
-                            var modal = bootstrap.Modal.getInstance(editUserModal);
-                            modal.hide();
-                        } else {
-                            alert('Error updating user: ' + result.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error updating user:', error);
-                        alert('An error occurred while updating the user.');
-                    }
-                });
-
+            // Delete User Modal
+            var deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var userId = button.getAttribute('data-user-id');
+                document.getElementById('deleteUserId').value = userId;
             });
         });
+
+
 
     </script>
 </body>

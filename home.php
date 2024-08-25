@@ -131,17 +131,12 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                 <!-- Profile information will be loaded here -->
             </div>
             <div class="col mt-2"></div>
-            <?php if ($is_logged_in): ?>
-                <button id="editProfileBtn">Edit Profile</button>
-                <button id="logoutBtn">Logout</button>
-            <?php else: ?>
-                <p>Please log in to view your profile.</p>
-                <button id="loginBtn">Login</button>
-            <?php endif; ?>
+            <button id="editProfileBtn">Edit Profile</button>
+            <div id="cartItems">
+                <!-- Cart items will be loaded here -->
+            </div>
         </div>
     </div>
-
-
     <!-- ***** Main Banner Area Start ***** -->
     <div class="main-banner" id="top">
         <div class="container-fluid">
@@ -173,7 +168,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                                         <div class="hover-content">
                                             <div class="inner">
                                                 <h4>Women</h4>
-                                                <p>Lorem ipsum dolor sit amet, conservisii ctetur adipiscing elit incid.</p>
+                                                <p>Check out our latest women's products</p>
                                                 <div class="main-border-button">
                                                     <a href="#women" class="scroll-to-section">Discover More</a>
                                                 </div>
@@ -193,7 +188,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                                         <div class="hover-content">
                                             <div class="inner">
                                                 <h4>Men</h4>
-                                                <p>Lorem ipsum dolor sit amet, conservisii ctetur adipiscing elit incid.</p>
+                                                <p>Check out our latest men's products</p>
                                                 <div class="main-border-button">
                                                     <a href="#men" class="scroll-to-section">Discover More</a>
                                                 </div>
@@ -213,7 +208,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                                         <div class="hover-content">
                                             <div class="inner">
                                                 <h4>Kids</h4>
-                                                <p>Lorem ipsum dolor sit amet, conservisii ctetur adipiscing elit incid.</p>
+                                                <p>Check out our latest kid's products</p>
                                                 <div class="main-border-button">
                                                     <a href="#kids" class="scroll-to-section">Discover More</a>
                                                 </div>
@@ -227,15 +222,15 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                                 <div class="right-first-image">
                                     <div class="thumb">
                                         <div class="inner-content">
-                                            <h4>Accessories</h4>
-                                            <span>Best Trend Accessories</span>
+                                            <h4>More</h4>
+                                            <span>Best Trend Products</span>
                                         </div>
                                         <div class="hover-content">
                                             <div class="inner">
-                                                <h4>Accessories</h4>
-                                                <p>Lorem ipsum dolor sit amet, conservisii ctetur adipiscing elit incid.</p>
+                                                <h4>More</h4>
+                                                <p>Check out our latest Products.</p>
                                                 <div class="main-border-button">
-                                                    <a href="#">Discover More</a>
+                                                    <a href="#explore">Discover More</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -578,7 +573,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                             <ul>
                                 <li>Work Hours:<br><span>07:30 AM - 9:30 PM Daily</span></li>
                                 <li>Email:<br><span>voguevault@gmail.com</span></li>
-                                <li>Social Media:<br><span><a href="#">Facebook</a>, <a href="#">Instagram</a>, <a href="#">Behance</a>, <a href="#">Linkedin</a></span></li>
+                                <li>Social Media:<br><span><a href="#">Facebook</a>, <a href="#">Instagram</a>, <a href="#">Linkedin</a></span></li>
                             </ul>
                         </div>
                     </div>
@@ -616,7 +611,6 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                     <ul>
                         <li class="scroll-to-section"><a href="#top">Homepage</a></li>
                         <li><a href="about.php">About Us</a></li>
-                        <li class="scroll-to-section"><a href="#">Help</a></li>
                         <li><a href="contact.php">Contact Us</a></li>
                     </ul>
                 </div>
@@ -625,8 +619,6 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                     <ul>
                         <li><a href="#">Help</a></li>
                         <li><a href="#">FAQ's</a></li>
-                        <li><a href="#">Shipping</a></li>
-                        <li><a href="#">Tracking ID</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-12">
@@ -636,7 +628,6 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                             <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                             <li><a href="#"><i class="fa fa-twitter"></i></a></li>
                             <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#"><i class="fa fa-behance"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -679,27 +670,78 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
     </script>
 
     <script>
-        $(document).ready(function() {
-            // Toggle profile slider visibility
-            $("#profileToggle").click(function() {
-                $("#profileSlider").toggleClass("active");
-                
-                if ($("#profileSlider").hasClass("active") && <?php echo $is_logged_in ? 'true' : 'false'; ?>) {
-                    // Load profile information only if user is logged in
-                    $.ajax({
-                        url: 'get_profile.php',
-                        type: 'GET',
-                        success: function(response) {
-                            $("#profileInfo").html(response);
-                        },
-                        error: function() {
-                            $("#profileInfo").html("<p>Error loading profile information.</p>");
-                        }
-                    });
-                }
-            });
+    $(document).ready(function() {
+        $("#profileToggle").click(function() {
+            $("#profileSlider").toggleClass("active");
+            
+            if ($("#profileSlider").hasClass("active")) {
+                // Load profile information
+                $.ajax({
+                    url: 'get_profile.php',
+                    type: 'GET',
+                    success: function(response) {
+                        $("#profileInfo").html(response);
+                    },
+                    error: function() {
+                        $("#profileInfo").html("<p>Error loading profile information.</p>");
+                    }
+                });
 
-            // Redirect to edit profile page
+                // Load cart items
+                $.ajax({
+                    url: 'get_cart.php',
+                    type: 'GET',
+                    success: function(response) {
+                        const data = JSON.parse(response);
+                        if (data.success) {
+                            let cartHtml = '<h3>Your Cart</h3>';
+                            if (data.cart_items.length > 0) {
+                                data.cart_items.forEach(item => {
+                                    cartHtml += `
+                                        <div class="cart-item">
+                                            <p>${item.name} - Quantity: ${item.quantity} - Price: ₱${(item.price * item.quantity).toFixed(2)}</p>
+                                            <button class="buy-now-btn" data-cart-id="${item.cart_id}">Buy Now</button>
+                                        </div>
+                                    `;
+                                });
+                            } else {
+                                cartHtml += '<p>Your cart is empty.</p>';
+                            }
+                            $("#cartItems").html(cartHtml);
+
+                            // Add event listener for Buy Now buttons
+                            $(".buy-now-btn").click(function() {
+                                const cartId = $(this).data('cart-id');
+                                $.ajax({
+                                    url: 'place-order.php',
+                                    type: 'POST',
+                                    data: { cart_id: cartId },
+                                    success: function(response) {
+                                        const data = JSON.parse(response);
+                                        if (data.success) {
+                                            alert(data.message);
+                                            // Reload cart items
+                                            $("#profileToggle").click().click();
+                                        } else {
+                                            alert('Failed to place order: ' + data.message);
+                                        }
+                                    },
+                                    error: function() {
+                                        alert('Error placing order.');
+                                    }
+                                });
+                            });
+                        } else {
+                            $("#cartItems").html("<p>Error loading cart items.</p>");
+                        }
+                    },
+                    error: function() {
+                        $("#cartItems").html("<p>Error loading cart items.</p>");
+                    }
+                });
+            }
+        });
+
             $("#editProfileBtn").click(function() {
                 window.location.href = "edit_profile.php";
             });
@@ -817,6 +859,70 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                 });
             });
         });
+
+            // Function to handle Add to Cart
+            function addToCart(productId, quantity) {
+                $.ajax({
+                    url: 'add-to-cart.php',
+                    method: 'POST',
+                    data: {
+                        product_id: productId,
+                        quantity: quantity
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.message);
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error adding product to cart');
+                    }
+                });
+            }
+
+            // Function to handle Buy Now
+            function buyNow(productId, quantity) {
+                $.ajax({
+                    url: 'place-order.php',
+                    method: 'POST',
+                    data: {
+                        product_id: productId,
+                        quantity: quantity
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.message);
+                            // Optionally redirect to a confirmation page
+                            // window.location.href = 'order-confirmation.php';
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error placing order');
+                    }
+                });
+            }
+
+            // Event delegation for dynamically added elements
+            $(document).on('click', '.add-to-cart-btn', function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                var quantity = 1; // You might want to add a quantity input field in your modal
+                addToCart(productId, quantity);
+            });
+
+            $(document).on('click', '.buy-now-btn', function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                var quantity = 1; // You might want to add a quantity input field in your modal
+                buyNow(productId, quantity);
+            });
+
 
         function showProductModal(productDetails) {
             var modal = $('<div class="product-modal"></div>');

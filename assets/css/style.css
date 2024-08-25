@@ -196,6 +196,7 @@ body {
   top: 0;
   right: -300px;
   width: 300px;
+  max-width: 90%;
   height: 100%;
   background-color: #f8f9fa;
   box-shadow: -2px 0 5px rgba(0,0,0,0.1);
@@ -264,6 +265,39 @@ body {
   background-color: #bbb;
 }
 
+
+.profile-slider .cart-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+}
+
+.profile-slider .buy-now-btn {
+  background-color: #dfd0b8;
+  color: #153448;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.profile-slider .buy-now-btn:hover {
+  background-color: #c9b8a0;
+}
+
+#editProfileBtn, .profile-slider .buy-now-btn {
+  width: 100%;
+  text-align: center;
+}
+
+#cartItems {
+  margin-top: 20px;
+}
 
 /* 
 ---------------------------------------------

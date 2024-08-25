@@ -20,6 +20,7 @@ if (!$order) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmation - VogueVault</title>
+    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <style>
@@ -94,6 +95,8 @@ if (!$order) {
                 <li><strong>Order ID:</strong> <?php echo htmlspecialchars($order['id']); ?></li>
                 <li><strong>Product ID:</strong> <?php echo htmlspecialchars($order['product_id']); ?></li>
                 <li><strong>Quantity:</strong> <?php echo htmlspecialchars($order['quantity']); ?></li>
+                <li><strong>Shipping Address:</strong> <?php echo isset($order['shipping_address']) ? htmlspecialchars($order['shipping_address']) : 'Not provided'; ?></li>
+                <li><strong>Payment Method:</strong> <?php echo isset($order['payment_method']) ? htmlspecialchars($order['payment_method']) : 'Not provided'; ?></li>
                 <li><strong>Total Price:</strong> ₱<?php echo number_format($order['total_price'], 2); ?></li>
             </ul>
             <a href="products.php" class="btn-continue">Continue Shopping</a>

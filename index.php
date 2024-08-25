@@ -2,6 +2,11 @@
 session_start();
 require_once 'includes/connection.php'; // Include your database connection file
 
+if (isset($_SESSION['user_id'])) {
+    header("Location: home.php");
+    exit();
+}
+
 $error_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -54,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VogueVault - Welcome</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
     <style>
         body {
@@ -256,7 +262,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="password">Password:</label>
                     <div class="password-field">
                         <input type="password" id="password" name="password" required>
-                        <i class="password-toggle fas fa-eye" id="togglePassword"></i>
+                        
                         <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
                     </div>
                 </div>

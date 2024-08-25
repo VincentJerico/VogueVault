@@ -46,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
     <style>
         body {
@@ -154,6 +155,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 0.9rem;
         }
 
+        body.modal-open {
+            overflow: hidden;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -162,35 +167,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
             background-color: rgba(0,0,0,0.4);
+            overflow-y: hidden;
         }
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: auto; /* Center horizontally */
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
             max-width: 600px;
             border-radius: 8px;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow-y: auto;
-        }
-
-        #terms-text h3 {
-            color: #153448;
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
-        }
-
-        #terms-text p {
-            margin-bottom: 1em;
-            line-height: 1.6;
-        }
-
-        #terms-text strong {
-            color: #153448;
+            position: relative; /* Required for transform to work */
+            top: 50%; /* Position from the top */
+            transform: translateY(-50%); /* Move it up by 50% of its height */
         }
 
         .close {
@@ -253,7 +246,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password">Password:</label>
                 <div class="password-field">
                     <input type="password" id="password" name="password" required>
-                    <i class="password-toggle fas fa-eye" id="togglePassword"></i>
+                    
                     <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
                 </div>
             </div>
@@ -261,7 +254,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="confirm_password">Confirm Password:</label>
                 <div class="password-field">
                     <input type="password" id="confirm_password" name="confirm_password" required>
-                    <i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>
+                    
                     <!--<i class="password-toggle fas fa-eye" id="toggleConfirmPassword"></i>-->
                 </div>
             </div>
@@ -279,11 +272,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p class="index-link">Already have an account? <a href="index.php">Log in</a></p>
     </div>
 
-    <div id="terms-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>VogueVault Terms and Conditions</h2>
-            <div id="terms-text">
+<div id="terms-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>VogueVault Terms and Conditions</h2>
+        <div id="terms-text">
                 <h3>1. Introduction</h3>
                 <p>Welcome to VogueVault! These Terms and Conditions govern your use of our website, services, and products. By accessing or using VogueVault, you agree to comply with and be bound by these Terms.</p>
 
@@ -330,79 +323,77 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-            var password = document.getElementById('password').value;
-            var confirm_password = document.getElementById('confirm_password').value;
+document.addEventListener('DOMContentLoaded', function() {
+    // Password validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        var password = document.getElementById('password').value;
+        var confirm_password = document.getElementById('confirm_password').value;
 
-            // Check if the password is at least 8 characters long
-            if (password.length < 8) {
-                alert('Password must be at least 8 characters long.');
-                e.preventDefault();
-            }
+        if (password.length < 8) {
+            alert('Password must be at least 8 characters long.');
+            e.preventDefault();
+            return;
+        }
 
-            if (password != confirm_password) {
-                alert('Passwords do not match.');
-                e.preventDefault();
-            }
-        });
+        if (password != confirm_password) {
+            alert('Passwords do not match.');
+            e.preventDefault();
+            return;
+        }
+    });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            function togglePassword(inputId, toggleId) {
-                const input = document.getElementById(inputId);
-                const toggle = document.getElementById(toggleId);
-                
-                toggle.addEventListener('click', function () {
-                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                    input.setAttribute('type', type);
-                    this.classList.toggle('fa-eye-slash');
-                });
-            }
+    // Terms and Conditions Modal
+    var modal = document.getElementById("terms-modal");
+    var btn = document.getElementById("open-terms");
+    var span = document.getElementsByClassName("close")[0];
 
-            togglePassword('password', 'togglePassword');
-            togglePassword('confirm_password', 'toggleConfirmPassword');
+    function toggleBodyScroll(isModalOpen) {
+        if (isModalOpen) {
+            document.body.classList.add('modal-open');
+            document.body.style.overflow = 'hidden';
+            document.body.style.paddingRight = getScrollbarWidth() + 'px';
+        } else {
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }
+    }
 
-            document.querySelector('form').addEventListener('submit', function(e) {
-                var password = document.getElementById('password').value;
-                var confirm_password = document.getElementById('confirm_password').value;
-                if (password != confirm_password) {
-                    alert('Passwords do not match');
-                    e.preventDefault();
-                }
-            });
-            // Get the modal
-            var modal = document.getElementById("terms-modal");
-            // Get the button that opens the modal
-            var btn = document.getElementById("open-terms");
-            // Get the <span> element that closes the modal
-            var span = document.getElementsByClassName("close")[0];
-            // Function to toggle body scroll
-            function toggleBodyScroll(isModalOpen) {
-                document.body.style.overflow = isModalOpen ? 'hidden' : 'auto';
-            }
-            // Function to open modal
-            function openModal(e) {
-                e.preventDefault();
-                modal.style.display = "block";
-                toggleBodyScroll(true);
-            }
-            // Function to close modal
-            function closeModal() {
-                modal.style.display = "none";
-                toggleBodyScroll(false);
-            }
-            // When the user clicks on the button, open the modal
-            btn.onclick = openModal;
-            // When the user clicks on <span> (x), close the modal
-            span.onclick = closeModal;
-            // When the user clicks anywhere outside of the modal, close it
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    closeModal();
-                }
-            }
-        });
-    </script>
+    function getScrollbarWidth() {
+        return window.innerWidth - document.documentElement.clientWidth;
+    }
 
+    function openModal(e) {
+        e.preventDefault();
+        modal.style.display = "block";
+        toggleBodyScroll(true);
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+        toggleBodyScroll(false);
+    }
+
+    btn.addEventListener('click', openModal);
+    span.addEventListener('click', closeModal);
+
+    window.addEventListener('click', function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    });
+
+
+    // Prevent form submission if terms are not accepted
+    document.querySelector('form').addEventListener('submit', function(e) {
+        var termsCheckbox = document.getElementById('terms');
+        if (!termsCheckbox.checked) {
+            alert('You must accept the Terms and Conditions to register.');
+            e.preventDefault();
+        }
+    });
+});
+</script>
 
 </body>
 </html>

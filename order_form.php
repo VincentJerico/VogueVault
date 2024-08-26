@@ -8,13 +8,33 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Fetch product details if product_id is set
-$product = null;
-if (isset($_POST['product_id'])) {
-    $stmt = $pdo->prepare("SELECT * FROM products WHERE id = :id");
-    $stmt->bindParam(':id', $_POST['product_id'], PDO::PARAM_INT);
+$buy_all = isset($_GET['buy_all']) && $_GET['buy_all'] === 'true';
+
+// Fetch cart items if buying all
+$cart_items = [];
+if ($buy_all) {
+    $stmt = $pdo->prepare("SELECT c.id as cart_id, p.id as product_id, p.name, p.price, c.quantity 
+                            FROM cart c 
+                            JOIN products p ON c.product_id = p.id 
+                            WHERE c.user_id = :user_id");
+    $stmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
     $stmt->execute();
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+    $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    // Fetch single product details
+    if (isset($_GET['product_id'])) {
+        $stmt = $pdo->prepare("SELECT * FROM products WHERE id = :id");
+        $stmt->bindParam(':id', $_GET['product_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+        $quantity = isset($_GET['quantity']) ? intval($_GET['quantity']) : 1;
+        $cart_items[] = [
+            'product_id' => $product['id'],
+            'name' => $product['name'],
+            'price' => $product['price'],
+            'quantity' => $quantity
+        ];
+    }
 }
 
 // Fetch user details
@@ -22,6 +42,14 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");
 $stmt->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// If user has an address, use it as default
+$default_address = $user['address'] ?? '';
+
+$total_price = 0;
+foreach ($cart_items as $item) {
+    $total_price += $item['price'] * $item['quantity'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -32,13 +60,19 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
     <title>Order Form - VogueVault</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/logosquaretransparent.png">
 </head>
 <body>
     <div class="container mt-5">
         <h2>Order Form</h2>
+        <?php
+        if (isset($_SESSION['error_message'])) {
+            echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error_message']) . '</div>';
+            unset($_SESSION['error_message']);
+        }
+        ?>
         <form action="process_order.php" method="POST">
-            <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($_POST['product_id'] ?? ''); ?>">
-            <input type="hidden" name="quantity" value="<?php echo htmlspecialchars($_POST['quantity'] ?? ''); ?>">
+            <input type="hidden" name="buy_all" value="<?php echo $buy_all ? 'true' : 'false'; ?>">
             
             <div class="form-group">
                 <label for="name">Name:</label>
@@ -47,7 +81,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             <div class="form-group">
                 <label for="address">Shipping Address:</label>
-                <textarea class="form-control" id="address" name="address" required></textarea>
+                <textarea class="form-control" id="address" name="address" required><?php echo htmlspecialchars($default_address); ?></textarea>
             </div>
 
             <div class="form-group">
@@ -59,15 +93,14 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
                 </select>
             </div>
             
-            <?php if ($product): ?>
             <div class="form-group">
-                <h4>Product Information:</h4>
-                <p>Name: <?php echo htmlspecialchars($product['name']); ?></p>
-                <p>Price: ₱<?php echo number_format($product['price'], 2); ?></p>
-                <p>Quantity: <?php echo htmlspecialchars($_POST['quantity'] ?? '1'); ?></p>
-                <p>Total: ₱<?php echo number_format($product['price'] * ($_POST['quantity'] ?? 1), 2); ?></p>
+                <h4>Order Information:</h4>
+                <?php foreach ($cart_items as $item): ?>
+                    <p><?php echo htmlspecialchars($item['name']); ?> - Quantity: <?php echo htmlspecialchars($item['quantity']); ?> - Price: ₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
+                    <input type="hidden" name="items[]" value="<?php echo htmlspecialchars(json_encode($item)); ?>">
+                <?php endforeach; ?>
+                <p><strong>Total: ₱<?php echo number_format($total_price, 2); ?></strong></p>
             </div>
-            <?php endif; ?>
             
             <button type="submit" class="btn btn-primary">Place Order</button>
         </form>

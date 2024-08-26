@@ -11,7 +11,7 @@ $user_id = $_SESSION['user_id'];
 
 try {
     // Prepare and execute the statement to get user profile information
-    $stmt = $pdo->prepare("SELECT username, email, gender, birthday FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT username, email, gender, birthday, address FROM users WHERE id = ?");
     $stmt->execute([$user_id]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -22,6 +22,7 @@ try {
         echo "<p><strong>Email:</strong> " . htmlspecialchars($row['email']) . "</p>";
         echo "<p><strong>Gender:</strong> " . htmlspecialchars($row['gender']) . "</p>";
         echo "<p><strong>Birthday:</strong> " . htmlspecialchars($row['birthday']) . "</p>";
+        echo "<p><strong>Address:</strong> " . htmlspecialchars($row['address'] ?? 'Not set') . "</p>";
         echo "</div>";
     } else {
         echo "<p>Error: User not found.</p>";

@@ -25,6 +25,7 @@ $conn->close();
     <title>Manage Products - VogueVault Admin</title>
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="../assets/images/logosquaretransparent.png">
 </head>
 <body>
     <header>

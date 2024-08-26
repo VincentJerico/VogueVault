@@ -85,7 +85,7 @@ $total_pages = ceil($total_products / $perPage);
     <link rel="stylesheet" href="assets/css/get-product-style.css">
     <link rel="stylesheet" href="assets/css/owl-carousel.css">
     <link rel="stylesheet" href="assets/css/lightbox.css">
-    <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
+    <link rel="icon" type="image/x-icon" href="assets/images/logosquaretransparent.png">
 </head>
 <body>
     <!-- ***** Preloader Start ***** -->
@@ -105,15 +105,15 @@ $total_pages = ceil($total_products / $perPage);
                     <nav class="main-nav">
                         <!-- ***** Logo Start ***** -->
                         <a href="home.php" class="logo">
-                            <img src="assets/images/logo_landscape.png">
+                            <img src="assets/images/logolandscapetransparent.png" style="max-height: 100px; width: auto;">
                         </a>
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
-                            <li class="scroll-to-section"><a href="home.php">Home</a></li>
-                            <li class="scroll-to-section"><a href="home.php">Men's</a></li>
-                            <li class="scroll-to-section"><a href="home.php">Women's</a></li>
-                            <li class="scroll-to-section"><a href="home.php">Kid's</a></li>
+                            <li class="scroll-to-section"><a href="home.php #top">Home</a></li>
+                            <li class="scroll-to-section"><a href="home.php #men">Men's</a></li>
+                            <li class="scroll-to-section"><a href="home.php #women">Women's</a></li>
+                            <li class="scroll-to-section"><a href="home.php #kids">Kid's</a></li>
                             <li class="submenu">
                                 <a href="javascript:;">Pages</a>
                                 <ul>
@@ -132,7 +132,7 @@ $total_pages = ceil($total_products / $perPage);
                                 </ul>
                             </li>
                             -->
-                            <li class="scroll-to-section"><a href="home.php">Explore</a></li>
+                            <li class="scroll-to-section"><a href="home.php #explore">Explore</a></li>
                             <li class="profile-nav"><a href="javascript:void(0);" id="profileToggle">Profile</a></li>
                             <li class=""><a href="logout.php">Logout</a></li>
                         </ul>        
@@ -216,7 +216,6 @@ $total_pages = ceil($total_products / $perPage);
                             <div class="hover-content">
                                 <ul>
                                     <li><a href="#" class="view-product-btn" data-product-id="<?php echo htmlspecialchars($product['id']); ?>"><i class="fa fa-eye"></i></a></li>
-                                    <li><a href="single-product.php?id=<?php echo htmlspecialchars($product['id']); ?>" class="view-product-btn"><i class="fa fa-shopping-cart"></i></a></li>
                                 </ul>
                             </div>
                             <?php
@@ -371,82 +370,134 @@ $total_pages = ceil($total_products / $perPage);
     </script>
 
     <script>
-    $(document).ready(function() {
-        $("#profileToggle").click(function() {
-            $("#profileSlider").toggleClass("active");
-            
-            if ($("#profileSlider").hasClass("active")) {
-                // Load profile information
-                $.ajax({
-                    url: 'get_profile.php',
-                    type: 'GET',
-                    success: function(response) {
-                        $("#profileInfo").html(response);
-                    },
-                    error: function() {
-                        $("#profileInfo").html("<p>Error loading profile information.</p>");
-                    }
-                });
+        $(document).ready(function() {
+            $("#profileToggle").click(function() {
+                $("#profileSlider").toggleClass("active");
+                if ($("#profileSlider").hasClass("active")) {
+                    loadProfileInfo();
+                    loadCartItems();
+                }
+            });
 
-                // Load cart items
-                $.ajax({
-                    url: 'get_cart.php',
-                    type: 'GET',
-                    success: function(response) {
-                        const data = JSON.parse(response);
-                        if (data.success) {
-                            let cartHtml = '<h3>Your Cart</h3>';
-                            if (data.cart_items.length > 0) {
-                                data.cart_items.forEach(item => {
-                                    cartHtml += `
-                                        <div class="cart-item">
-                                            <p>${item.name} - Quantity: ${item.quantity} - Price: ₱${(item.price * item.quantity).toFixed(2)}</p>
-                                            <button class="buy-now-btn" data-cart-id="${item.cart_id}">Buy Now</button>
-                                        </div>
-                                    `;
-                                });
-                            } else {
-                                cartHtml += '<p>Your cart is empty.</p>';
-                            }
-                            $("#cartItems").html(cartHtml);
+            $("#editProfileBtn").click(function() {
+                window.location.href = "edit_profile.php";
+            });
 
-                            // Add event listener for Buy Now buttons
-                            $(".buy-now-btn").click(function() {
-                                const cartId = $(this).data('cart-id');
-                                $.ajax({
-                                    url: 'place-order.php',
-                                    type: 'POST',
-                                    data: { cart_id: cartId },
-                                    success: function(response) {
-                                        const data = JSON.parse(response);
-                                        if (data.success) {
-                                            alert(data.message);
-                                            // Reload cart items
-                                            $("#profileToggle").click().click();
-                                        } else {
-                                            alert('Failed to place order: ' + data.message);
-                                        }
-                                    },
-                                    error: function() {
-                                        alert('Error placing order.');
-                                    }
-                                });
+            $(document).click(function(event) {
+                if (!$(event.target).closest("#profileSlider, #profileToggle").length) {
+                    $("#profileSlider").removeClass("active");
+                }
+            });
+
+            $(document).on('click', '.buy-now-btn', function() {
+                var productId = $(this).data('product-id');
+                var quantity = $('#quantity').val() || 1;
+
+                window.location.href = 'order_form.php?product_id=' + productId + '&quantity=' + quantity;
+            });
+        });
+
+        function loadProfileInfo() {
+            $.ajax({
+                url: 'get_profile.php',
+                type: 'GET',
+                success: function(response) {
+                    $("#profileInfo").html(response);
+                },
+                error: function() {
+                    $("#profileInfo").html("<p>Error loading profile information.</p>");
+                }
+            });
+        }
+
+        function loadCartItems() {
+            $.ajax({
+                url: 'get_cart.php',
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        let cartHtml = '<h3>Your Cart</h3>';
+                        if (response.cart_items.length > 0) {
+                            response.cart_items.forEach(item => {
+                                cartHtml += `
+                                    <div class="cart-item">
+                                        <p>${item.name} - Quantity: ${item.quantity} - Price: ₱${(item.price * item.quantity).toFixed(2)}</p>
+                                        <button class="buy-now-btn" data-product-id="${item.product_id}" data-cart-id="${item.cart_id}">Buy Now</button>
+                                    </div>
+                                `;
                             });
+                            cartHtml += `
+                                <button id="buyAllBtn" style="
+                                    background-color: #153448;
+                                    color: #fff;
+                                    border: none;
+                                    padding: 10px;
+                                    cursor: pointer;
+                                    font-size: 16px;
+                                    border-radius: 3px;
+                                    transition: background-color 0.3s ease;
+                                ">Buy All</button>
+                            `;
                         } else {
-                            $("#cartItems").html("<p>Error loading cart items.</p>");
+                            cartHtml += '<p>Your cart is empty.</p>';
                         }
-                    },
-                    error: function() {
+                        $("#cartItems").html(cartHtml);
+
+                        // Add click event and hover effect for Buy All button
+                        $("#buyAllBtn").click(function() {
+                            window.location.href = 'order_form.php?buy_all=true';
+                        }).hover(
+                            function() {
+                                $(this).css("background-color", "#0d2a3a");
+                            },
+                            function() {
+                                $(this).css("background-color", "#153448");
+                            }
+                        );
+                    } else {
                         $("#cartItems").html("<p>Error loading cart items.</p>");
                     }
-                });
-            }
-        });
+                },
+                error: function() {
+                    $("#cartItems").html("<p>Error loading cart items.</p>");
+                }
+            });
+        }
 
-        $("#editProfileBtn").click(function() {
-            window.location.href = "edit_profile.php";
-        });
-    });
+        function clearCartDisplay() {
+            $("#cartItems").html('<h3>Your Cart</h3><p>Your cart is empty.</p>');
+        }
+
+        function editAddress() {
+            $('#addressDisplay').hide();
+            $('#addressEditForm').show();
+        }
+
+        function cancelEditAddress() {
+            $('#addressDisplay').show();
+            $('#addressEditForm').hide();
+        }
+
+        function saveAddress() {
+            var newAddress = $('#newAddress').val();
+            $.ajax({
+                url: 'update_address.php',
+                type: 'POST',
+                data: {address: newAddress},
+                success: function(response) {
+                    if(response === 'success') {
+                        $('#addressDisplay').text(newAddress);
+                        cancelEditAddress();
+                        loadProfileInfo();
+                    } else {
+                        alert('Failed to update address');
+                    }
+                },
+                error: function() {
+                    alert('Error updating address');
+                }
+            });
+        }
     </script>
 
     <script>

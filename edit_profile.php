@@ -27,14 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
     $gender = filter_input(INPUT_POST, 'gender', FILTER_SANITIZE_STRING);
     $birthday = filter_input(INPUT_POST, 'birthday', FILTER_SANITIZE_STRING);
+    $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
 
-    if (!$username || !$email || !$gender || !$birthday) {
+    if (!$username || !$email || !$gender || !$birthday || !$address) {
         die('Invalid input data');
     }
-
+    
     // Use PDO to update the user's information
-    $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, gender = ?, birthday = ? WHERE id = ?");
-    $stmt->execute([$username, $email, $gender, $birthday, $user_id]);
+    $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, gender = ?, birthday = ?, address = ? WHERE id = ?");
+    $stmt->execute([$username, $email, $gender, $birthday, $address, $user_id]);
 
     $success_message = "Profile updated successfully!";
 }
@@ -47,7 +48,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 // Use PDO to retrieve the user's information
-$stmt = $pdo->prepare("SELECT username, email, gender, birthday FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT username, email, gender, birthday, address FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
@@ -60,7 +61,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
     <title>Edit Profile</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="assets/images/Logo_Transparent.png">
+    <link rel="icon" type="image/x-icon" href="assets/images/logosquaretransparent.png">
     <style>
         * {
             margin: 0;
@@ -122,15 +123,28 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
         input[type="text"],
         input[type="email"],
         input[type="date"],
-        select {
+        select,
+        textarea {
             width: 100%;
             padding: 0.5rem;
             border: 1px solid #ced4da;
             border-radius: 4px;
             font-size: 1rem;
-            height: calc(2.5rem + 2px);
             box-sizing: border-box;
         }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        select {
+            height: calc(2.5rem + 2px);
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
 
         select {
             background-color: #fff;
@@ -225,6 +239,10 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
             <div class="form-group">
                 <label for="birthday">Birthday</label>
                 <input type="date" id="birthday" name="birthday" value="<?php echo htmlspecialchars($row['birthday']); ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea type="text" id="address" name="address" required><?php echo htmlspecialchars($row['address'] ?? ''); ?></textarea>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn primary">Update</button>

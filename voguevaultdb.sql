@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 24, 2024 at 11:55 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Aug 26, 2024 at 06:19 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -35,13 +35,6 @@ CREATE TABLE `cart` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `cart`
---
-
-INSERT INTO `cart` (`id`, `user_id`, `product_id`, `quantity`, `created_at`, `updated_at`) VALUES
-(3, 3, 6, 1, '2024-08-24 16:33:31', '2024-08-24 16:33:31');
 
 -- --------------------------------------------------------
 
@@ -73,7 +66,97 @@ INSERT INTO `orders` (`id`, `user_id`, `product_id`, `quantity`, `total_price`, 
 (6, 1, 5, 1, 4099.00, 'pending', '2024-08-24 21:02:46', NULL, NULL),
 (7, 1, 6, 3, 40320.00, 'pending', '2024-08-24 21:24:34', NULL, NULL),
 (8, 1, 10, 3, 18147.00, 'pending', '2024-08-24 21:24:42', NULL, NULL),
-(9, 1, 6, 1, 13440.00, 'pending', '2024-08-24 21:25:38', 'Diyan lang sa may tabi', 'cash_on_delivery');
+(9, 1, 6, 1, 13440.00, 'pending', '2024-08-24 21:25:38', 'Diyan lang sa may tabi', 'cash_on_delivery'),
+(10, 1, 6, 1, 13440.00, 'pending', '2024-08-25 19:48:36', NULL, NULL),
+(11, 1, 10, 1, 6049.00, 'pending', '2024-08-25 19:55:51', NULL, NULL),
+(12, 1, 10, 1, 6049.00, 'pending', '2024-08-25 19:55:51', NULL, NULL),
+(13, 1, 14, 1, 6399.00, 'pending', '2024-08-25 19:56:16', NULL, NULL),
+(14, 1, 9, 1, 799.00, 'pending', '2024-08-25 20:34:32', NULL, NULL),
+(15, 1, 5, 1, 4099.00, 'pending', '2024-08-25 20:35:08', NULL, NULL),
+(16, 1, 13, 1, 7399.00, 'pending', '2024-08-25 20:35:17', NULL, NULL),
+(17, 1, 10, 1, 6049.00, 'pending', '2024-08-25 21:07:55', NULL, NULL),
+(18, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:37', NULL, NULL),
+(19, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:39', NULL, NULL),
+(20, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:39', NULL, NULL),
+(21, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:40', NULL, NULL),
+(22, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:40', NULL, NULL),
+(23, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:40', NULL, NULL),
+(24, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:40', NULL, NULL),
+(25, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:40', NULL, NULL),
+(26, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:40', NULL, NULL),
+(27, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:41', NULL, NULL),
+(28, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:41', NULL, NULL),
+(29, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:41', NULL, NULL),
+(30, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:41', NULL, NULL),
+(31, 1, 5, 1, 4099.00, 'pending', '2024-08-25 21:20:41', NULL, NULL),
+(32, 1, 9, 1, 799.00, 'pending', '2024-08-25 21:20:55', NULL, NULL),
+(33, 1, 9, 1, 799.00, 'pending', '2024-08-25 21:20:56', NULL, NULL),
+(34, 1, 9, 1, 799.00, 'pending', '2024-08-25 21:20:56', NULL, NULL),
+(35, 1, 9, 1, 799.00, 'pending', '2024-08-25 21:20:56', NULL, NULL),
+(36, 1, 9, 1, 799.00, 'pending', '2024-08-25 21:20:56', NULL, NULL),
+(37, 1, 9, 1, 799.00, 'pending', '2024-08-25 21:20:56', NULL, NULL),
+(38, 1, 9, 1, 799.00, 'pending', '2024-08-25 21:20:58', NULL, NULL),
+(39, 1, 9, 1, 799.00, 'pending', '2024-08-25 21:20:58', NULL, NULL),
+(40, 1, 9, 1, 799.00, 'pending', '2024-08-25 21:20:58', NULL, NULL),
+(41, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:17:57', NULL, NULL),
+(42, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:17:58', NULL, NULL),
+(43, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:17:58', NULL, NULL),
+(44, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:17:59', NULL, NULL),
+(45, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:18:00', NULL, NULL),
+(46, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:18:00', NULL, NULL),
+(47, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:18:00', NULL, NULL),
+(48, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:18:00', NULL, NULL),
+(49, 1, 9, 1, 799.00, 'pending', '2024-08-26 02:18:17', NULL, NULL),
+(50, 1, 9, 1, 799.00, 'pending', '2024-08-26 02:18:17', NULL, NULL),
+(51, 1, 9, 1, 799.00, 'pending', '2024-08-26 02:18:17', NULL, NULL),
+(52, 1, 14, 1, 6399.00, 'pending', '2024-08-26 02:18:29', NULL, NULL),
+(53, 1, 14, 1, 6399.00, 'pending', '2024-08-26 02:18:29', NULL, NULL),
+(54, 1, 10, 1, 6049.00, 'pending', '2024-08-26 02:18:57', NULL, NULL),
+(55, 1, 10, 1, 6049.00, 'pending', '2024-08-26 02:18:58', NULL, NULL),
+(56, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:30:27', 'dyan lang sa tabi', 'paypal'),
+(57, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:30:56', NULL, NULL),
+(58, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:30:57', NULL, NULL),
+(59, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:30:57', NULL, NULL),
+(60, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:30:58', NULL, NULL),
+(61, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:30:58', NULL, NULL),
+(62, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:30:58', NULL, NULL),
+(63, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:30:59', NULL, NULL),
+(64, 1, 6, 1, 13440.00, 'pending', '2024-08-26 02:30:59', NULL, NULL),
+(65, 1, 8, 1, 899.00, 'pending', '2024-08-26 02:32:03', NULL, NULL),
+(66, 1, 8, 1, 899.00, 'pending', '2024-08-26 02:32:04', NULL, NULL),
+(67, 1, 8, 1, 899.00, 'pending', '2024-08-26 02:32:04', NULL, NULL),
+(68, 1, 8, 1, 899.00, 'pending', '2024-08-26 02:32:04', NULL, NULL),
+(69, 1, 8, 1, 899.00, 'pending', '2024-08-26 02:32:05', NULL, NULL),
+(70, 1, 8, 1, 899.00, 'pending', '2024-08-26 02:32:06', NULL, NULL),
+(71, 1, 5, 1, 4099.00, 'pending', '2024-08-26 02:37:46', NULL, NULL),
+(72, 1, 5, 1, 4099.00, 'pending', '2024-08-26 02:37:47', NULL, NULL),
+(73, 1, 5, 1, 4099.00, 'pending', '2024-08-26 02:37:47', NULL, NULL),
+(74, 1, 5, 1, 4099.00, 'pending', '2024-08-26 02:39:07', NULL, NULL),
+(75, 1, 5, 1, 4099.00, 'pending', '2024-08-26 02:39:08', NULL, NULL),
+(76, 1, 5, 1, 4099.00, 'pending', '2024-08-26 02:39:08', NULL, NULL),
+(77, 1, 10, 1, 6049.00, 'pending', '2024-08-26 02:42:59', NULL, NULL),
+(78, 1, 6, 4, 53760.00, 'pending', '2024-08-26 03:04:15', 'dyan lang ulit', 'cash_on_delivery'),
+(79, 1, 10, 3, 18147.00, 'pending', '2024-08-26 03:04:15', 'dyan lang ulit', 'cash_on_delivery'),
+(80, 1, 13, 2, 14798.00, 'pending', '2024-08-26 03:04:15', 'dyan lang ulit', 'cash_on_delivery'),
+(81, 1, 8, 2, 1798.00, 'pending', '2024-08-26 03:04:15', 'dyan lang ulit', 'cash_on_delivery'),
+(82, 1, 5, 1, 4099.00, 'pending', '2024-08-26 03:04:15', 'dyan lang ulit', 'cash_on_delivery'),
+(83, 1, 14, 1, 6399.00, 'pending', '2024-08-26 03:04:15', 'dyan lang ulit', 'cash_on_delivery'),
+(84, 1, 10, 1, 6049.00, 'pending', '2024-08-26 03:15:42', 'dyan lang ulit', 'cash_on_delivery'),
+(85, 1, 9, 1, 799.00, 'pending', '2024-08-26 03:15:42', 'dyan lang ulit', 'cash_on_delivery'),
+(86, 1, 3, 1, 6199.00, 'pending', '2024-08-26 03:41:37', 'Dyan lang sa may tabi', 'cash_on_delivery'),
+(87, 1, 10, 5, 30245.00, 'pending', '2024-08-26 03:57:35', 'Sa may tabi', 'credit_card'),
+(88, 1, 11, 1, 4599.00, 'pending', '2024-08-26 03:57:35', 'Sa may tabi', 'credit_card'),
+(89, 1, 8, 1, 899.00, 'pending', '2024-08-26 03:58:33', 'Dyan lang sa may tabi', 'cash_on_delivery'),
+(90, 1, 9, 1, 799.00, 'pending', '2024-08-26 03:59:22', 'dyan lang', 'cash_on_delivery'),
+(91, 1, 9, 1, 799.00, 'pending', '2024-08-26 04:00:01', 'dyan lang haha', 'cash_on_delivery'),
+(92, 1, 3, 1, 6199.00, 'pending', '2024-08-26 04:04:18', 'dyan lang haha', 'cash_on_delivery'),
+(93, 1, 9, 1, 799.00, 'pending', '2024-08-26 04:06:38', 'dyan lang haha', 'cash_on_delivery'),
+(94, 1, 9, 1, 799.00, 'pending', '2024-08-26 04:06:47', 'dyan lang haha', 'cash_on_delivery'),
+(95, 1, 9, 1, 799.00, 'pending', '2024-08-26 04:15:48', 'dyan lang haha', 'cash_on_delivery'),
+(96, 1, 5, 1, 4099.00, 'pending', '2024-08-26 04:16:25', 'dyan lang haha', 'cash_on_delivery'),
+(97, 1, 4, 1, 1990.00, 'pending', '2024-08-26 04:16:25', 'dyan lang haha', 'cash_on_delivery'),
+(98, 1, 3, 1, 6199.00, 'pending', '2024-08-26 04:16:25', 'dyan lang haha', 'cash_on_delivery'),
+(99, 1, 6, 1, 13440.00, 'pending', '2024-08-26 04:16:25', 'dyan lang haha', 'cash_on_delivery');
 
 -- --------------------------------------------------------
 
@@ -113,18 +196,18 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `description`, `category`, `price`, `image`, `created_at`, `rating`, `rating_count`, `stock`) VALUES
-(3, '(Men\'s) Modular Jacket', 'Carhartt Modular Jacket', 'Men\'s', 6199.00, '../uploads/men-1modularjacket.png', '2024-08-23 10:01:18', 4.8, 5, 100),
-(4, '(Men\'s) Cargo Pants', 'Uniqlo Cargo Pants', 'Men\'s', 1990.00, '../uploads/men-2pants.png', '2024-08-23 10:01:52', 4.75, 4, 100),
-(5, '(Men\'s) Converse', 'Converse Chuck \'70s', 'Men\'s', 4099.00, '../uploads/men-3shoes.jpg', '2024-08-23 10:03:22', 5, 4, 95),
-(6, '(Men\'s) Aviator Sunglasses', 'Ray-Ban Polarized Metal Aviator Sunglasses', 'Men\'s', 13440.00, '../uploads/men-4rayban.png', '2024-08-23 10:04:55', 4.78571, 14, 95),
+(3, '(Men\'s) Modular Jacket', 'Carhartt Modular Jacket', 'Men\'s', 6199.00, '../uploads/men-1modularjacket.png', '2024-08-23 10:01:18', 4.8, 5, 97),
+(4, '(Men\'s) Cargo Pants', 'Uniqlo Cargo Pants', 'Men\'s', 1990.00, '../uploads/men-2pants.png', '2024-08-23 10:01:52', 4.75, 4, 99),
+(5, '(Men\'s) Converse', 'Converse Chuck \'70s', 'Men\'s', 4099.00, '../uploads/men-3shoes.jpg', '2024-08-23 10:03:22', 5, 4, 72),
+(6, '(Men\'s) Aviator Sunglasses', 'Ray-Ban Polarized Metal Aviator Sunglasses', 'Men\'s', 13440.00, '../uploads/men-4rayban.png', '2024-08-23 10:04:55', 4.78571, 14, 72),
 (7, '(Women\'s) Cap-Sleeve Tshirt', 'Uniqlo Cap-Sleeve Tshirt', 'Women\'s', 499.00, '../uploads/woman-1shirt.png', '2024-08-23 10:08:09', 4.66667, 6, 90),
-(8, '(Women\'s) Oversized Japanese Style Cardigan', 'Uniqlo Oversized Japanese Style Cardigan', 'Women\'s', 899.00, '../uploads/woman-2cardigan.png', '2024-08-23 10:10:09', 5, 2, 100),
-(9, '(Women\'s) Wide-Leg Trouser', 'Uniqlo Wide-Leg Trouser', 'Women\'s', 799.00, '../uploads/woman-3trouser.png', '2024-08-23 10:12:30', 4.75, 8, 100),
-(10, '(Women\'s) Puma', 'Puma Palermo Leather Shoes', 'Women\'s', 6049.00, '../uploads/woman-4shoes.png', '2024-08-23 10:15:50', 5, 2, 97),
-(11, '(Kid\'s) School Collection', 'Back-To-School Collection for kids', 'Kid\'s', 4599.00, '../uploads/kid-01.jpg', '2024-08-23 10:25:26', 0, 0, 100),
+(8, '(Women\'s) Oversized Japanese Style Cardigan', 'Uniqlo Oversized Japanese Style Cardigan', 'Women\'s', 899.00, '../uploads/woman-2cardigan.png', '2024-08-23 10:10:09', 5, 2, 91),
+(9, '(Women\'s) Wide-Leg Trouser', 'Uniqlo Wide-Leg Trouser', 'Women\'s', 799.00, '../uploads/woman-3trouser.png', '2024-08-23 10:12:30', 4.75, 8, 81),
+(10, '(Women\'s) Puma', 'Puma Palermo Leather Shoes', 'Women\'s', 6049.00, '../uploads/woman-4shoes.png', '2024-08-23 10:15:50', 5, 2, 82),
+(11, '(Kid\'s) School Collection', 'Back-To-School Collection for kids', 'Kid\'s', 4599.00, '../uploads/kid-01.jpg', '2024-08-23 10:25:26', 0, 0, 99),
 (12, '(Kid\'s) Summer Collection', 'Summer Outfit for kids', 'Kid\'s', 2799.00, '../uploads/kid-02.jpg', '2024-08-23 10:32:46', 0, 0, 100),
-(13, '(Kid\'s) Casual Collection', 'Casual Collection for kids', 'Kid\'s', 7399.00, '../uploads/kid-03.jpg', '2024-08-23 10:37:53', 0, 0, 100),
-(14, '(Kid\'s) Winter Collection', 'Winter Outfit for kids', 'Kid\'s', 6399.00, '../uploads/kid-4.png', '2024-08-23 10:39:44', 0, 0, 100);
+(13, '(Kid\'s) Casual Collection', 'Casual Collection for kids', 'Kid\'s', 7399.00, '../uploads/kid-03.jpg', '2024-08-23 10:37:53', 5, 2, 97),
+(14, '(Kid\'s) Winter Collection', 'Winter Outfit for kids', 'Kid\'s', 6399.00, '../uploads/kid-4.png', '2024-08-23 10:39:44', 5, 2, 96);
 
 -- --------------------------------------------------------
 
@@ -141,17 +224,17 @@ CREATE TABLE `users` (
   `gender` enum('male','female','other') DEFAULT NULL,
   `birthday` date DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `reset_token` varchar(100) DEFAULT NULL
+  `reset_token` varchar(100) DEFAULT NULL,
+  `address` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `gender`, `birthday`, `created_at`, `reset_token`) VALUES
-(1, 'testuser1', '$2y$10$bp.moFEisbTkVUDFoEV/YekwEuxOVJ69fIJ62L5pdndXc3Z90QJWm', 'testuser1@example.com', 'customer', 'male', '2003-12-07', '2024-08-23 08:55:28', '78cb8a3536851e223fb1fe496e16787277ead06361e040247eef36779eaa532c62df1aa0b618ab57c575b7b16745f19c5f19'),
-(2, 'admin1', '$2y$10$hRChidKpexOrdui/zLWSk.3ST9GIbtj2JCLSJThbC5FXspfnaZcqq', 'admin1@example.com', 'admin', NULL, NULL, '2024-08-23 09:48:31', NULL),
-(3, 'Rence', '$2y$10$dVlli./KQW7MeFn42nBZeuTHV6bHQETw8kR.d04zb1sfjho/QOFoW', 'rence@gmail.com', 'customer', 'other', '2003-04-17', '2024-08-24 16:28:56', NULL);
+INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `gender`, `birthday`, `created_at`, `reset_token`, `address`) VALUES
+(1, 'testuser1', '$2y$10$bp.moFEisbTkVUDFoEV/YekwEuxOVJ69fIJ62L5pdndXc3Z90QJWm', 'testuser1@example.com', 'customer', 'male', '2003-12-07', '2024-08-23 08:55:28', '0b012b1e4c42e7b3d4b35cc868973c523d7eee3e09e48dc490eb1b313493ede858ceea78c0e5955a7cf8ec71b22bd011e1ea', 'dyan lang haha'),
+(2, 'admin1', '$2y$10$hRChidKpexOrdui/zLWSk.3ST9GIbtj2JCLSJThbC5FXspfnaZcqq', 'admin1@example.com', 'admin', NULL, NULL, '2024-08-23 09:48:31', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -202,13 +285,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- AUTO_INCREMENT for table `order_items`

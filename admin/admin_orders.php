@@ -38,7 +38,8 @@ $pdo = null;
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../assets/fonts/poppins.css">
-    <link rel="icon" type="image/x-icon" href="../assets/images/Logo_Transparent.png">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="../assets/images/logosquaretransparent.png">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -124,7 +125,7 @@ $pdo = null;
             <div class="row align-items-center">
                 <div class="col-md-3 col-lg-2">
                     <a href="admin_panel.php" class="logo">
-                        <img src="../assets/images/white-logo.png">
+                        <img src="../assets/images/logowhitelctransparent.png" style="max-height: 80px; width: auto;">
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-8">
@@ -227,6 +228,26 @@ $pdo = null;
             </main>
         </div>
     </div>
+    <!-- ***** Footer Start ***** -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="under-footer">
+                        <div class="logo">
+                            <img src="../assets/images/white-logo.png" alt="">
+                        </div>
+                        <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved. <br> This website is for school project purposes only</p>
+                        <ul>
+                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/jquery-3.5.1.slim.min.js"></script>

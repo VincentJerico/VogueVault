@@ -2,16 +2,13 @@
 session_start();
 require_once 'includes/connection.php';
 
-// Fetch the last order details
-$stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = :user_id ORDER BY id DESC LIMIT 1");
-$stmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
-$stmt->execute();
-$order = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$order) {
-    echo "No recent order found!";
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['last_order'])) {
+    header("Location: index.php");
     exit();
 }
+
+$order = $_SESSION['last_order'];
+unset($_SESSION['last_order']); // Clear the order from session after displaying
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +20,7 @@ if (!$order) {
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/logosquaretransparent.png">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -92,15 +90,28 @@ if (!$order) {
             <h2>Order Confirmation</h2>
             <p>Thank you for your purchase! Here are your order details:</p>
             <ul class="order-details">
-                <li><strong>Order ID:</strong> <?php echo htmlspecialchars($order['id']); ?></li>
-                <li><strong>Product ID:</strong> <?php echo htmlspecialchars($order['product_id']); ?></li>
-                <li><strong>Quantity:</strong> <?php echo htmlspecialchars($order['quantity']); ?></li>
-                <li><strong>Shipping Address:</strong> <?php echo isset($order['shipping_address']) ? htmlspecialchars($order['shipping_address']) : 'Not provided'; ?></li>
-                <li><strong>Payment Method:</strong> <?php echo isset($order['payment_method']) ? htmlspecialchars($order['payment_method']) : 'Not provided'; ?></li>
+                <?php foreach ($order['items'] as $item): ?>
+                    <li>
+                        <strong>Product:</strong> <?php echo htmlspecialchars($item['name']); ?><br>
+                        <strong>Quantity:</strong> <?php echo htmlspecialchars($item['quantity']); ?><br>
+                        <strong>Price:</strong> ₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?>
+                    </li>
+                <?php endforeach; ?>
+                <li><strong>Shipping Address:</strong> <?php echo htmlspecialchars($order['shipping_address']); ?></li>
+                <li><strong>Payment Method:</strong> <?php echo htmlspecialchars($order['payment_method']); ?></li>
                 <li><strong>Total Price:</strong> ₱<?php echo number_format($order['total_price'], 2); ?></li>
             </ul>
-            <a href="products.php" class="btn-continue">Continue Shopping</a>
+            <a href="home.php" class="btn-continue">Continue Shopping</a>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            if (window.opener && !window.opener.closed) {
+                window.opener.clearCartDisplay();
+            }
+        });
+    </script>
 </body>
 </html>

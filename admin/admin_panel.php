@@ -30,7 +30,7 @@ $recentActivity = executeQuery("
         SELECT 'New Order' as type, CONCAT('Order ID: ', id) as detail, created_at FROM orders
     ) as activity
     ORDER BY created_at DESC
-    LIMIT 5
+    LIMIT 10
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 $pdo = null;
@@ -51,9 +51,11 @@ $pdo = null;
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .sidebar {
-            height: 100vh;
             background-color: white;
             border-right: 1px solid #dee2e6;
             padding-top: 20px;
@@ -90,12 +92,33 @@ $pdo = null;
             transform: translateY(-50%);
         }
         .main-content {
-            margin-left: 200px;
+            flex: 1;
+            overflow-y: auto;
         }
         .card {
             border: none;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             margin-bottom: 20px;
+        }
+        .recent-activity {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        footer {
+            background-color: #153448;
+            color: white;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+        .footer-content {
+            text-align: center;
+        }
+        .footer-content .logo img {
+            max-height: 60px;
+        }
+        .footer-content p {
+            color: white;
+            font-size: 0.9rem;
         }
         @media (max-width: 767.98px) {
             .sidebar {
@@ -128,8 +151,8 @@ $pdo = null;
         </div>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid flex-grow-1">
+        <div class="row h-100">
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky">
                     <ul class="nav flex-column">
@@ -141,11 +164,6 @@ $pdo = null;
                         <li class="nav-item">
                             <a class="nav-link" href="./admin_users.php">
                                 <i class="bi bi-people-fill me-2"></i>Users
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-tags-fill me-2"></i>Categories
                             </a>
                         </li>
                         <li class="nav-item">
@@ -187,26 +205,32 @@ $pdo = null;
                 <div class="row mb-4">
                     <div class="col-md-4 mb-4">
                         <div class="card text-center h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Products</h5>
-                                <p class="card-text display-4"><?php echo htmlspecialchars($total_products); ?></p>
-                            </div>
+                            <a href="admin_products.php">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Products</h5>
+                                    <p class="card-text display-4"><?php echo htmlspecialchars($total_products); ?></p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-4">
                         <div class="card text-center h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Users</h5>
-                                <p class="card-text display-4"><?php echo htmlspecialchars($total_users); ?></p>
-                            </div>
+                            <a href="admin_users.php">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Users</h5>
+                                    <p class="card-text display-4"><?php echo htmlspecialchars($total_users); ?></p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-4">
                         <div class="card text-center h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Orders</h5>
-                                <p class="card-text display-4"><?php echo htmlspecialchars($total_orders); ?></p>
-                            </div>
+                            <a href="admin_orders.php">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Orders</h5>
+                                    <p class="card-text display-4"><?php echo htmlspecialchars($total_orders); ?></p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -215,7 +239,7 @@ $pdo = null;
                     <div class="card-header">
                         <h5 class="mb-0">Recent Activity</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body recent-activity">
                         <ul class="list-group list-group-flush">
                             <?php foreach ($recentActivity as $activity): ?>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -229,21 +253,17 @@ $pdo = null;
             </main>
         </div>
     </div>
-    <!-- ***** Footer Start ***** -->
+
+    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="under-footer">
+                    <div class="footer-content">
                         <div class="logo">
-                            <img src="../assets/images/white-logo.png" alt="">
+                            <img src="../assets/images/white-logo.png" alt="VogueVault Logo">
                         </div>
                         <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved. <br> This website is for school project purposes only</p>
-                        <ul>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                        </ul>
                     </div>
                 </div>
             </div>

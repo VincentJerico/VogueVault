@@ -45,8 +45,50 @@ $pdo = null;
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
         }
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-wrap {
+            flex: 1 0 auto;
+        }
+
+        footer {
+            flex-shrink: 0;
+            background-color: #153448; /* Match your design */
+            color: white;
+            padding: 20px 0;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-content .logo img {
+            max-height: 60px;
+        }
+
+        .footer-content p {
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Adjust the main content area to account for the footer */
+        main {
+            padding-bottom: 20px; /* Add some space above the footer */
+        }
         .sidebar {
-            height: 100vh;
+            height: auto;
+            max-height: calc(100vh - 100px); /* Adjust based on your top bar height */
+            overflow-y: auto;
             background-color: white;
             border-right: 1px solid #dee2e6;
             padding-top: 20px;
@@ -95,6 +137,23 @@ $pdo = null;
             background-color: #fff;
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
         }
+        .table-container {
+            max-height: 400px; /* Adjust this value as needed */
+            overflow-y: auto;
+        }
+
+        .table-container table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-container thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f2f2f2;
+            z-index: 1;
+        }
         th, td {
             padding: 12px;
             text-align: left;
@@ -120,134 +179,133 @@ $pdo = null;
     </style>
 </head>
 <body>
-    <div class="top-bar">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-md-3 col-lg-2">
-                    <a href="admin_panel.php" class="logo">
-                        <img src="../assets/images/logowhitelctransparent.png" style="max-height: 80px; width: auto;">
-                    </a>
-                </div>
-                <div class="col-md-6 col-lg-8">
-                    <div class="search-bar">
-                        <i class="bi bi-search text-muted"></i>
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search...">
-                    </div>
-                </div>
-                <div class="col-md-3 col-lg-2 text-end">
-                    <span class="text-white">Admin</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container-fluid">
-        <div class="row">
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <div class="position-sticky">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="./admin_panel.php">
-                                <i class="bi bi-house-fill me-2"></i>Home
+    <div class="page-container">
+        <div class="content-wrap">
+            <div class="top-bar">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 col-lg-2">
+                            <a href="admin_panel.php" class="logo">
+                                <img src="../assets/images/logowhitelctransparent.png" style="max-height: 80px; width: auto;">
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="./admin_users.php">
-                                <i class="bi bi-people-fill me-2"></i>Users
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-tags-fill me-2"></i>Categories
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="./admin_products.php">
-                                <i class="bi bi-box me-2"></i>Products
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="./admin_orders.php">
-                                <i class="bi bi-cart-fill me-2"></i>Orders
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="./admin_analytics.php">
-                                <i class="bi bi-bar-chart-fill me-2"></i>Analytics
-                            </a>
-                        </li>
-                    </ul>
-                    <hr>
-                    <div class="d-flex align-items-center justify-content-center">
-                        <a href="../logout.php" class="btn btn-outline-danger w-100">
-                            <i class="bi bi-box-arrow-right me-2"></i>Logout
-                        </a>
-                    </div>
-                </div>
-            </nav>
-
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h2>Orders</h2>
-                </div>
-
-                <input type="text" id="search" class="form-control" placeholder="Search Orders..." onkeyup="searchTable()">
-
-                <div class="table-responsive">
-                    <table id="ordersTable" class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Order #</th>
-                                <th>User #</th>
-                                <th>Total Price</th>
-                                <th>Status</th>
-                                <th>Date Created</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            if ($stmt) {
-                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                    echo "<tr>";
-                                    echo "<td>" . htmlspecialchars($row["id"]) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
-                                    echo "<td>₱" . htmlspecialchars($row["total_price"]) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row["status"]) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row["created_at"]) . "</td>";
-                                    echo "<td><a href='order_details.php?order_id=" . htmlspecialchars($row["id"]) . "' class='btn btn-sm btn-outline-primary'>View Items</a></td>";
-                                    echo "</tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='6'>No orders found</td></tr>";
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
-            </main>
-        </div>
-    </div>
-    <!-- ***** Footer Start ***** -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="under-footer">
-                        <div class="logo">
-                            <img src="../assets/images/white-logo.png" alt="">
                         </div>
-                        <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved. <br> This website is for school project purposes only</p>
-                        <ul>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                        </ul>
+                        <div class="col-md-6 col-lg-8">
+                            <div class="search-bar">
+                                <i class="bi bi-search text-muted"></i>
+                                <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-lg-2 text-end">
+                            <span class="text-white">Admin</span>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                        <div class="position-sticky">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="./admin_panel.php">
+                                        <i class="bi bi-house-fill me-2"></i>Home
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="./admin_users.php">
+                                        <i class="bi bi-people-fill me-2"></i>Users
+                                    </a>
+                                </li>
+                                <!--<li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                        <i class="bi bi-tags-fill me-2"></i>Categories
+                                    </a>
+                                </li>-->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="./admin_products.php">
+                                        <i class="bi bi-box me-2"></i>Products
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="./admin_orders.php">
+                                        <i class="bi bi-cart-fill me-2"></i>Orders
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="./admin_analytics.php">
+                                        <i class="bi bi-bar-chart-fill me-2"></i>Analytics
+                                    </a>
+                                </li>
+                            </ul>
+                            <hr>
+                            <div class="d-flex align-items-center justify-content-center">
+                                <a href="../logout.php" class="btn btn-outline-danger w-100">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h2>Orders</h2>
+                        </div>
+
+                        <input type="text" id="search" class="form-control" placeholder="Search Orders..." onkeyup="searchTable()">
+
+                        <div class="table-container">
+                            <table id="ordersTable" class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>User #</th>
+                                        <th>Total Price</th>
+                                        <th>Status</th>
+                                        <th>Date Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    if ($stmt) {
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                            echo "<tr>";
+                                            echo "<td>" . htmlspecialchars($row["id"]) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row["user_id"]) . "</td>";
+                                            echo "<td>₱" . htmlspecialchars($row["total_price"]) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row["status"]) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row["created_at"]) . "</td>";
+                                            echo "<td><a href='order_details.php?order_id=" . htmlspecialchars($row["id"]) . "' class='btn btn-sm btn-outline-primary'>View Items</a></td>";
+                                            echo "</tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='6'>No orders found</td></tr>";
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </main>
+                </div>
+            </div>
         </div>
-    </footer>
+        <!-- ***** Footer Start ***** -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer-content">
+                            <div class="logo">
+                                <img src="../assets/images/white-logo.png" alt="VogueVault Logo">
+                            </div>
+                            <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved. <br> This website is for school project purposes only</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/jquery-3.5.1.slim.min.js"></script>

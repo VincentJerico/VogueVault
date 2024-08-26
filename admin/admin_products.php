@@ -19,7 +19,14 @@ function executeQuery($query) {
     return $stmt;
 }
 
-$sql = "SELECT * FROM products";
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$perPage = 12; // Number of products per page
+$start = ($page - 1) * $perPage;
+
+$totalProducts = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+$totalPages = ceil($totalProducts / $perPage);
+
+$sql = "SELECT * FROM products LIMIT $start, $perPage";
 $stmt = $pdo->query($sql);
 
 $pdo = null;
@@ -40,9 +47,11 @@ $pdo = null;
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .sidebar {
-            height: 100vh;
             background-color: white;
             border-right: 1px solid #dee2e6;
             padding-top: 20px;
@@ -61,11 +70,6 @@ $pdo = null;
             background-color: #153448;
             padding: 10px 0;
         }
-        .top-bar h1 {
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 0;
-        }
         .search-bar {
             position: relative;
         }
@@ -79,19 +83,56 @@ $pdo = null;
             transform: translateY(-50%);
         }
         .main-content {
-            margin-top: 20px;
-        }
-        .card {
-            border: none;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            flex: 1 0 auto;
+            padding-bottom: 20px; /* Add some padding at the bottom */
         }
         .product-img {
             max-width: 100px;
             max-height: 100px;
             object-fit: cover;
         }
+        .pagination {
+            display: inline-flex;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .page-item:not(:first-child) .page-link {
+            margin-left: -1px;
+        }
+
+        .page-link {
+            position: relative;
+            display: block;
+            padding: 0.5rem 0.75rem;
+            margin-left: -1px;
+            line-height: 1.25;
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+        }
+
+        .page-item.active .page-link {
+            z-index: 3;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        footer {
+        flex-shrink: 0;
+        background-color: #153448;
+        color: white;
+        padding: 20px 0;
+        margin-top: auto;
+        }
+        footer p {
+            color: white;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
         @media (max-width: 767.98px) {
             .sidebar {
+                position: static;
                 height: auto;
                 border-right: none;
                 border-bottom: 1px solid #dee2e6;
@@ -121,8 +162,8 @@ $pdo = null;
         </div>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid flex-grow-1">
+        <div class="row h-100">
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky">
                     <ul class="nav flex-column">
@@ -136,11 +177,11 @@ $pdo = null;
                                 <i class="bi bi-people-fill me-2"></i>Users
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <!--<li class="nav-item">
                             <a class="nav-link" href="#">
                                 <i class="bi bi-tags-fill me-2"></i>Categories
                             </a>
-                        </li>
+                        </li>-->
                         <li class="nav-item">
                             <a class="nav-link active" href="./admin_products.php">
                                 <i class="bi bi-box me-2"></i>Products
@@ -194,6 +235,17 @@ $pdo = null;
                     }
                     ?>
                 </div>
+                <nav aria-label="Product pagination" class="mt-4">
+                    <div class="d-flex justify-content-center">
+                        <ul class="pagination">
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <li class="page-item <?php echo ($page == $i) ? 'active' : ''; ?>">
+                                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                </li>
+                            <?php endfor; ?>
+                        </ul>
+                    </div>
+                </nav>
             </main>
         </div>
     </div>
@@ -273,21 +325,12 @@ $pdo = null;
         </div>
     </div>
     <!-- ***** Footer Start ***** -->
-    <footer>
+    <footer class="mt-auto">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="under-footer">
-                        <div class="logo">
-                            <img src="../assets/images/white-logo.png" alt="">
-                        </div>
-                        <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved. <br> This website is for school project purposes only</p>
-                        <ul>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                        </ul>
-                    </div>
+                <div class="col-lg-12 text-center">
+                    <img src="../assets/images/white-logo.png" alt="VogueVault Logo" style="max-height: 60px;">
+                    <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved.<br>This website is for school project purposes only</p>
                 </div>
             </div>
         </div>

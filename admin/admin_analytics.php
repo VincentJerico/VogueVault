@@ -37,9 +37,11 @@ foreach ($dailySalesData as $day) {
 
 // List of Selling Items with Product Name
 $sellingItemsQuery = "
-    SELECT p.name, SUM(oi.quantity) AS total_sold, p.price, SUM(oi.quantity * p.price) AS total_sales
+    SELECT p.name, SUM(oi.quantity) AS total_sold, p.price, SUM(oi.quantity * oi.price) AS total_sales
     FROM order_items oi
     JOIN products p ON oi.product_id = p.id
+    JOIN orders o ON oi.order_id = o.id
+    WHERE o.created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
     GROUP BY p.id, p.name, p.price
     ORDER BY total_sales DESC
     LIMIT 10
@@ -48,7 +50,7 @@ $sellingItemsStmt = executeQuery($sellingItemsQuery);
 $sellingItemsData = $sellingItemsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Query to get total quantity sold across all products
-$totalQuery = "SELECT SUM(quantity) AS total_quantity_sold FROM order_items;";
+$totalQuery = "SELECT SUM(quantity) AS total_quantity_sold FROM order_items";
 $totalStmt = executeQuery($totalQuery);
 $totalSoldData = $totalStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -56,27 +58,43 @@ $totalQuantitySold = $totalSoldData['total_quantity_sold'];
 
 // Fetch total sales per month
 $totalSalesQuery = "
-    SELECT MONTHNAME(o.created_at) AS month, SUM(oi.quantity * oi.price) AS total_sales
+    SELECT DATE_FORMAT(o.created_at, '%Y-%m') AS month, SUM(oi.quantity * oi.price) AS total_sales
     FROM orders o
     JOIN order_items oi ON o.id = oi.order_id
-    WHERE YEAR(o.created_at) = YEAR(CURDATE())
-    GROUP BY MONTH(o.created_at)
-    ORDER BY MONTH(o.created_at)
+    WHERE o.created_at >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+    GROUP BY month
+    ORDER BY month
 ";
 $totalSalesStmt = executeQuery($totalSalesQuery);
 $totalSalesData = $totalSalesStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Fetch daily sales data
+// Prepare data for chart
+$months = [];
+$salesData = [];
+foreach ($totalSalesData as $data) {
+    $months[] = date('M Y', strtotime($data['month']));
+    $salesData[] = $data['total_sales'];
+}
+
+// Fetch daily sales data for the last 30 days
 $dailySalesQuery = "
-    SELECT DAY(o.created_at) AS day, SUM(oi.quantity * oi.price) AS total_sales
+    SELECT DATE(o.created_at) AS day, SUM(oi.quantity * oi.price) AS total_sales
     FROM orders o
     JOIN order_items oi ON o.id = oi.order_id
-    WHERE MONTH(o.created_at) = MONTH(CURDATE())
-    GROUP BY DAY(o.created_at)
-    ORDER BY DAY(o.created_at)
+    WHERE o.created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    GROUP BY day
+    ORDER BY day
 ";
 $dailySalesStmt = executeQuery($dailySalesQuery);
 $dailySalesData = $dailySalesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Prepare data for chart
+$days = [];
+$dailySales = [];
+foreach ($dailySalesData as $data) {
+    $days[] = date('d M', strtotime($data['day']));
+    $dailySales[] = $data['total_sales'];
+}
 
 $pdo = null;
 
@@ -97,9 +115,11 @@ $pdo = null;
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .sidebar {
-            height: 100vh;
             background-color: white;
             border-right: 1px solid #dee2e6;
             padding-top: 20px;
@@ -118,11 +138,6 @@ $pdo = null;
             background-color: #153448;
             padding: 10px 0;
         }
-        .top-bar h1 {
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 0;
-        }
         .search-bar {
             position: relative;
         }
@@ -136,7 +151,8 @@ $pdo = null;
             transform: translateY(-50%);
         }
         .main-content {
-            margin-left: 200px;
+            flex: 1 0 auto;
+            padding-bottom: 20px;
         }
         .card {
             border: none;
@@ -160,8 +176,21 @@ $pdo = null;
             height: 300px;
             width: 100%;
         }
+        footer {
+            flex-shrink: 0;
+            background-color: #153448;
+            color: white;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+        footer p {
+            color: white;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
         @media (max-width: 767.98px) {
             .sidebar {
+                position: static;
                 height: auto;
                 border-right: none;
                 border-bottom: 1px solid #dee2e6;
@@ -206,11 +235,11 @@ $pdo = null;
                                 <i class="bi bi-people-fill me-2"></i>Users
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <!--<li class="nav-item">
                             <a class="nav-link" href="#">
                                 <i class="bi bi-tags-fill me-2"></i>Categories
                             </a>
-                        </li>
+                        </li>-->
                         <li class="nav-item">
                             <a class="nav-link" href="./admin_products.php">
                                 <i class="bi bi-box me-2"></i>Products
@@ -237,26 +266,29 @@ $pdo = null;
             </nav>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
-
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Sales Overview</h1>
                 </div>
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="display">
-                            <span class="text">Today's Date:</span>
-                            <i class="bi bi-calendar"></i>
-                            <div id="date"></div>
+                
+                <!-- Date display -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Today's Date</h5>
+                                <p class="card-text" id="date"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Overview cards -->
                 <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
                     <div class="col">
                         <div class="card h-100">
                             <div class="card-body bg-primary text-white">
                                 <h5 class="card-title" id="firstLayerCard">Total Sales</h5>
-                                <p class="card-text display-6">₱<?php echo number_format($totalSales, 2); ?></p>
+                                <p class="card-text display-6" style="color: #e9ecef;">₱<?php echo number_format($totalSales, 2); ?></p>
                             </div>
                         </div>
                     </div>
@@ -264,7 +296,7 @@ $pdo = null;
                         <div class="card h-100">
                             <div class="card-body bg-success text-white">
                                 <h5 class="card-title" id="firstLayerCard">Daily Sales</h5>
-                                <p class="card-text display-6">₱<?php echo number_format($totalDailySales, 2); ?></p>
+                                <p class="card-text display-6" style="color: #e9ecef;">₱<?php echo number_format($totalDailySales, 2); ?></p>
                             </div>
                         </div>
                     </div>
@@ -272,12 +304,13 @@ $pdo = null;
                         <div class="card h-100">
                             <div class="card-body bg-dark text-white">
                                 <h5 class="card-title" id="firstLayerCard">Total Products Sold</h5>
-                                <p class="card-text display-6"><?php echo number_format($totalQuantitySold); ?></p>
+                                <p class="card-text display-6" style="color: #e9ecef;"><?php echo number_format($totalQuantitySold); ?></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Sales charts -->
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="card">
@@ -301,30 +334,33 @@ $pdo = null;
                     </div>
                 </div>
 
+                <!-- Top selling items -->
                 <div class="card mb-4">
-                    <div class="card-body bg-dark text-white">
-                        <h5 class="card-title" id="firstLayerCard">Top Selling Items</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">Top Selling Items</h5>
                         <?php if (!empty($sellingItemsData)): ?>
-                            <table class="table table-striped table-dark">
-                                <thead>
-                                    <tr>
-                                        <th>Product Name</th>
-                                        <th>Quantity Sold</th>
-                                        <th>Price</th>
-                                        <th>Total Sales</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($sellingItemsData as $item): ?>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($item['name']); ?></td>
-                                            <td><?php echo number_format($item['total_sold']); ?></td>
-                                            <td>₱<?php echo number_format($item['price'], 2); ?></td>
-                                            <td>₱<?php echo number_format($item['total_sales'], 2); ?></td>
+                                            <th>Product Name</th>
+                                            <th>Quantity Sold</th>
+                                            <th>Price</th>
+                                            <th>Total Sales</th>
                                         </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($sellingItemsData as $item): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($item['name']); ?></td>
+                                                <td><?php echo number_format($item['total_sold']); ?></td>
+                                                <td>₱<?php echo number_format($item['price'], 2); ?></td>
+                                                <td>₱<?php echo number_format($item['total_sales'], 2); ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         <?php else: ?>
                             <p>No data available.</p>
                         <?php endif; ?>
@@ -337,18 +373,9 @@ $pdo = null;
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="under-footer">
-                        <div class="logo">
-                            <img src="../assets/images/white-logo.png" alt="">
-                        </div>
-                        <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved. <br> This website is for school project purposes only</p>
-                        <ul>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                        </ul>
-                    </div>
+                <div class="col-lg-12 text-center">
+                    <img src="../assets/images/white-logo.png" alt="VogueVault Logo" style="max-height: 60px;">
+                    <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved.<br>This website is for school project purposes only</p>
                 </div>
             </div>
         </div>
@@ -359,7 +386,6 @@ $pdo = null;
     <script src="../assets/js/popper.min.js"></script>
     <script src="../assets/js/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>    
-    <script src="../assets/js/chart.js"></script>
     <script>
         // search bar
         document.addEventListener('DOMContentLoaded', (event) => {
@@ -391,16 +417,18 @@ $pdo = null;
         const monthlySalesChart = new Chart(ctxMonthlySales, {
             type: 'line',
             data: {
-                labels: <?php echo json_encode(array_column($totalSalesData, 'month')); ?>,
+                labels: <?php echo json_encode($months); ?>,
                 datasets: [{
                     label: 'Monthly Sales',
-                    data: <?php echo json_encode(array_column($totalSalesData, 'total_sales')); ?>,
+                    data: <?php echo json_encode($salesData); ?>,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 2
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -414,16 +442,18 @@ $pdo = null;
         const dailySalesChart = new Chart(ctxDailySales, {
             type: 'bar',
             data: {
-                labels: <?php echo json_encode(array_column($dailySalesData, 'day')); ?>,
+                labels: <?php echo json_encode($days); ?>,
                 datasets: [{
                     label: 'Daily Sales',
-                    data: <?php echo json_encode(array_column($dailySalesData, 'total_sales')); ?>,
+                    data: <?php echo json_encode($dailySales); ?>,
                     backgroundColor: 'rgba(153, 102, 255, 0.2)',
                     borderColor: 'rgba(153, 102, 255, 1)',
                     borderWidth: 2
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true

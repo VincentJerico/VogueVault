@@ -42,26 +42,30 @@ $stmt = $pdo->query($sql);
 $pdo = null;
 ?>
 
+<?php
+// (Keep the existing PHP code at the top)
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link href="../assets/fonts/poppins.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/css/bootstrap-icons.min.css">
+    <title>VogueVault Admin - Users</title>
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../assets/fonts/poppins.css">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
     <link rel="icon" type="image/x-icon" href="../assets/images/logosquaretransparent.png">
-
     <style>
-    body {
+        body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .sidebar {
-            height: 100vh;
             background-color: white;
             border-right: 1px solid #dee2e6;
             padding-top: 20px;
@@ -80,11 +84,6 @@ $pdo = null;
             background-color: #153448;
             padding: 10px 0;
         }
-        .top-bar h1 {
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 0;
-        }
         .search-bar {
             position: relative;
         }
@@ -98,13 +97,36 @@ $pdo = null;
             transform: translateY(-50%);
         }
         .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 60px; /* Adjust based on your footer height */
+        }
+        .table-responsive {
+            max-height: calc(100vh - 250px); /* Adjust based on your header and footer heights */
+            overflow-y: auto;
+        }
+        footer {
+            background-color: #153448;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        footer p {
+            color: white;
             margin-top: 20px;
+            font-size: 0.9rem;
         }
         @media (max-width: 767.98px) {
             .sidebar {
+                position: static;
                 height: auto;
                 border-right: none;
                 border-bottom: 1px solid #dee2e6;
+            }
+            .table-responsive {
+                max-height: calc(100vh - 350px); /* Adjust for mobile */
             }
         }
     </style>
@@ -131,8 +153,8 @@ $pdo = null;
         </div>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid flex-grow-1">
+        <div class="row h-100">
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky">
                     <ul class="nav flex-column">
@@ -146,11 +168,11 @@ $pdo = null;
                                 <i class="bi bi-people-fill me-2"></i>Users
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <!--<li class="nav-item">
                             <a class="nav-link" href="#">
                                 <i class="bi bi-tags-fill me-2"></i>Categories
                             </a>
-                        </li>
+                        </li>-->
                         <li class="nav-item">
                             <a class="nav-link" href="./admin_products.php">
                                 <i class="bi bi-box me-2"></i>Products
@@ -273,18 +295,9 @@ $pdo = null;
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="under-footer">
-                        <div class="logo">
-                            <img src="../assets/images/white-logo.png" alt="">
-                        </div>
-                        <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved. <br> This website is for school project purposes only</p>
-                        <ul>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                        </ul>
-                    </div>
+                <div class="col-lg-12 text-center">
+                    <img src="../assets/images/white-logo.png" alt="VogueVault Logo" style="max-height: 60px;">
+                    <p>Copyright © <?php echo date("Y"); ?>. All Rights Reserved.<br>This website is for school project purposes only</p>
                 </div>
             </div>
         </div>

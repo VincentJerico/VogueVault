@@ -3,7 +3,7 @@
 // php code for uploading image but not finished
 
 // Include the database configuration file
-require_once 'includes/connection.php';
+require_once '../includes/connection.php';
 
 if(isset($_POST['submit'])){
     // Check if the file was uploaded without errors

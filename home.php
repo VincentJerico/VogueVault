@@ -21,7 +21,7 @@ $_SESSION['login_redirect'] = true;
 $is_logged_in = isset($_SESSION['user_id']);
 
 // Fetch products for each category
-function getProductsByCategory($pdo, $category, $limit = 4) {
+function getProductsByCategory($pdo, $category, $limit = 10) {
     $stmt = $pdo->prepare("SELECT * FROM products WHERE category = :category ORDER BY created_at DESC LIMIT :limit");
     $stmt->bindParam(':category', $category, PDO::PARAM_STR);
     $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);

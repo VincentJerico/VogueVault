@@ -50,6 +50,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error_message = "No user found with that username or email.";
     }
 }
+
+// Fetch preview products (adjust the query as needed)
+$preview_stmt = $pdo->query("SELECT * FROM products LIMIT 30");
+$preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -59,34 +63,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VogueVault - Welcome</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
     <link rel="icon" type="image/x-icon" href="assets/images/logosquaretransparent.png">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .logo img {
+            width: 150px;
+            height: auto;
+        }
+
+        .main-section {
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             position: relative;
             overflow: hidden;
         }
 
-        body::before {
+        .main-section::before {
             content: "";
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('assets/images/bnwbg2.jpg');
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.1) 70%, rgba(0, 0, 0, 0) 100%), url('assets/images/bnwbg2.jpg');
             background-size: cover;
             background-position: center;
-            filter: blur(5px) brightness(0.5); /* Adjust the blur value as needed */
+            filter: blur(5px) brightness(0.5);
             z-index: -1;
         }
 
@@ -96,10 +115,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            max-width: 1000px;
+            height: 50%;
+            max-width: 75%;
             width: 100%;
             z-index: 1;
-            height: auto; /* Remove fixed height */
         }
 
         .welcome-section {
@@ -111,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             flex-direction: column;
             justify-content: center;
             overflow: hidden;
-            aspect-ratio: 1200 / 628; /* Set the aspect ratio to match the images */
+            aspect-ratio: 1200 / 628;
         }
 
         .slider-container {
@@ -130,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .slide {
             min-width: 100%;
             height: 100%;
-            object-fit: contain; /* Change to contain to avoid cropping */
+            object-fit: contain;
         }
 
         .prev, .next {
@@ -175,6 +194,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .dot.active {
             background-color: white;
         }
+
         .login-section {
             flex: 1;
             padding: 2rem;
@@ -182,15 +202,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             flex-direction: column;
             justify-content: center;
         }
+
         .form-group {
             margin-bottom: 1rem;
         }
+
         label {
             display: block;
             margin-bottom: 0.5rem;
             color: #153448;
             font-size: 0.9rem;
         }
+
         input[type="text"],
         input[type="password"] {
             width: 100%;
@@ -199,9 +222,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 4px;
             font-size: 1rem;
         }
+
         .password-field {
             position: relative;
         }
+
         .password-toggle {
             position: absolute;
             top: 50%;
@@ -210,15 +235,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             cursor: pointer;
             color: #153448;
         }
+
         .remember-me {
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
             font-size: 0.9rem;
         }
+
         .remember-me input {
             margin-right: 0.5rem;
         }
+
         .forgot-password {
             display: block;
             text-align: right;
@@ -226,6 +254,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-bottom: 1rem;
             font-size: 0.9rem;
         }
+
         .login-button {
             width: 100%;
             padding: 0.75rem;
@@ -237,9 +266,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             transition: background-color 0.3s;
             font-size: 1rem;
         }
+
         .login-button:hover {
             background-color: #0e2330;
         }
+
         .register-link {
             display: block;
             text-align: center;
@@ -247,18 +278,164 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #153448;
             font-size: 0.9rem;
         }
+
         .error-message {
             color: crimson;
             margin-bottom: 1rem;
             font-size: 0.9rem;
             text-align: center;
         }
+
         a {
             text-decoration: none;
             color: #153448;
         }
+
         a:hover {
             color: #FF8343;
+        }
+
+        .preview-section {
+            height: 100vh;
+            width: 100vw;
+            background-color: whitesmoke;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .preview-container {
+            width: 100%;
+            max-width: 1600px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .preview-title {
+            font-size: 28px;
+            color: #153448;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .preview-item {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .preview-item .hover-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .preview-item:hover .hover-content {
+            opacity: 1;
+        }
+
+        .preview-item .hover-content ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .preview-item .hover-content ul li a {
+            color: white;
+            font-size: 24px;
+        }
+
+        .preview-item .down-content {
+            padding: 15px;
+            background-color: white;
+        }
+
+        .preview-item h4 {
+            margin: 0 0 10px;
+            color: #153448;
+            font-size: 18px;
+        }
+
+        .preview-item .price {
+            color: #666;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .preview-item .stars {
+            color: red;
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .preview-item .stars li {
+            color: red;
+            margin: 0 2px;
+        }
+
+        .no-image {
+            background-color: #f0f0f0;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+            border-radius: 8px 8px 0 0;
+        }
+
+        @media (max-width: 1200px) {
+            .preview-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
@@ -268,88 +445,105 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             .welcome-section {
                 width: 100%;
-                aspect-ratio: 1200 / 628; /* Maintain aspect ratio on mobile */
+                aspect-ratio: 1200 / 628;
             }
             .login-section {
                 padding: 1.5rem;
-            }
-            .welcome-section h1 {
-                font-size: 2rem;
-            }
-            .welcome-section h2 {
-                font-size: 1.5rem;
-            }
-            .welcome-section p {
-                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
-<!-- ***** Preloader Start ***** -->
-<div id="preloader">
-    <div class="jumper">
-        <div></div>
-        <div></div>
-        <div></div>
+    <div class="logo">
+        <img src="assets/images/logosquaretransparent.png" alt="VogueVault Logo">
     </div>
-</div>  
-    <!-- ***** Preloader End ***** -->
-    <div class="container">
-        <div class="welcome-section">
-            <div class="slider-container">
-                <div class="slider">
-                    <img src="./assets/images/ads1.png" alt="Ad 1" class="slide">
-                    <img src="./assets/images/ads2.png" alt="Ad 2" class="slide">
-                    <img src="./assets/images/ads3.png" alt="Ad 3" class="slide">
-                    <img src="./assets/images/ads4.png" alt="Ad 4" class="slide">
-                    <img src="./assets/images/ads5.png" alt="Ad 5" class="slide">
+
+
+    <div class="main-section" id="top">
+        <div class="container">
+            <div class="welcome-section">
+                <div class="slider-container">
+                    <div class="slider">
+                        <img src="assets/images/ad1.png" alt="Ad 1" class="slide">
+                        <img src="assets/images/ad2.png" alt="Ad 2" class="slide">
+                        <img src="assets/images/ad3.png" alt="Ad 3" class="slide">
+                        <img src="assets/images/ad4.png" alt="Ad 4" class="slide">
+                        <img src="assets/images/ad5.png" alt="Ad 5" class="slide">
+                    </div>
+                    <button class="prev">&lt;</button>
+                    <button class="next">&gt;</button>
+                    <div class="dots"></div>
                 </div>
-                <button class="prev">&lt;</button>
-                <button class="next">&gt;</button>
-                <div class="dots"></div>
+            </div>
+            <div class="login-section">
+                <?php if ($error_message): ?>
+                    <div class="error-message"><?php echo htmlspecialchars($error_message); ?></div>
+                <?php endif; ?>
+                <center><h1 style="color:#153448;">Log in</h1></center>
+                <form method="POST" action="">
+                    <div class="form-group">
+                        <label for="username">Username or Email:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <div class="password-field">
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                    </div>
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Remember Me</label>
+                    </div>
+                    <a href="forgot_password.php" class="forgot-password">Forgot Password?</a>
+                    <button type="submit" class="login-button">Log in</button>
+                </form>
+                <p class="register-link">Don't have an account yet? <a href="register.php">Register</a></p>
             </div>
         </div>
-        <div class="login-section">
-            <?php if ($error_message): ?>
-                <div class="error-message"><?php echo htmlspecialchars($error_message); ?></div>
-            <?php endif; ?>
-            <form method="POST" action="">
-                <div class="form-group">
-                    <label for="username">Username or Email:</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <div class="password-field">
-                        <input type="password" id="password" name="password" required>
-                        
-                        <!--<i class="password-toggle fas fa-eye" id="togglePassword"></i>-->
-                    </div>
-                </div>
-                <div class="remember-me">
-                    <input type="checkbox" id="remember" name="remember">
-                    <label for="remember">Remember Me</label>
-                </div>
-                <a href="forgot_password.php" class="forgot-password">Forgot Password?</a>
-                <button type="submit" class="login-button">Log in</button>
-            </form>
-            <p class="register-link">Don't have an account yet? <a href="register.php">Register</a></p>
-        </div>
     </div>
 
-    <script>
-        const togglePassword = document.querySelector('#togglePassword');
-        const password = document.querySelector('#password');
-
-        togglePassword.addEventListener('click', function (e) {
-            // toggle the type attribute
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            // toggle the eye slash icon
-            this.classList.toggle('fa-eye-slash');
-        }); 
-    </script>
+    <div class="preview-section" id="preview">
+        <div class="preview-container">
+            <h2 class="preview-title">Featured Products</h2>
+            <div class="preview-grid">
+                <?php foreach ($preview_products as $product): ?>
+                    <div class="preview-item">
+                        <div class="thumb">
+                            <div class="hover-content">
+                                <ul>
+                                    <li><a href="#" class="view-product-btn" data-product-id="<?php echo htmlspecialchars($product['id']); ?>"><i class="fa fa-eye"></i></a></li>
+                                </ul>
+                            </div>
+                            <?php
+                            $imagePath = !empty($product['image_url']) ? 'uploads/' . basename($product['image_url']) : 'assets/images/default-product-image.jpg';
+                            $imageUrl = file_exists($imagePath) ? $imagePath : 'assets/images/default-product-image.jpg';
+                            ?>
+                            <img src="<?php echo htmlspecialchars($imageUrl); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                        </div>
+                        <div class="down-content">
+                            <h4><?php echo htmlspecialchars($product['name']); ?></h4>
+                            <span class="price">₱<?php echo number_format($product['price'], 2); ?></span>
+                            <ul class="stars">
+                                <?php
+                                $rating = isset($product['rating']) ? floatval($product['rating']) : 0;
+                                for ($i = 1; $i <= 5; $i++):
+                                    if ($i <= $rating):
+                                        echo '<li><i class="fa fa-star"></i></li>';
+                                    elseif ($i - 0.5 <= $rating):
+                                        echo '<li><i class="fa fa-star-half-o"></i></li>';
+                                    else:
+                                        echo '<li><i class="fa fa-star-o"></i></li>';
+                                    endif;
+                                endfor;
+                                ?>
+                            </ul>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
 
     <script>
         const slider = document.querySelector('.slider');
@@ -416,6 +610,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         slider.addEventListener('mouseleave', startSlideshow);
 
         startSlideshow();
+
+        // Handle product clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            const previewItems = document.querySelectorAll('.preview-item');
+            previewItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    window.location.href = '#top';
+                });
+            });
+        });
     </script>
 </body>
 </html>

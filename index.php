@@ -92,36 +92,88 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .container {
             display: flex;
-            background-color: rgba(255, 255, 255, 0.85); /* Slight transparency */
+            background-color: rgba(255, 255, 255, 0.85);
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             max-width: 1000px;
             width: 100%;
-            z-index: 1; /* Ensure the container is above the blurred background */
+            z-index: 1;
+            height: auto; /* Remove fixed height */
         }
+
         .welcome-section {
             flex: 1;
-            padding: 2rem;
+            padding: 0;
             background-color: #153448;
             color: #fff;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            overflow: hidden;
+            aspect-ratio: 1200 / 628; /* Set the aspect ratio to match the images */
         }
-        .welcome-section h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
-        .welcome-section h2 {
-            font-size: 1.75rem;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
         }
-        .welcome-section p {
-            font-size: 1rem;
-            line-height: 1.6;
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            object-fit: contain; /* Change to contain to avoid cropping */
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 10;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background-color: white;
         }
         .login-section {
             flex: 1;
@@ -212,10 +264,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
+                height: auto;
             }
             .welcome-section {
-                text-align: center;
-                padding: 1.5rem;
+                width: 100%;
+                aspect-ratio: 1200 / 628; /* Maintain aspect ratio on mobile */
             }
             .login-section {
                 padding: 1.5rem;
@@ -244,10 +297,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- ***** Preloader End ***** -->
     <div class="container">
         <div class="welcome-section">
-            <h1>Welcome to VogueVault</h1>
-            <i><h3>Unveiling Timeless Style</h3></i>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem maiores totam illum iste optio animi rerum est earum incidunt odio, quo mollitia non beatae doloribus odit id, pariatur provident delectus.
-            </p>
+            <div class="slider-container">
+                <div class="slider">
+                    <img src="./assets/images/ads1.png" alt="Ad 1" class="slide">
+                    <img src="./assets/images/ads2.png" alt="Ad 2" class="slide">
+                    <img src="./assets/images/ads3.png" alt="Ad 3" class="slide">
+                    <img src="./assets/images/ads4.png" alt="Ad 4" class="slide">
+                    <img src="./assets/images/ads5.png" alt="Ad 5" class="slide">
+                </div>
+                <button class="prev">&lt;</button>
+                <button class="next">&gt;</button>
+                <div class="dots"></div>
+            </div>
         </div>
         <div class="login-section">
             <?php if ($error_message): ?>
@@ -288,6 +349,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // toggle the eye slash icon
             this.classList.toggle('fa-eye-slash');
         }); 
+    </script>
+
+    <script>
+        const slider = document.querySelector('.slider');
+        const slides = document.querySelectorAll('.slide');
+        const prevButton = document.querySelector('.prev');
+        const nextButton = document.querySelector('.next');
+        const dotsContainer = document.querySelector('.dots');
+
+        let currentSlide = 0;
+        let slideInterval;
+
+        // Create dots
+        slides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+
+        function goToSlide(n) {
+            currentSlide = (n + slides.length) % slides.length;
+            slider.style.transform = `translateX(${-currentSlide * 100}%)`;
+            updateDots();
+        }
+
+        function updateDots() {
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        function startSlideshow() {
+            slideInterval = setInterval(nextSlide, 3000);
+        }
+
+        function stopSlideshow() {
+            clearInterval(slideInterval);
+        }
+
+        prevButton.addEventListener('click', () => {
+            prevSlide();
+            stopSlideshow();
+            startSlideshow();
+        });
+
+        nextButton.addEventListener('click', () => {
+            nextSlide();
+            stopSlideshow();
+            startSlideshow();
+        });
+
+        slider.addEventListener('mouseenter', stopSlideshow);
+        slider.addEventListener('mouseleave', startSlideshow);
+
+        startSlideshow();
     </script>
 </body>
 </html>

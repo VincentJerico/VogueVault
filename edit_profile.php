@@ -63,29 +63,56 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="assets/images/logosquaretransparent.png">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            background-image: url('assets/images/bnwbg.jpg') !important;
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .logo img {
+            width: 150px;
+            height: auto;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/images/bnwbg.jpg') !important;
+            background-size: cover;
+            background-position: center;
+            filter: blur(5px) brightness(0.5); /* Adjust blur and brightness as needed */
+            z-index: -1;
         }
 
         .edit-profile-container {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.85); /* Slight transparency */
             padding: 2rem;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
+            z-index: 1; /* Ensure the container is above the blurred background */
         }
 
         h2 {
@@ -212,6 +239,9 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
+    <div class="logo">
+        <img src="assets/images/logosquaretransparent.png" alt="VogueVault Logo">
+    </div>
     <div class="edit-profile-container">
         <h2>Edit Profile</h2>
         <?php if (isset($success_message)): ?>

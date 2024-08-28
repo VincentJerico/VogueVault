@@ -61,6 +61,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             overflow: hidden;
         }
 
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .logo img {
+            width: 150px;
+            height: auto;
+        }
+
         body::before {
             content: "";
             position: absolute;
@@ -173,6 +185,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
+    <div class="logo">
+        <img src="assets/images/logosquaretransparent.png" alt="VogueVault Logo">
+    </div>
     <div class="forgot-password-container">
         <h2>Forgot Password</h2>
         <?php if ($message): ?>

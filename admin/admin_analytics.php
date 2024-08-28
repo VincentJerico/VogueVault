@@ -19,86 +19,89 @@ function executeQuery($query) {
     return $stmt;
 }
 
+// Fix NULL or invalid created_at dates
+$fixDatesQuery = "UPDATE orders SET created_at = NOW() WHERE created_at IS NULL OR created_at = '0000-00-00 00:00:00'";
+executeQuery($fixDatesQuery);
+
 // Total Sales
-$totalSalesQuery = "SELECT SUM(total_price) AS total_sales FROM orders";
+$totalSalesQuery = "SELECT COALESCE(SUM(total_price), 0) AS total_sales FROM orders";
 $totalSalesStmt = executeQuery($totalSalesQuery);
 $totalSales = $totalSalesStmt->fetch(PDO::FETCH_ASSOC)['total_sales'];
 
 // Daily Sales
-$dailySalesQuery = "SELECT DATE(created_at) AS sale_date, SUM(total_price) AS daily_sales FROM orders GROUP BY sale_date";
+$dailySalesQuery = "SELECT DATE(created_at) AS sale_date, COALESCE(SUM(total_price), 0) AS daily_sales FROM orders WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) GROUP BY sale_date ORDER BY sale_date";
 $dailySalesStmt = executeQuery($dailySalesQuery);
 $dailySalesData = $dailySalesStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Calculate total daily sales
-$totalDailySales = 0;
-foreach ($dailySalesData as $day) {
-    $totalDailySales += (float)$day['daily_sales'];
-}
+$totalDailySales = array_sum(array_column($dailySalesData, 'daily_sales'));
+
+// Total Products Sold
+$totalProductsSoldQuery = "SELECT COALESCE(SUM(quantity), 0) AS total_quantity_sold FROM orders";
+$totalProductsSoldStmt = executeQuery($totalProductsSoldQuery);
+$totalProductsSold = $totalProductsSoldStmt->fetch(PDO::FETCH_ASSOC)['total_quantity_sold'];
 
 // List of Selling Items with Product Name
 $sellingItemsQuery = "
-    SELECT p.name, SUM(oi.quantity) AS total_sold, p.price, SUM(oi.quantity * oi.price) AS total_sales
-    FROM order_items oi
-    JOIN products p ON oi.product_id = p.id
-    JOIN orders o ON oi.order_id = o.id
-    WHERE o.created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-    GROUP BY p.id, p.name, p.price
-    ORDER BY total_sales DESC
+    SELECT 
+        p.name, 
+        COALESCE(SUM(o.quantity), 0) AS total_sold, 
+        p.price, 
+        COALESCE(SUM(o.quantity * o.total_price), 0) AS total_sales
+    FROM 
+        products p
+    LEFT JOIN 
+        orders o ON p.id = o.product_id AND o.created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    GROUP BY 
+        p.id, p.name, p.price
+    ORDER BY 
+        total_sales DESC
     LIMIT 10
 ";
 $sellingItemsStmt = executeQuery($sellingItemsQuery);
 $sellingItemsData = $sellingItemsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Query to get total quantity sold across all products
-$totalQuery = "SELECT SUM(quantity) AS total_quantity_sold FROM order_items";
-$totalStmt = executeQuery($totalQuery);
-$totalSoldData = $totalStmt->fetch(PDO::FETCH_ASSOC);
-
-$totalQuantitySold = $totalSoldData['total_quantity_sold'];
-
+// Fetch total sales per month
 // Fetch total sales per month
 $totalSalesQuery = "
-    SELECT DATE_FORMAT(o.created_at, '%Y-%m') AS month, SUM(oi.quantity * oi.price) AS total_sales
-    FROM orders o
-    JOIN order_items oi ON o.id = oi.order_id
-    WHERE o.created_at >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+    SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, 
+           COALESCE(SUM(total_price), 0) AS total_sales
+    FROM orders
+    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
     GROUP BY month
-    ORDER BY month
+    ORDER BY month ASC
 ";
 $totalSalesStmt = executeQuery($totalSalesQuery);
 $totalSalesData = $totalSalesStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Prepare data for chart
-$months = [];
-$salesData = [];
-foreach ($totalSalesData as $data) {
-    $months[] = date('M Y', strtotime($data['month']));
-    $salesData[] = $data['total_sales'];
+// Prepare data for monthly sales chart
+$months = array_column($totalSalesData, 'month');
+$salesData = array_column($totalSalesData, 'total_sales');
+
+// Debug: Print the data
+echo '<script>';
+echo 'console.log("PHP Months:", ' . json_encode($months) . ');';
+echo 'console.log("PHP Sales Data:", ' . json_encode($salesData) . ');';
+echo '</script>';
+
+// Handle potential NULL or invalid dates before rendering
+foreach ($totalSalesData as &$data) {
+    if (is_null($data['month']) || strtotime($data['month']) === false) {
+        $data['month'] = 'Unknown Date';
+    }
 }
 
-// Fetch daily sales data for the last 30 days
-$dailySalesQuery = "
-    SELECT DATE(o.created_at) AS day, SUM(oi.quantity * oi.price) AS total_sales
-    FROM orders o
-    JOIN order_items oi ON o.id = oi.order_id
-    WHERE o.created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-    GROUP BY day
-    ORDER BY day
-";
-$dailySalesStmt = executeQuery($dailySalesQuery);
-$dailySalesData = $dailySalesStmt->fetchAll(PDO::FETCH_ASSOC);
+// Prepare data for monthly sales chart
+$months = array_reverse(array_column($totalSalesData, 'month'));
+$salesData = array_reverse(array_column($totalSalesData, 'total_sales'));
 
-// Prepare data for chart
-$days = [];
-$dailySales = [];
-foreach ($dailySalesData as $data) {
-    $days[] = date('d M', strtotime($data['day']));
-    $dailySales[] = $data['total_sales'];
-}
+// Prepare data for daily sales chart
+$days = array_column($dailySalesData, 'sale_date');
+$dailySales = array_column($dailySalesData, 'daily_sales');
 
 $pdo = null;
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -175,6 +178,17 @@ $pdo = null;
             margin: auto;
             height: 300px;
             width: 100%;
+        }
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .table-responsive thead th {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 1;
         }
         footer {
             flex-shrink: 0;
@@ -304,11 +318,12 @@ $pdo = null;
                         <div class="card h-100">
                             <div class="card-body bg-dark text-white">
                                 <h5 class="card-title" id="firstLayerCard">Total Products Sold</h5>
-                                <p class="card-text display-6" style="color: #e9ecef;"><?php echo number_format($totalQuantitySold); ?></p>
+                                <p class="card-text display-6" style="color: #e9ecef;"><?php echo number_format($totalProductsSold); ?></p>
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <!-- Sales charts -->
                 <div class="row mb-4">
@@ -350,14 +365,14 @@ $pdo = null;
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($sellingItemsData as $item): ?>
-                                            <tr>
-                                                <td><?php echo htmlspecialchars($item['name']); ?></td>
-                                                <td><?php echo number_format($item['total_sold']); ?></td>
-                                                <td>₱<?php echo number_format($item['price'], 2); ?></td>
-                                                <td>₱<?php echo number_format($item['total_sales'], 2); ?></td>
-                                            </tr>
-                                        <?php endforeach; ?>
+                                    <?php foreach ($sellingItemsData as $item): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($item['name']); ?></td>
+                                            <td><?php echo number_format($item['total_sold']); ?></td>
+                                            <td>₱<?php echo number_format($item['price'], 2); ?></td>
+                                            <td>₱<?php echo number_format($item['total_sales'], 2); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -412,55 +427,62 @@ $pdo = null;
 
         document.getElementById('date').textContent = new Date().toLocaleDateString();
 
-        // Monthly Sales Chart
-        const ctxMonthlySales = document.getElementById('monthlySalesChart').getContext('2d');
-        const monthlySalesChart = new Chart(ctxMonthlySales, {
-            type: 'line',
-            data: {
-                labels: <?php echo json_encode($months); ?>,
-                datasets: [{
-                    label: 'Monthly Sales',
-                    data: <?php echo json_encode($salesData); ?>,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+// Monthly Sales Chart
+const ctxMonthlySales = document.getElementById('monthlySalesChart').getContext('2d');
+const monthlySalesChart = new Chart(ctxMonthlySales, {
+    type: 'line',
+    data: {
+        labels: <?php echo json_encode($months); ?>,
+        datasets: [{
+            label: 'Monthly Sales',
+            data: <?php echo json_encode($salesData); ?>,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
             }
-        });
+        }
+    }
+});
+
+// Debug: Log the data to console
+console.log('Months:', <?php echo json_encode($months); ?>);
+console.log('Sales Data:', <?php echo json_encode($salesData); ?>);
 
         // Daily Sales Chart
         const ctxDailySales = document.getElementById('dailySalesChart').getContext('2d');
-        const dailySalesChart = new Chart(ctxDailySales, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($days); ?>,
-                datasets: [{
-                    label: 'Daily Sales',
-                    data: <?php echo json_encode($dailySales); ?>,
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
+                const dailySalesChart = new Chart(ctxDailySales, {
+                    type: 'bar',
+                    data: {
+                        labels: <?php echo json_encode(array_map(function($day) { return date('d M', strtotime($day)); }, $days)); ?>,
+                        datasets: [{
+                            label: 'Daily Sales',
+                            data: <?php echo json_encode($dailySales); ?>,
+                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value, index, values) {
+                                        return '₱' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
     </script>
 </body>
 </html>

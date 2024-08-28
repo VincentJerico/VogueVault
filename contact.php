@@ -128,7 +128,7 @@ if (!isset($_SESSION['user_id'])) {
                         <h2>Say Hello. Don't Be Shy!</h2>
                         <span>We're all ears and ready to chat about your style!</span>
                     </div>
-                    <form id="contact" action="" method="post">
+                    <form id="contactForm" action="" method="post">
                         <div class="row">
                             <div class="col-lg-6">
                             <fieldset>
@@ -150,7 +150,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <button type="submit" id="form-submit" class="main-dark-button"><i class="fa fa-paper-plane"></i></button>
                             </div>
                         </div>
-                        </form>
+                    </form>
                 </div>
             </div>
         </div>
@@ -267,6 +267,35 @@ if (!isset($_SESSION['user_id'])) {
                 
             });
         });
+    </script>
+
+    <script>
+    $(document).ready(function() {
+        $('#contactForm').submit(function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                type: 'POST',
+                url: 'process_contact.php',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#contactForm')[0].reset();
+                    } else {
+                        alert('Error: ' + response.message);
+                        console.error('Form submission error:', response.message);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('AJAX error:', textStatus, errorThrown);
+                    console.log('Response:', jqXHR.responseText);
+                    alert('An error occurred. Please check the console for more information.');
+                }
+            });
+        });
+    });
     </script>
     
     <script>

@@ -426,12 +426,12 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                 <div class="col-lg-6">
                     <div class="left-content">
                         <h2>Explore Our Products</h2>
-                        <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat dicta deserunt enim expedita animi impedit praesentium cupiditate est quia similique totam sequi aliquid hic, unde dignissimos explicabo et itaque! Nostrum.</span>
+                        <span>Discover the latest in fashion and style at VogueVault. From timeless classics to cutting-edge trends, our curated collection ensures you find the perfect piece to express your individuality. Whether you're dressing up for a special occasion or adding flair to your everyday wardrobe, we've got you covered.</span>
                         <div class="quote">
                             <i class="fa fa-quote-left"></i><p>Fashion is the armor to survive the reality of everyday life." — Bill Cunningham</p>
                         </div>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam, modi nam est dolor, qui illo a saepe quisquam eveniet suscipit facilis quas enim nesciunt.</p>
-                        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. <a rel="nofollow" href="https://paypal.me/templatemo" target="_blank">support us</a> a little via PayPal. Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+                        <p>At VogueVault, we believe that fashion is more than just clothing; it's a statement, a way to express who you are and how you feel. Our carefully selected pieces are designed to empower you, helping you navigate life with confidence and style.</p>
+                        <p>Love what you see? You can support us by shopping your favorite styles or by contributing a little via <a rel="nofollow" href="https://paypal.me/templatemo" target="_blank">PayPal. </a>Every bit helps us bring you the best in fashion and continue curating a collection that speaks to your unique taste.</p>
                         <div class="main-border-button">
                             <a href="products.php">Discover More</a>
                         </div>
@@ -476,7 +476,7 @@ $kidsProducts = getProductsByCategory($pdo, "Kid's");
                 <div class="col-lg-12">
                     <div class="section-heading">
                         <h2>Social Media</h2>
-                        <span>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</span>
+                        <span>Stay connected with VogueVault on all your favorite platforms. Follow us for the latest trends, exclusive offers, and behind-the-scenes looks at our newest collections. Join our community and be a part of the conversation in fashion.</span>
                     </div>
                 </div>
             </div>

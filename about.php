@@ -126,11 +126,13 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-lg-6">
                     <div class="right-content">
                         <h4>About Us &amp; Our Skills</h4>
-                        <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod kon tempor incididunt ut labore.</span>
+                        <span>At VogueVault, we believe that fashion is a reflection of the soul—a way to express your innermost self to the world. Our team of dedicated designers and fashion enthusiasts work tirelessly to bring you collections that resonate with your unique style and personality.</span>
                         <div class="quote">
                             <i class="fa fa-quote-left"></i><p>"Fashion is about something that comes from within you." — Ralph Lauren</p>
                         </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod kon tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
+                        <p>With a deep understanding of fashion's transformative power, we combine creativity, innovation, and craftsmanship to deliver pieces that not only look good but feel good too. From fabric selection to final stitch, every detail is meticulously crafted to ensure you get the best.
+
+Our skills are rooted in a passion for design, an eye for trends, and a commitment to quality. Whether it's tailoring the perfect fit or staying ahead of the latest fashion movements, VogueVault is your trusted partner in style.</p>
                         <!--<ul>
                             <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                             <li><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -149,7 +151,7 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-lg-12">
                     <div class="section-heading">
                         <h2>Our Amazing Team</h2>
-                        <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat ipsam tenetur minus.</span>
+                        <span>We are a group of passionate Information Technology students from Cavite State University Trece Martires City Campus. As part of our academic journey, we collaborated to design and build the VogueVault website. Our diverse skills in web development, design, and technology have come together to create an online platform that seamlessly blends fashion and functionality. We're proud to have contributed to this project, bringing VogueVault's vision to life and enhancing your online shopping experience.</span>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -263,27 +265,27 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-lg-12">
                     <div class="section-heading">
                         <h2>Our Services</h2>
-                        <span>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officia expedita inventore quisquam!</span>
+                        <span>At VogueVault, we offer a range of services designed to enhance your style and elevate your wardrobe:</span>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="service-item">
                         <h4>Styling sessions</h4>
-                        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam aut aperiam optio, eius voluptatem maiores deserunt?</p>
+                        <p>Let our expert stylists help you discover your unique look. We'll guide you in selecting the perfect pieces that complement your style and personality.</p>
                         <img src="assets/images/service-1.jpg" alt="">
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="service-item">
                         <h4>Wardrobe consultation</h4>
-                        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cupiditate aliquam id nostrum quibusdam sunt numquam vero sit aspernatur?</p>
+                        <p>Need a closet refresh? Our wardrobe consultation service helps you organize and update your wardrobe, ensuring you always have the perfect outfit for any occasion.</p>
                         <img src="assets/images/service-2.jpg" alt="">
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="service-item">
                         <h4>Custom clothing design</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Qui perferendis nihil maxime?</p>
+                        <p>Looking for something truly unique? Our custom clothing design service allows you to work with our designers to create one-of-a-kind pieces tailored just for you.</p>
                         <img src="assets/images/service-3.jpg" alt="">
                     </div>
                 </div>
@@ -292,21 +294,21 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-lg-4">
                     <div class="service-item">
                         <h4>Repair services for shoes or accessories</h4>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in provident eligendi. Lorem ipsum.</p>
+                        <p>Keep your favorite items in top shape with our repair services. From shoes to accessories, we'll restore your beloved pieces to their former glory.</p>
                         <img src="assets/images/service-04.jpg" alt="">
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="service-item">
                         <h4>Fashion workshops or classes</h4>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id impedit quae consectetur?</p>
+                        <p>Expand your fashion knowledge with our workshops and classes. Whether you're a budding designer or a fashion enthusiast, there's always something new to learn.</p>
                         <img src="assets/images/service-05.jpg" alt="">
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="service-item">
                         <h4>VIP shopping experiences</h4>
-                        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorum aliquam similique doloribus.</p>
+                        <p>Enjoy the ultimate shopping experience with our VIP services. Get personalized attention, exclusive access to new collections, and more.</p>
                         <img src="assets/images/service-06.png" alt="">
                     </div>
                 </div>

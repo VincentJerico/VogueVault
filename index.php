@@ -296,58 +296,66 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         .preview-section {
-            height: 100vh;
-            width: 100vw;
-            background-color: whitesmoke;
+            min-height: 100vh;
+            width: 100%;
+            background-color: #f8f9fa;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 40px;
-            overflow: hidden;
+            align-items: flex-start;
+            padding: 40px 20px;
         }
 
         .preview-container {
             width: 100%;
-            max-width: 1600px;
+            max-width: 1200px;
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
         }
 
         .preview-title {
-            font-size: 28px;
+            font-size: 32px;
             color: #153448;
             margin-bottom: 30px;
             text-align: center;
+            font-weight: 600;
         }
 
         .preview-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
         }
 
         .preview-item {
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            background-color: white;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
         }
 
         .preview-item:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .preview-item .thumb {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1 / 1;
         }
 
         .preview-item img {
             width: 100%;
-            height: 250px;
+            height: 100%;
             object-fit: cover;
-            border-radius: 8px 8px 0 0;
+            transition: transform 0.3s ease;
+        }
+
+        .preview-item:hover img {
+            transform: scale(1.05);
         }
 
         .preview-item .hover-content {
@@ -356,7 +364,7 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(21, 52, 72, 0.7);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -377,23 +385,33 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
         .preview-item .hover-content ul li a {
             color: white;
             font-size: 24px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .preview-item .hover-content ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.4);
         }
 
         .preview-item .down-content {
-            padding: 15px;
-            background-color: white;
+            padding: 20px;
         }
 
         .preview-item h4 {
             margin: 0 0 10px;
             color: #153448;
             font-size: 18px;
+            font-weight: 600;
         }
 
         .preview-item .price {
             color: #666;
             font-size: 16px;
             font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
         }
 
         .preview-item .stars {
@@ -406,7 +424,6 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         .preview-item .stars li {
-            color: red;
             margin: 0 2px;
         }
 
@@ -432,7 +449,13 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
 
-        @media (max-width: 576px) {
+        @media (max-width: 768px) {
+            .preview-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
             .preview-grid {
                 grid-template-columns: 1fr;
             }
@@ -516,14 +539,14 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </ul>
                             </div>
                             <?php
-                            $imagePath = !empty($product['image_url']) ? 'uploads/' . basename($product['image_url']) : 'assets/images/default-product-image.jpg';
+                            $imagePath = !empty($product['image']) ? 'uploads/' . basename($product['image']) : 'assets/images/default-product-image.jpg';
                             $imageUrl = file_exists($imagePath) ? $imagePath : 'assets/images/default-product-image.jpg';
                             ?>
                             <img src="<?php echo htmlspecialchars($imageUrl); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                         </div>
                         <div class="down-content">
                             <h4><?php echo htmlspecialchars($product['name']); ?></h4>
-                            <span class="price">₱<?php echo number_format($product['price'], 2); ?></span>
+                            <span>₱<?php echo number_format($product['price'], 2); ?></span>
                             <ul class="stars">
                                 <?php
                                 $rating = isset($product['rating']) ? floatval($product['rating']) : 0;

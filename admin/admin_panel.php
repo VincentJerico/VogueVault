@@ -33,6 +33,13 @@ $recentActivity = executeQuery("
     LIMIT 10
 ")->fetchAll(PDO::FETCH_ASSOC);
 
+// Fetch recent messages
+$recentMessages = executeQuery("
+    SELECT * FROM contact_messages
+    ORDER BY created_at DESC
+    LIMIT 10
+")->fetchAll(PDO::FETCH_ASSOC);
+
 $pdo = null;
 ?>
 
@@ -103,6 +110,24 @@ $pdo = null;
         .recent-activity {
             max-height: 300px;
             overflow-y: auto;
+        }
+        .messages-section {
+            margin-top: 20px;
+        }
+        .message-item {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .message-content {
+            margin-top: 10px;
         }
         footer {
             background-color: #153448;
@@ -248,6 +273,27 @@ $pdo = null;
                                 </li>
                             <?php endforeach; ?>
                         </ul>
+                    </div>
+                </div>
+                <div class="card messages-section">
+                    <div class="card-header">
+                        <h5 class="mb-0">Inbox</h5>
+                    </div>
+                    <div class="card-body">
+                        <?php if (empty($recentMessages)): ?>
+                            <p>No recent messages.</p>
+                        <?php else: ?>
+                            <?php foreach ($recentMessages as $message): ?>
+                                <div class="message-item">
+                                    <div class="message-header">
+                                        <strong><?php echo htmlspecialchars($message['name']); ?></strong>
+                                        <span class="text-muted"><?php echo date('d M Y H:i', strtotime($message['created_at'])); ?></span>
+                                    </div>
+                                    <div><?php echo htmlspecialchars($message['email']); ?></div>
+                                    <div class="message-content"><?php echo nl2br(htmlspecialchars($message['message'])); ?></div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </main>

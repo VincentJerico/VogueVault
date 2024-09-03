@@ -166,29 +166,28 @@ if (!empty($cart_categories)) {
                 <div class="card shadow-lg p-4">
                     <h2 class="h4 mb-4 text-center">Related Products</h2>
                     <div class="row">
-                        <?php if (!empty($related_products)): ?>
-                            <?php foreach ($related_products as $related): ?>
-                                <div class="col-md-4">
-                                    <div class="card mb-3">
-                                        <div class="thumb">
-                                            <?php
-                                            // Ensure the correct relative path to the uploads directory
-                                            $imagePath = !empty($related['image']) ? './uploads/' . basename($related['image']) : 'assets/images/default-product-image.jpg';
-                                            $imageUrl = file_exists($imagePath) ? $imagePath : 'assets/images/default-product-image.jpg';
-                                            ?>
-                                            <img src="<?php echo htmlspecialchars($imageUrl); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($related['name']); ?>">
-                                        </div>
-                                        <div class="card-body">
-                                            <p class="card-title"><strong><?php echo htmlspecialchars($related['name']); ?></strong></p>
-                                            <p class="card-text">₱<?php echo number_format($related['price'], 2); ?></p>
-                                            <a href="product.php?id=<?php echo $related['id']; ?>" class="btn btn-primary btn-sm">View</a>
-                                        </div>
+                    <?php if (!empty($related_products)): ?>
+                        <?php foreach ($related_products as $related): ?>
+                            <div class="col-md-4">
+                                <div class="card mb-3">
+                                    <div class="thumb">
+                                        <?php
+                                        $imagePath = !empty($related['image']) ? './uploads/' . basename($related['image']) : 'assets/images/default-product-image.jpg';
+                                        $imageUrl = file_exists($imagePath) ? $imagePath : 'assets/images/default-product-image.jpg';
+                                        ?>
+                                        <img src="<?php echo htmlspecialchars($imageUrl); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($related['name']); ?>">
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-title"><strong><?php echo htmlspecialchars($related['name']); ?></strong></p>
+                                        <p class="card-text">₱<?php echo number_format($related['price'], 2); ?></p>
+                                        <button class="btn btn-primary btn-sm view-product" data-product-id="<?php echo $related['id']; ?>">View</button>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <p class="text-center">No related products found.</p>
-                        <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-center">No related products found.</p>
+                    <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -198,5 +197,35 @@ if (!empty($cart_categories)) {
     </div>
 
     <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('.view-product').on('click', function() {
+            var productId = $(this).data('product-id');
+            $.ajax({
+                url: 'get-product-details.php',
+                method: 'GET',
+                data: { id: productId },
+                success: function(response) {
+                    $('body').append(response);
+                    $('.modal-overlay').fadeIn();
+                },
+                error: function() {
+                    alert('Error loading product details.');
+                }
+            });
+        });
+
+        $(document).on('click', '.modal-overlay, .close-modal', function() {
+            $('.modal-overlay').fadeOut(function() {
+                $(this).remove();
+            });
+        });
+
+        $(document).on('click', '.product-modal', function(e) {
+            e.stopPropagation();
+        });
+    });
+</script>
 </body>
 </html>

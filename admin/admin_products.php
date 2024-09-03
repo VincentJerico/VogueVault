@@ -313,6 +313,10 @@ $pdo = null;
                             <input type="number" class="form-control" id="price" name="price" step="0.01" required>
                         </div>
                         <div class="mb-3">
+                            <label for="stock" class="form-label">Quantity in Stock:</label>
+                            <input type="number" class="form-control" id="stock" name="stock" required min="0">
+                        </div>
+                        <div class="mb-3">
                             <label for="image" class="form-label">Product Image</label>
                             <input type="file" class="form-control" id="image" name="image" required>
                         </div>
@@ -349,6 +353,10 @@ $pdo = null;
                         <div class="mb-3">
                             <label for="editPrice" class="form-label">Price</label>
                             <input type="number" class="form-control" id="editPrice" name="price" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">Quantity in Stock:</label>
+                            <input type="number" class="form-control" id="stock" name="stock" value="<?php echo $product['stock']; ?>" required min="0">
                         </div>
                         <div class="mb-3">
                             <label for="editImage" class="form-label">Product Image</label>

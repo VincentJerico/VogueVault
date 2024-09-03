@@ -23,11 +23,28 @@ if ($buy_all) {
 } else {
     // Fetch single product details
     if (isset($_GET['product_id'])) {
+        // Check if the product is already in the cart
+        $stmt = $pdo->prepare("SELECT * FROM cart WHERE user_id = :user_id AND product_id = :product_id");
+        $stmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':product_id', $_GET['product_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($cart_item) {
+            // If product is in the cart, use the cart's quantity
+            $quantity = $cart_item['quantity'];
+        } else {
+            // If not in the cart, use the quantity from the URL or default to 1
+            $quantity = isset($_GET['quantity']) ? intval($_GET['quantity']) : 1;
+        }
+
+        // Fetch the product details
         $stmt = $pdo->prepare("SELECT * FROM products WHERE id = :id");
         $stmt->bindParam(':id', $_GET['product_id'], PDO::PARAM_INT);
         $stmt->execute();
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
-        $quantity = isset($_GET['quantity']) ? intval($_GET['quantity']) : 1;
+
+        // Add product details to cart items array
         $cart_items[] = [
             'product_id' => $product['id'],
             'name' => $product['name'],
@@ -51,7 +68,7 @@ foreach ($cart_items as $item) {
     $total_price += $item['price'] * $item['quantity'];
 }
 
-// Step 1: Fetch the categories of the products in the cart
+// Fetch the categories of the products in the cart
 $cart_categories = [];
 foreach ($cart_items as $item) {
     $stmt = $pdo->prepare("SELECT category FROM products WHERE id = :product_id");
@@ -63,7 +80,7 @@ foreach ($cart_items as $item) {
     }
 }
 
-// Step 2: Fetch related products based on the categories
+// Fetch related products based on the categories
 $related_products = [];
 if (!empty($cart_categories)) {
     $placeholders = implode(',', array_fill(0, count($cart_categories), '?'));
@@ -72,7 +89,6 @@ if (!empty($cart_categories)) {
     $related_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -152,7 +168,6 @@ if (!empty($cart_categories)) {
                             <p class="h5 text-end"><strong>Total: ₱<?php echo number_format($total_price, 2); ?></strong></p>
                         </div>
 
-
                         <div class="d-grid d-md-flex justify-content-between">
                             <button type="submit" class="btn btn-primary btn-sm">Place Order</button>
                             <a href="home.php" class="btn btn-secondary btn-sm">Cancel</a>
@@ -161,9 +176,9 @@ if (!empty($cart_categories)) {
                 </div>
             </div>
 
-            <div class="col-12 col-md-5 col-lg-6">
+            <div class="col-12 col-md-5 col-lg-6 mt-4 mt-md-0">
                 <div class="card shadow-lg p-4">
-                    <h2 class="h4 mb-4 text-center">Related Products</h2>
+                    <h4 class="h5 mb-3">You Might Also Like</h4>
                     <div class="row">
                     <?php if (!empty($related_products)): ?>
                         <?php foreach ($related_products as $related): ?>
@@ -190,8 +205,6 @@ if (!empty($cart_categories)) {
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 
@@ -225,6 +238,6 @@ if (!empty($cart_categories)) {
             e.stopPropagation();
         });
     });
-</script>
+    </script>
 </body>
 </html>

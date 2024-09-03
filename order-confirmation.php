@@ -19,99 +19,128 @@ unset($_SESSION['last_order']); // Clear the order from session after displaying
     <title>Order Confirmation - VogueVault</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <link rel="icon" type="image/x-icon" href="assets/images/logosquaretransparent.png">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             background-color: #f8f9fa;
-            color: #153448;
+            color: #333;
         }
-        .order-confirmation {
+        .receipt-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
             background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            padding: 30px;
-            margin-top: 50px;
-            transition: transform 0.3s ease;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .order-confirmation:hover {
-            transform: translateY(-5px);
-        }
-        h2 {
-            color: #153448;
+        .receipt-header {
+            text-align: center;
             margin-bottom: 20px;
-            transition: color 0.3s ease;
         }
-        h2:hover {
-            color: #DFD0B8;
+        .receipt-header h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #333;
         }
-        .order-details {
-            list-style-type: none;
-            padding: 0;
+        .receipt-header p {
+            margin: 5px 0;
+            color: #666;
         }
-        .order-details li {
+        .receipt-details {
+            margin-bottom: 20px;
+        }
+        .receipt-details h4 {
             margin-bottom: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+        }
+        .receipt-details p {
+            margin: 0;
+            color: #666;
+        }
+        .order-summary {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        .order-summary th, .order-summary td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            color: #333;
+        }
+        .order-summary th {
+            background-color: #f2f2f2;
+        }
+        .order-summary tfoot tr th, .order-summary tfoot tr td {
+            border-top: 2px solid #ccc;
+        }
+        .receipt-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .receipt-footer a {
+            background-color: #153448;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
             border-radius: 5px;
             transition: background-color 0.3s ease;
         }
-        .order-details li:hover {
-            background-color: #e9ecef;
-        }
-        .btn-continue {
-            background-color: #153448;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-        .btn-continue:hover {
+        .receipt-footer a:hover {
             background-color: #DFD0B8;
             color: #153448;
-            transform: scale(1.05);
-        }
-        @media (max-width: 768px) {
-            .order-confirmation {
-                margin-top: 20px;
-                padding: 20px;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="order-confirmation">
-            <h2>Order Confirmation</h2>
-            <p>Thank you for your purchase! Here are your order details:</p>
-            <ul class="order-details">
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <h1>VogueVault</h1>
+            <p>Order Confirmation</p>
+            <p>Date: <?php echo date('F j, Y'); ?></p>
+        </div>
+
+        <div class="receipt-details">
+            <h4>Order Details</h4>
+            <p><strong>Shipping Address:</strong> <?php echo htmlspecialchars($order['shipping_address']); ?></p>
+            <p><strong>Payment Method:</strong> <?php echo htmlspecialchars($order['payment_method']); ?></p>
+        </div>
+
+        <table class="order-summary">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
                 <?php foreach ($order['items'] as $item): ?>
-                    <li>
-                        <strong>Product:</strong> <?php echo htmlspecialchars($item['name']); ?><br>
-                        <strong>Quantity:</strong> <?php echo htmlspecialchars($item['quantity']); ?><br>
-                        <strong>Price:</strong> ₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?>
-                    </li>
+                    <tr>
+                        <td><?php echo htmlspecialchars($item['name']); ?></td>
+                        <td><?php echo htmlspecialchars($item['quantity']); ?></td>
+                        <td>₱<?php echo number_format($item['price'], 2); ?></td>
+                        <td>₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?></td>
+                    </tr>
                 <?php endforeach; ?>
-                <li><strong>Shipping Address:</strong> <?php echo htmlspecialchars($order['shipping_address']); ?></li>
-                <li><strong>Payment Method:</strong> <?php echo htmlspecialchars($order['payment_method']); ?></li>
-                <li><strong>Total Price:</strong> ₱<?php echo number_format($order['total_price'], 2); ?></li>
-            </ul>
-            <a href="home.php" class="btn-continue">Continue Shopping</a>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="3">Total</th>
+                    <th>₱<?php echo number_format($order['total_price'], 2); ?></th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="receipt-footer">
+            <p>Thank you for your purchase!</p>
+            <a href="home.php">Continue Shopping</a>
+            <button onclick="window.print()" class="btn btn-secondary">Print Receipt</button>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            if (window.opener && !window.opener.closed) {
-                window.opener.clearCartDisplay();
-            }
-        });
-    </script>
 </body>
 </html>

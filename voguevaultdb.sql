@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 26, 2024 at 06:19 AM
+-- Generation Time: Sep 03, 2024 at 02:18 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -39,6 +39,27 @@ CREATE TABLE `cart` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `contact_messages`
+--
+
+CREATE TABLE `contact_messages` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contact_messages`
+--
+
+INSERT INTO `contact_messages` (`id`, `name`, `email`, `message`, `created_at`) VALUES
+(1, 'testuser2', 'testuser2@example.com', 'ahaha', '2024-08-28 12:20:20');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `orders`
 --
 
@@ -49,7 +70,7 @@ CREATE TABLE `orders` (
   `quantity` int(11) DEFAULT NULL,
   `total_price` decimal(10,2) NOT NULL,
   `status` enum('pending','processing','shipped','delivered','cancelled') NOT NULL DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `shipping_address` text DEFAULT NULL,
   `payment_method` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -156,7 +177,13 @@ INSERT INTO `orders` (`id`, `user_id`, `product_id`, `quantity`, `total_price`, 
 (96, 1, 5, 1, 4099.00, 'pending', '2024-08-26 04:16:25', 'dyan lang haha', 'cash_on_delivery'),
 (97, 1, 4, 1, 1990.00, 'pending', '2024-08-26 04:16:25', 'dyan lang haha', 'cash_on_delivery'),
 (98, 1, 3, 1, 6199.00, 'pending', '2024-08-26 04:16:25', 'dyan lang haha', 'cash_on_delivery'),
-(99, 1, 6, 1, 13440.00, 'pending', '2024-08-26 04:16:25', 'dyan lang haha', 'cash_on_delivery');
+(99, 1, 6, 1, 13440.00, 'pending', '2024-08-26 04:16:25', 'dyan lang haha', 'cash_on_delivery'),
+(100, 4, 9, 2, 1598.00, 'pending', '2024-08-28 11:27:14', 'Diyan lang ulit sa may tabi', 'cash_on_delivery'),
+(101, 4, 11, 1, 4599.00, 'pending', '2024-08-28 11:27:14', 'Diyan lang ulit sa may tabi', 'cash_on_delivery'),
+(103, 1, 10, 1, 6049.00, 'pending', '2024-09-03 12:13:17', 'dyan lang haha', 'cash_on_delivery'),
+(104, 1, 12, 1, 2799.00, 'pending', '2024-09-03 12:13:17', 'dyan lang haha', 'cash_on_delivery'),
+(105, 1, 7, 1, 499.00, 'pending', '2024-09-03 12:13:17', 'dyan lang haha', 'cash_on_delivery'),
+(106, 1, 11, 1, 4599.00, 'pending', '2024-09-03 12:13:17', 'dyan lang haha', 'cash_on_delivery');
 
 -- --------------------------------------------------------
 
@@ -200,12 +227,12 @@ INSERT INTO `products` (`id`, `name`, `description`, `category`, `price`, `image
 (4, '(Men\'s) Cargo Pants', 'Uniqlo Cargo Pants', 'Men\'s', 1990.00, '../uploads/men-2pants.png', '2024-08-23 10:01:52', 4.75, 4, 99),
 (5, '(Men\'s) Converse', 'Converse Chuck \'70s', 'Men\'s', 4099.00, '../uploads/men-3shoes.jpg', '2024-08-23 10:03:22', 5, 4, 72),
 (6, '(Men\'s) Aviator Sunglasses', 'Ray-Ban Polarized Metal Aviator Sunglasses', 'Men\'s', 13440.00, '../uploads/men-4rayban.png', '2024-08-23 10:04:55', 4.78571, 14, 72),
-(7, '(Women\'s) Cap-Sleeve Tshirt', 'Uniqlo Cap-Sleeve Tshirt', 'Women\'s', 499.00, '../uploads/woman-1shirt.png', '2024-08-23 10:08:09', 4.66667, 6, 90),
+(7, '(Women\'s) Cap-Sleeve Tshirt', 'Uniqlo Cap-Sleeve Tshirt', 'Women\'s', 499.00, '../uploads/woman-1shirt.png', '2024-08-23 10:08:09', 4.66667, 6, 89),
 (8, '(Women\'s) Oversized Japanese Style Cardigan', 'Uniqlo Oversized Japanese Style Cardigan', 'Women\'s', 899.00, '../uploads/woman-2cardigan.png', '2024-08-23 10:10:09', 5, 2, 91),
-(9, '(Women\'s) Wide-Leg Trouser', 'Uniqlo Wide-Leg Trouser', 'Women\'s', 799.00, '../uploads/woman-3trouser.png', '2024-08-23 10:12:30', 4.75, 8, 81),
-(10, '(Women\'s) Puma', 'Puma Palermo Leather Shoes', 'Women\'s', 6049.00, '../uploads/woman-4shoes.png', '2024-08-23 10:15:50', 5, 2, 82),
-(11, '(Kid\'s) School Collection', 'Back-To-School Collection for kids', 'Kid\'s', 4599.00, '../uploads/kid-01.jpg', '2024-08-23 10:25:26', 0, 0, 99),
-(12, '(Kid\'s) Summer Collection', 'Summer Outfit for kids', 'Kid\'s', 2799.00, '../uploads/kid-02.jpg', '2024-08-23 10:32:46', 0, 0, 100),
+(9, '(Women\'s) Wide-Leg Trouser', 'Uniqlo Wide-Leg Trouser', 'Women\'s', 799.00, '../uploads/woman-3trouser.png', '2024-08-23 10:12:30', 4.75, 8, 79),
+(10, '(Women\'s) Puma', 'Puma Palermo Leather Shoes', 'Women\'s', 6049.00, '../uploads/woman-4shoes.png', '2024-08-23 10:15:50', 5, 2, 81),
+(11, '(Kid\'s) School Collection', 'Back-To-School Collection for kids', 'Kid\'s', 4599.00, '../uploads/kid-01.jpg', '2024-08-23 10:25:26', 0, 0, 97),
+(12, '(Kid\'s) Summer Collection', 'Summer Outfit for kids', 'Kid\'s', 2799.00, '../uploads/kid-02.jpg', '2024-08-23 10:32:46', 0, 0, 99),
 (13, '(Kid\'s) Casual Collection', 'Casual Collection for kids', 'Kid\'s', 7399.00, '../uploads/kid-03.jpg', '2024-08-23 10:37:53', 5, 2, 97),
 (14, '(Kid\'s) Winter Collection', 'Winter Outfit for kids', 'Kid\'s', 6399.00, '../uploads/kid-4.png', '2024-08-23 10:39:44', 5, 2, 96);
 
@@ -233,8 +260,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `gender`, `birthday`, `created_at`, `reset_token`, `address`) VALUES
-(1, 'testuser1', '$2y$10$bp.moFEisbTkVUDFoEV/YekwEuxOVJ69fIJ62L5pdndXc3Z90QJWm', 'testuser1@example.com', 'customer', 'male', '2003-12-07', '2024-08-23 08:55:28', '0b012b1e4c42e7b3d4b35cc868973c523d7eee3e09e48dc490eb1b313493ede858ceea78c0e5955a7cf8ec71b22bd011e1ea', 'dyan lang haha'),
-(2, 'admin1', '$2y$10$hRChidKpexOrdui/zLWSk.3ST9GIbtj2JCLSJThbC5FXspfnaZcqq', 'admin1@example.com', 'admin', NULL, NULL, '2024-08-23 09:48:31', NULL, NULL);
+(1, 'testuser1', '$2y$10$o00lpTYhfdokiMQ5MKJW4un27mxOzu6iPUx5kCZajK31vZs5Hn4mO', 'testuser1@example.com', 'customer', 'male', '2003-12-07', '2024-08-23 08:55:28', NULL, 'dyan lang haha'),
+(2, 'admin1', '$2y$10$hRChidKpexOrdui/zLWSk.3ST9GIbtj2JCLSJThbC5FXspfnaZcqq', 'admin1@example.com', 'admin', NULL, NULL, '2024-08-23 09:48:31', NULL, NULL),
+(4, 'testuser2', '$2y$10$iRT0JvNjAVj6QLbr7pNmIeGS7tuQ6Nmp1kV4KSoCgLtLBo.NgfgwG', 'testuser2@example.com', 'customer', 'male', '2003-12-07', '2024-08-28 11:15:51', NULL, 'Diyan lang ulit sa may tabi');
 
 --
 -- Indexes for dumped tables
@@ -247,6 +275,12 @@ ALTER TABLE `cart`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `product_id` (`product_id`);
+
+--
+-- Indexes for table `contact_messages`
+--
+ALTER TABLE `contact_messages`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `orders`
@@ -285,13 +319,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT for table `contact_messages`
+--
+ALTER TABLE `contact_messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT for table `order_items`
@@ -309,7 +349,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

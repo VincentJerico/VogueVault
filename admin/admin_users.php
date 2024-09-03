@@ -314,7 +314,6 @@ $pdo = null;
     <script src="../assets/js/bootstrap.min.js"></script>
 
     <script>
-        // search bar
         document.addEventListener('DOMContentLoaded', (event) => {
             const searchInput = document.getElementById('searchInput');
             const searchBar = document.querySelector('.search-bar');

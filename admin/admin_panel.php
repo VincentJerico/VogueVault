@@ -321,18 +321,18 @@ $pdo = null;
     <script src="../assets/js/popper.min.js"></script>
     <script src="../assets/js/jquery-3.5.1.slim.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const searchInput = document.getElementById('searchInput');
-            const searchBar = document.querySelector('.search-bar');
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const searchInput = document.getElementById('searchInput');
+        const searchBar = document.querySelector('.search-bar');
 
-            searchInput.addEventListener('input', () => {
-                if (searchInput.value.trim() === '') {
-                    searchBar.classList.remove('expanded');
-                } else {
-                    searchBar.classList.add('expanded');
-                }
-            });
+        searchInput.addEventListener('input', () => {
+            if (searchInput.value.trim() === '') {
+                searchBar.classList.remove('expanded');
+            } else {
+                searchBar.classList.add('expanded');
+            }
         });
+    });
     </script>
 </body>
 </html>

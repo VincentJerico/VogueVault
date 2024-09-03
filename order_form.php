@@ -89,7 +89,6 @@ if (!empty($cart_categories)) {
     <link rel="stylesheet" href="assets/css/get-product-style.css">
     <link rel="stylesheet" href="assets/css/owl-carousel.css">
     <link rel="stylesheet" href="assets/css/lightbox.css">
-    <link rel="icon" type="image/x-icon" href="assets/images/logosquaretransparent.png">
 </head>
 <body>
     <div class="container mt-5">

@@ -115,10 +115,9 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            height: 50%;
+            min-height: 50%;
             max-width: 75%;
             width: 100%;
-            z-index: 1;
         }
 
         .welcome-section {
@@ -201,6 +200,7 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
             display: flex;
             flex-direction: column;
             justify-content: center;
+            overflow-y: auto;
         }
 
         .form-group {
@@ -284,6 +284,10 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
             margin-bottom: 1rem;
             font-size: 0.9rem;
             text-align: center;
+            padding: 10px;
+            background-color: #ffebee;
+            border: 1px solid crimson;
+            border-radius: 4px;
         }
 
         a {
@@ -465,10 +469,11 @@ $preview_products = $preview_stmt->fetchAll(PDO::FETCH_ASSOC);
             .container {
                 flex-direction: column;
                 height: auto;
+                min-height: 100vh;
             }
             .welcome-section {
                 width: 100%;
-                aspect-ratio: 1200 / 628;
+                aspect-ratio: 16 / 9;
             }
             .login-section {
                 padding: 1.5rem;

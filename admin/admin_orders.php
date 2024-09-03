@@ -276,7 +276,7 @@ $pdo = null;
                                             echo "<td>₱" . htmlspecialchars($row["total_price"]) . "</td>";
                                             echo "<td>" . htmlspecialchars($row["status"]) . "</td>";
                                             echo "<td>" . htmlspecialchars($row["created_at"]) . "</td>";
-                                            echo "<td><a href='order_details.php?order_id=" . htmlspecialchars($row["id"]) . "' class='btn btn-sm btn-outline-primary'>View Items</a></td>";
+                                            echo "<td><button class='btn btn-sm btn-outline-primary view-order' data-order-id='" . htmlspecialchars($row["id"]) . "'>View Items</button></td>";
                                             echo "</tr>";
                                         }
                                     } else {
@@ -307,10 +307,24 @@ $pdo = null;
         </footer>
     </div>
 
+    <!-- Order Details Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
+            </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../assets/js/popper.min.js"></script>
-    <script src="../assets/js/bootstrap.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const searchInput = document.getElementById('searchInput');
@@ -346,6 +360,26 @@ $pdo = null;
                 }
             }
         }
+
+        $(document).ready(function() {
+            $('.view-order').on('click', function() {
+                var orderId = $(this).data('order-id');
+                
+                $.ajax({
+                    url: 'get_order_details.php',
+                    method: 'GET',
+                    data: { order_id: orderId },
+                    success: function(response) {
+                        $('#orderDetailsContent').html(response);
+                        $('#orderDetailsModal').modal('show');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error("AJAX error: " + textStatus + ' : ' + errorThrown);
+                        alert('Error fetching order details');
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

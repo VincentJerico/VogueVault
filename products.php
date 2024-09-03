@@ -86,6 +86,91 @@ $total_pages = ceil($total_products / $perPage);
     <link rel="stylesheet" href="assets/css/owl-carousel.css">
     <link rel="stylesheet" href="assets/css/lightbox.css">
     <link rel="icon" type="image/x-icon" href="assets/images/logosquaretransparent.png">
+
+    <style>
+        /* FAQ Modal Styles */
+        .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+        background-color: #ffffff;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 500px; /* Reduced from 800px */
+        max-height: 80vh;
+        overflow-y: auto;
+        }
+
+        .close {
+        color: #aaa;
+        float: right;
+        font-size: 24px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+        }
+
+        .close:hover,
+        .close:focus {
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+        }
+
+        #faq-content h2 {
+        color: #153448;
+        margin-bottom: 20px;
+        font-size: 22px;
+        text-align: center;
+        }
+
+        #faq-content h3 {
+        color: #153448;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-size: 16px;
+        }
+
+        #faq-content p {
+        color: #333;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        font-size: 14px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+        .modal-content {
+            margin: 10% auto;
+            padding: 15px;
+            width: 95%;
+        }
+
+        #faq-content h2 {
+            font-size: 20px;
+        }
+
+        #faq-content h3 {
+            font-size: 15px;
+        }
+
+        #faq-content p {
+            font-size: 13px;
+        }
+        }
+    </style>
 </head>
 <body>
     <!-- ***** Preloader Start ***** -->
@@ -317,8 +402,8 @@ $total_pages = ceil($total_products / $perPage);
                 <div class="col-lg-3">
                     <h4>Help &amp; Information</h4>
                     <ul>
-                        <li><a href="#">Help</a></li>
-                        <li><a href="#">FAQ's</a></li>
+                        <li><a href="contact.php">Help</a></li>
+                        <li><a href="#" onclick="return false;">FAQ's</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-12">
@@ -334,6 +419,45 @@ $total_pages = ceil($total_products / $perPage);
             </div>
         </div>
     </footer>
+
+    <div id="faq-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>FAQs</h2>
+            <div id="faq-content">
+                <h3>1. What is VogueVault?</h3>
+                <p>VogueVault is a premier fashion e-commerce website inspired by the renowned "Vogue" brand. We specialize in delivering a curated collection of timeless fashion pieces for men, women, and kids. Our mission is to offer a seamless and superior shopping experience by blending high-quality, classic styles with the latest trends.</p>
+
+                <h3>2. What products does VogueVault offer?</h3>
+                <p>We offer a wide range of clothing and accessories for men, women, and kids. Our product categories include everyday wear, formal attire, seasonal collections, and exclusive designer collaborations, all selected for their quality and style.</p>
+
+                <h3>3. How do I place an order?</h3>
+                <p>To place an order, simply browse our website, select the items you wish to purchase, and add them to your cart. Once you're ready, proceed to checkout, where you can review your order, enter your shipping information, and complete your purchase.</p>
+
+                <h3>4. What payment methods are accepted?</h3>
+                <p>We accept various payment methods, including major credit/debit cards, PayPal, and other secure payment gateways. All transactions are encrypted to ensure your payment information is safe.</p>
+
+                <h3>5. How can I track my order?</h3>
+                <p>Once your order is shipped, you will receive a tracking number via email. You can use this number on our website to track the status of your delivery.</p>
+
+                <h3>6. What is VogueVault's return policy?</h3>
+                <p>We offer a hassle-free return policy. If you're not completely satisfied with your purchase, you can return it within 30 days of delivery for a full refund or exchange. The item must be in its original condition, with tags still attached.</p>
+
+                <h3>7. How do I contact customer support?</h3>
+                <p>You can reach our customer support team via email at voguevault@gmail.com, or by phone at 0998-765-4321 during our work hours from 07:30 AM to 09:30 PM. We're also available on our social media channels: Facebook, Instagram, and LinkedIn.</p>
+
+                <h3>8. Does VogueVault offer international shipping?</h3>
+                <p>Currently, VogueVault only ships within the Philippines. However, we are working on expanding our shipping options to include international destinations in the near future.</p>
+
+                <h3>9. How do I stay updated on new arrivals and promotions?</h3>
+                <p>You can stay updated by subscribing to our newsletter or following us on social media. We regularly share news about new arrivals, special promotions, and exclusive offers with our community.</p>
+
+                <h3>10. Is it safe to shop on VogueVault?</h3>
+                <p>Yes, shopping on VogueVault is completely safe. We prioritize your security by using advanced encryption technology to protect your personal and payment information.</p>
+            </div>
+        </div>
+    </div>
+    
     <!-- jQuery -->
     <script src="assets/js/jquery-2.1.0.min.js"></script>
     <!-- Bootstrap -->
@@ -368,6 +492,54 @@ $total_pages = ceil($total_products / $perPage);
             });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = document.getElementById("faq-modal");
+            var btn = document.querySelector("a[href='#'][onclick='return false;']");
+            var span = modal.querySelector(".close");
+
+            if (!modal) {
+                console.error("Modal element not found. Make sure you have an element with id 'faq-modal'");
+                return;
+            }
+
+            if (!btn) {
+                console.error("FAQ button not found. Make sure you have an <a> element with href='#' and onclick='return false;'");
+                return;
+            }
+
+            function toggleBodyScroll(isModalOpen) {
+                document.body.style.overflow = isModalOpen ? 'hidden' : '';
+            }
+
+            function openModal(e) {
+                e.preventDefault();
+                modal.style.display = "block";
+                toggleBodyScroll(true);
+            }
+
+            function closeModal() {
+                modal.style.display = "none";
+                toggleBodyScroll(false);
+            }
+
+            btn.addEventListener('click', openModal);
+
+            if (span) {
+                span.addEventListener('click', closeModal);
+            } else {
+                console.warn("Close button not found in modal. Users may not be able to close the modal easily.");
+            }
+
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+
 
     <script>
         $(document).ready(function() {

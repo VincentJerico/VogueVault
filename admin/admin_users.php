@@ -85,16 +85,51 @@ $pdo = null;
             padding: 10px 0;
         }
         .search-bar {
-            position: relative;
+        position: relative;
         }
         .search-bar input {
-            padding-left: 30px;
+            width: 100%;
+            padding: 10px 15px 10px 35px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 16px;
         }
         .search-bar .bi-search {
             position: absolute;
             top: 50%;
-            left: 10px;
+            left: 12px;
             transform: translateY(-50%);
+            color: #6c757d;
+        }
+        #searchResults {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        .search-result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .search-result-item:hover {
+            background-color: #f8f9fa;
+        }
+        .search-result-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .search-result-description {
+            font-size: 14px;
+            color: #6c757d;
         }
         .main-content {
             flex: 1;
@@ -144,6 +179,7 @@ $pdo = null;
                     <div class="search-bar">
                         <i class="bi bi-search text-muted"></i>
                         <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+                        <div id="searchResults" class="search-results"></div>
                     </div>
                 </div>
                 <div class="col-md-3 col-lg-2 text-end">
@@ -308,25 +344,90 @@ $pdo = null;
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../assets/js/jquery-3.5.1.slim.min.js"></script>
     <script src="../assets/js/popper.min.js"></script>
     <script src="../assets/js/bootstrap.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const searchInput = document.getElementById('searchInput');
-            const searchBar = document.querySelector('.search-bar');
+    $(document).ready(function() {
+        const searchInput = $('#searchInput');
+        const searchResults = $('#searchResults');
 
-            searchInput.addEventListener('input', () => {
-                if (searchInput.value.trim() === '') {
-                    searchBar.classList.remove('expanded');
-                } else {
-                    searchBar.classList.add('expanded');
-                }
-            });
+        searchInput.on('input', function() {
+            const searchTerm = $(this).val().trim();
+            if (searchTerm.length > 2) {
+                $.ajax({
+                    url: 'search.php',
+                    method: 'GET',
+                    data: { term: searchTerm },
+                    dataType: 'json',
+                    success: function(results) {
+                        displaySearchResults(results);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Search error:', error);
+                    }
+                });
+            } else {
+                searchResults.hide().empty();
+            }
         });
 
+        function displaySearchResults(results) {
+            searchResults.empty();
+            if (results.length > 0) {
+                results.forEach(function(result) {
+                    const resultItem = $('<div class="search-result-item">')
+                        .append($('<div class="search-result-title">').text(result.title))
+                        .append($('<div class="search-result-description">').text(result.description));
+                    
+                    resultItem.on('click', function() {
+                        window.location.href = result.link;
+                    });
+
+                    searchResults.append(resultItem);
+                });
+                searchResults.show();
+            } else {
+                searchResults.hide();
+            }
+        }
+
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('.search-bar').length) {
+                searchResults.hide();
+            }
+        });
+
+        // Add keyboard navigation
+        searchInput.on('keydown', function(e) {
+            const items = searchResults.find('.search-result-item');
+            const current = searchResults.find('.search-result-item.active');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (current.length === 0 || current.is(':last-child')) {
+                    items.first().addClass('active').siblings().removeClass('active');
+                } else {
+                    current.removeClass('active').next().addClass('active');
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (current.length === 0 || current.is(':first-child')) {
+                    items.last().addClass('active').siblings().removeClass('active');
+                } else {
+                    current.removeClass('active').prev().addClass('active');
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (current.length > 0) {
+                    window.location.href = current.data('link');
+                }
+            }
+        });
+    });
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Edit User Modal
             var editUserModal = document.getElementById('editUserModal');
